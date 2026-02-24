@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allenamento | BAIONICOL</title>
+<link rel="icon" type="image/png" href="favicon.png">
+	<link rel="stylesheet" href="baionicol-core.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+       /* --- RIPRISTINO VARIABILI E SCROLL PER QUESTA PAGINA --- */
+        :root {
+            --yellow-neon: #ffaa00;
+            --pink-neon: #ff0055;
+        }
+
+        body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }         
+        /* --- STILI ICONE VETTORIALI --- */
+        .card-icon-svg { width: 85px; height: 85px; margin-bottom: 20px; filter: drop-shadow(0 0 15px currentColor); }
+        .metric-icon { width: 24px; height: 24px; flex-shrink: 0; }
+        .btn-icon { width: 22px; height: 22px; flex-shrink: 0; }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-container { padding: 100px 4vw 20px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; }
+        .view-section { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .hidden { display: none !important; opacity: 0; transform: scale(0.95); }
+
+        /* --- VISTA 1: CAROUSEL HUB --- */
+        .page-title { font-size: 52px; color: var(--cyan-neon); margin-bottom: 10px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); text-align: center; letter-spacing: 2px; }
+        .page-subtitle { font-size: 22px; color: var(--text-muted); margin-bottom: 15px; text-align: center; }
+
+       .carousel-wrapper { position: relative; width: 100%; height: 55vh; min-height: 550px; display: flex; justify-content: center; align-items: center; perspective: 1200px; overflow: visible; }
+
+        .super-card { position: absolute; width: 480px; height: 550px; background: rgba(5, 5, 5, 0.8); border: 1px solid var(--glass-border); border-radius: 25px; backdrop-filter: blur(15px); transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease, z-index 0.6s ease; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 30px 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .super-card.active { transform: translateX(0) scale(1) translateZ(0); z-index: 10; opacity: 1; border-width: 2px; }
+        .super-card.prev { transform: translateX(-65%) scale(0.8) translateZ(-150px); z-index: 5; opacity: 0.4; }
+        .super-card.next { transform: translateX(65%) scale(0.8) translateZ(-150px); z-index: 5; opacity: 0.4; }
+        .super-card.hidden-card { transform: translateX(0) scale(0.5) translateZ(-300px); z-index: 1; opacity: 0; pointer-events: none; }
+
+        .card-content-top { display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+        .card-title { font-size: 42px; color: var(--text-main); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px;}
+        .card-subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; text-transform: uppercase;}
+        .card-desc { font-size: 18px; color: var(--text-main); line-height: 1.6; margin-bottom: 20px; }
+        
+        .start-btn { background: transparent; border: 2px solid; padding: 15px 40px; border-radius: 10px; font-size: 22px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: 0.3s; width: 90%; }
+
+        .super-card.active[data-diff="fase1"] { border-color: var(--green-neon); box-shadow: 0 0 40px rgba(57, 255, 20, 0.15); color: var(--green-neon); }
+        .super-card.active[data-diff="fase1"] .card-title { color: var(--green-neon); }
+        .super-card.active[data-diff="fase1"] .start-btn { border-color: var(--green-neon); color: var(--green-neon); }
+        .super-card.active[data-diff="fase1"]:hover .start-btn { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--green-neon); }
+
+        .super-card.active[data-diff="fase2"] { border-color: var(--yellow-neon); box-shadow: 0 0 40px rgba(255, 170, 0, 0.15); color: var(--yellow-neon); }
+        .super-card.active[data-diff="fase2"] .card-title { color: var(--yellow-neon); }
+        .super-card.active[data-diff="fase2"] .start-btn { border-color: var(--yellow-neon); color: var(--yellow-neon); }
+        .super-card.active[data-diff="fase2"]:hover .start-btn { background: var(--yellow-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--yellow-neon); }
+
+        .super-card.active[data-diff="fase3"] { border-color: var(--pink-neon); box-shadow: 0 0 40px rgba(255, 0, 85, 0.15); color: var(--pink-neon); }
+        .super-card.active[data-diff="fase3"] .card-title { color: var(--pink-neon); }
+        .super-card.active[data-diff="fase3"] .start-btn { border-color: var(--pink-neon); color: var(--pink-neon); }
+        .super-card.active[data-diff="fase3"]:hover .start-btn { background: var(--pink-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--pink-neon); }
+
+        .carousel-controls { display: flex; justify-content: center; gap: 40px; margin-top: 15px; }
+        .nav-btn { background: rgba(5,5,5,0.8); border: 2px solid var(--cyan-neon); color: var(--cyan-neon); width: 65px; height: 65px; border-radius: 50%; font-size: 26px; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: all 0.3s ease; }
+        .nav-btn:hover { background: var(--cyan-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--cyan-neon); transform: scale(1.1); }
+
+        /* --- DETTAGLIO ROUTINE --- */
+        .routine-header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
+        .routine-header h1 { font-size: 55px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 2px; }
+        .routine-header p { font-size: 22px; color: var(--text-muted); }
+
+        .progress-wrapper { position: sticky; top: 110px; z-index: 100; background: rgba(5,5,5,0.9); padding: 20px; border-radius: 15px; border: 1px solid var(--glass-border); backdrop-filter: blur(15px); margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; }
+        .progress-info { display: flex; justify-content: space-between; font-family: 'VT323', monospace; font-size: 28px; color: var(--text-main); letter-spacing: 2px; }
+        .progress-track { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 0 15px currentColor; }
+
+        .exercise-block { display: flex; align-items: stretch; background: rgba(5, 5, 5, 0.7); border: 1px solid var(--glass-border); border-radius: 20px; margin-bottom: 40px; overflow: hidden; backdrop-filter: blur(10px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); transition: all 0.5s ease; }
+        .exercise-block.completed { opacity: 0.6; filter: grayscale(0.3); border-color: var(--glass-border) !important; box-shadow: none; transform: scale(0.98); }
+        .exercise-block.completed .ex-video-col video { opacity: 0; } 
+        .exercise-block:not(.completed):hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+
+        .ex-video-col { flex: 0 0 40%; width: 40%; background: rgba(0,0,0,0.8); border-right: 2px solid var(--glass-border); position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 400px; }
+        .ex-video-col video { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; filter: contrast(1.2) brightness(1.1); transition: opacity 0.5s ease; }
+
+        .ex-info-col { flex: 0 0 60%; width: 60%; padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+        .ex-number { font-family: 'Space Grotesk', sans-serif; font-size: 22px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; font-weight: bold;}
+        .ex-title { font-size: 42px; color: var(--text-main); margin-bottom: 25px; font-family: 'Space Grotesk', sans-serif; line-height: 1.1;}
+        .ex-metrics { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .metric-badge { background: rgba(0, 243, 255, 0.08); border: 1px solid rgba(0, 243, 255, 0.4); padding: 12px 20px; border-radius: 8px; font-family: 'VT323', monospace; font-size: 26px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .ex-desc { font-size: 20px; color: var(--text-muted); line-height: 1.6; }
+
+        .confirm-btn { margin-top: 30px; align-self: flex-start; background: transparent; border: 2px solid; padding: 15px 30px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        
+        .routine-fase1 .routine-header h1, .routine-fase1 .ex-number, .routine-fase1 .progress-info span { color: var(--green-neon); text-shadow: 0 0 20px rgba(57, 255, 20, 0.3); }
+        .routine-fase1 .exercise-block:not(.completed):hover { border-color: var(--green-neon); box-shadow: 0 0 30px rgba(57, 255, 20, 0.15); }
+        .routine-fase1 .metric-badge { color: var(--green-neon); border-color: rgba(57, 255, 20, 0.3); background: rgba(57, 255, 20, 0.05); }
+        .routine-fase1 .progress-bar { background: var(--green-neon); color: var(--green-neon); }
+        .routine-fase1 .confirm-btn { color: var(--green-neon); border-color: var(--green-neon); }
+        .routine-fase1 .confirm-btn:hover { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--green-neon); }
+
+        .routine-fase2 .routine-header h1, .routine-fase2 .ex-number, .routine-fase2 .progress-info span { color: var(--yellow-neon); text-shadow: 0 0 20px rgba(255, 170, 0, 0.3); }
+        .routine-fase2 .exercise-block:not(.completed):hover { border-color: var(--yellow-neon); box-shadow: 0 0 30px rgba(255, 170, 0, 0.15); }
+        .routine-fase2 .metric-badge { color: var(--yellow-neon); border-color: rgba(255, 170, 0, 0.3); background: rgba(255, 170, 0, 0.05); }
+        .routine-fase2 .progress-bar { background: var(--yellow-neon); color: var(--yellow-neon); }
+        .routine-fase2 .confirm-btn { color: var(--yellow-neon); border-color: var(--yellow-neon); }
+        .routine-fase2 .confirm-btn:hover { background: var(--yellow-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--yellow-neon); }
+
+        .routine-fase3 .routine-header h1, .routine-fase3 .ex-number, .routine-fase3 .progress-info span { color: var(--pink-neon); text-shadow: 0 0 20px rgba(255, 0, 85, 0.3); }
+        .routine-fase3 .exercise-block:not(.completed):hover { border-color: var(--pink-neon); box-shadow: 0 0 30px rgba(255, 0, 85, 0.15); }
+        .routine-fase3 .metric-badge { color: var(--pink-neon); border-color: rgba(255, 0, 85, 0.3); background: rgba(255, 0, 85, 0.05); }
+        .routine-fase3 .progress-bar { background: var(--pink-neon); color: var(--pink-neon); }
+        .routine-fase3 .confirm-btn { color: var(--pink-neon); border-color: var(--pink-neon); }
+        .routine-fase3 .confirm-btn:hover { background: var(--pink-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--pink-neon); }
+
+        .exercise-block.completed .confirm-btn { background: rgba(255,255,255,0.1); border-color: var(--text-muted); color: var(--text-muted); box-shadow: none; pointer-events: none; }
+
+        /* --- SCHERMATA DI SUCCESSO (Modal) --- */
+        #success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
+        #success-modal h1 { color: var(--green-neon); font-size: 70px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
+        #success-modal p { color: var(--text-main); font-size: 26px; margin-bottom: 40px; font-family: 'Rajdhani'; }
+        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 22px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
+        .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }
+
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 1200px) {
+           * { cursor: auto !important; } 
+            .cursor-ring { display: none !important; }
+            .carousel-wrapper { height: auto; padding: 50px 0; }
+            .super-card { width: 90%; height: auto; position: relative; transform: none !important; opacity: 1 !important; display: none; }
+            .super-card.active { display: flex; }
+            .carousel-controls { margin-top: 0; }
+            
+            .exercise-block { flex-direction: column; }
+            .ex-video-col { width: 100%; border-right: none; border-bottom: 2px solid var(--glass-border); min-height: 300px; }
+            .ex-info-col { width: 100%; padding: 30px; }
+            .ex-metrics { flex-direction: column; gap: 10px; }
+            
+            .hud-arc, .hud-reticle-top { display: none; }
+            header { position: relative; height: auto; flex-direction: column; padding: 15px; gap: 15px;}
+            .hud-status, .logo, .header-actions { position: relative; left: auto; right: auto; top: auto; transform: none; text-align: center;}
+        }
+    </style>
+</head>
+<body>
+	<div class="cursor-ring" id="cursor-ring"></div>
+    <div class="hud-overlay">
+        <div class="hud-arc arc-left"></div>
+        <div class="hud-arc arc-right"></div>
+        <div class="hud-reticle-top"><div class="reticle-line"></div><div class="reticle-center"></div><div class="reticle-line"></div></div>
+    </div>
+
+    <header>
+        <div class="hud-status">
+            <div class="status-dot"></div>Sistema: Online
+        </div>
+        
+        <a href="1.html" class="logo interactive-el">BAIONICOL</a>
+        
+        <div class="header-actions">
+            <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
+
+            <a href="paziente.html?return=true" class="back-btn interactive-el" id="btn-back-paziente">&larr; Torna all'Area Paziente</a>
+            <button class="back-btn hidden interactive-el" id="btn-back-hub" onclick="showHub()">&#8634; Cambia Fase</button>
+        </div>
+    </header>
+
+    <div id="success-modal">
+        <h1>SINCRONIZZAZIONE COMPLETATA</h1>
+        <p>Protocollo neurale eseguito con successo. I dati sono stati registrati nella memoria del tuo profilo.</p>
+        <button class="modal-btn interactive-el" onclick="chiudiModalEShowHub()">Aggiorna Livello e Torna alla Libreria</button>
+    </div>
+
+    <div class="content-container">
+        
+        <div id="view-hub" class="view-section">
+            <h1 class="page-title">Programmi di Calibrazione</h1>
+            <p class="page-subtitle">Seleziona la fase di addestramento neuromuscolare.</p>
+
+            <div class="carousel-wrapper" id="carousel">
+                
+                <div class="super-card active interactive-el" data-diff="fase1" onclick="if(this.classList.contains('active')) openRoutine('fase1'); else selectCard(0);">
+                    <div class="card-content-top">
+                        <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        <h3 class="card-title">Riattivazione</h3>
+                        <p class="card-subtitle">Settimane 1-4</p>
+                        <p class="card-desc" id="card-desc-1">Risveglia i muscoli atrofizzati e comunica con i nervi silenti. Creiamo le basi elettriche vitali per i sensori della tua futura protesi. Nessun carico, pura neuro-modulazione.</p>
+                    </div>
+                    <button class="start-btn interactive-el" onclick="event.stopPropagation(); openRoutine('fase1');">Avvia Modulo</button>
+                </div>
+
+                <div class="super-card next interactive-el" data-diff="fase2" onclick="if(this.classList.contains('active')) openRoutine('fase2'); else selectCard(1);">
+                    <div class="card-content-top">
+                        <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <h3 class="card-title" id="card-title-2">Ipertrofia</h3>
+                        <p class="card-subtitle">Settimane 5-8</p>
+                        <p class="card-desc" id="card-desc-2">Costruiamo la struttura fisica. Un muscolo denso e forte è l'unico modo per sopportare le forze meccaniche e il peso dell'arto bionico per l'intera giornata. Iniziamo con i carichi.</p>
+                    </div>
+                    <button class="start-btn interactive-el" onclick="event.stopPropagation(); openRoutine('fase2');">Avvia Modulo</button>
+                </div>
+
+                <div class="super-card prev interactive-el" data-diff="fase3" onclick="if(this.classList.contains('active')) openRoutine('fase3'); else selectCard(2);">
+                    <div class="card-content-top">
+                        <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="16" height="10" rx="2" ry="2"/>
+                            <line x1="22" y1="11" x2="22" y2="13"/>
+                            <line x1="6" y1="11" x2="6" y2="13"/>
+                            <line x1="10" y1="11" x2="10" y2="13"/>
+                            <line x1="14" y1="11" x2="14" y2="13"/>
+                        </svg>
+                        <h3 class="card-title">Resistenza</h3>
+                        <p class="card-subtitle">Settimane 9-12</p>
+                        <p class="card-desc" id="card-desc-3">L'addestramento definitivo. Un allenamento per generare un segnale mioelettrico pulito e sopportare la fatica senza perdere la padronanza meccanica.</p>
+                    </div>
+                    <button class="start-btn interactive-el" onclick="event.stopPropagation(); openRoutine('fase3');">Avvia Modulo</button>
+                </div>
+
+            </div>
+
+            <div class="carousel-controls">
+                <button class="nav-btn interactive-el" onclick="prevCard()">&#8592;</button>
+                <button class="nav-btn interactive-el" onclick="nextCard()">&#8594;</button>
+            </div>
+        </div>
+
+        <svg style="display: none;">
+            <symbol id="icon-serie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+            </symbol>
+            <symbol id="icon-tempo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M12 2v2"/><path d="M15 4l-1 1"/>
+            </symbol>
+            <symbol id="icon-pausa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="6" width="4" height="12" rx="1"/><rect x="14" y="6" width="4" height="12" rx="1"/>
+            </symbol>
+            <symbol id="icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+            </symbol>
+        </svg>
+
+        <div id="view-fase1" class="view-section hidden routine-fase1">
+            <div class="routine-header">
+                <h1>Fase 1: Riattivazione</h1>
+                <p>Protocollo isometrico per la mappatura neurale.</p>
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-info">
+                    <span>Sincronizzazione Modulo</span>
+                    <span id="prog-text-fase1">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="prog-bar-fase1"></div>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase1_ex1.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 01</div>
+                    <h2 class="ex-title">Mobilizzazione Articolare</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-tempo"></use></svg> Tempo: 2 Minuti</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 30 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f1-ex1-desc">Esegui movimenti passivi e attivi assistiti per la spalla e il gomito. Aiutati sollevando il moncone con l'arto sano per prevenire retrazioni.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase1')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase1_ex2.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 02</div>
+                    <h2 class="ex-title">Contrazioni Rapide "Flick"</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 5</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 10</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f1-ex2-desc">Senza usare alcun peso, immagina di chiudere e aprire la mano fantasma in modo scattante. Contrai i muscoli per 1 solo secondo, poi rilascia.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase1')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase1_ex3.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 03</div>
+                    <h2 class="ex-title">Isometria Sostenuta</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 5</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 5</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f1-ex3-desc">Immagina di stringere un oggetto con forza. Mantieni questa contrazione in modo costante e profondo per 3 secondi esatti prima di rilasciare per generare un segnale elettrico ampio e stabile.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase1')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-fase2" class="view-section hidden routine-fase2">
+            <div class="routine-header">
+                <h1 id="f2-title">Fase 2: Ipertrofia</h1>
+                <p>Sviluppo del volume muscolare per supportare l'invasatura in fibra di carbonio.</p>
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-info">
+                    <span>Sincronizzazione Modulo</span>
+                    <span id="prog-text-fase2">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="prog-bar-fase2"></div>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase2_ex1.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 01</div>
+                    <h2 class="ex-title" id="f2-ex1-title">Flesso-Estensione Zavorrata</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 2</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 30</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 90 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f2-ex1-desc">Applica una zavorra. Esegui movimenti completi di flessione ed estensione contro la gravità. Movimento di discesa lento (3 secondi).</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase2')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase2_ex2.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 02</div>
+                    <h2 class="ex-title" id="f2-ex2-title">Rematore con Theraband</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 15</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f2-ex2-desc">Fissa una banda elastica e agganciala al moncone. Tira verso il busto per rinforzare la catena cinetica posteriore.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase2')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase2_ex3.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 03</div>
+                    <h2 class="ex-title" id="f2-ex3-title">Alzate Laterali con Elastico</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 15</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f2-ex3-desc">Esegui una trazione laterale. Questo rinforza i muscoli stabilizzatori fondamentali per gestire il peso della protesi meccanica.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase2')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase2_ex4.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 04</div>
+                    <h2 class="ex-title" id="f2-ex4-title">Isometria Massimale</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 10</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f2-ex4-desc">Spingi delicatamente l'apice del moncone contro un cuscino, attivando al 100% l'energia isometrica.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase2')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-fase3" class="view-section hidden routine-fase3">
+            <div class="routine-header">
+                <h1>Fase 3: Resistenza</h1>
+                <p>Interval Training per blindare la stabilità meccanica ed elettrica.</p>
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-info">
+                    <span>Sincronizzazione Modulo</span>
+                    <span id="prog-text-fase3">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="prog-bar-fase3"></div>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase3_ex1.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 01</div>
+                    <h2 class="ex-title">Co-contrazione Esplosiva</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Cicli: 30</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-tempo"></use></svg> Azione: 2 Sec</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 4 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f3-ex1-desc">Contrai volontariamente e con la massima violenza l'arto residuo INSIEME per 1-2 secondi. Rilascia per 4 secondi e ripeti. Simula un comando di Switch o correzione rapida d'emergenza.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase3')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase3_ex2.mp4" poster="placeholder.jpg" autoplay loop muted playsinline></video></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 02</div>
+                    <h2 class="ex-title" id="f3-ex2-title">Trazione Asimmetrica</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-target"></use></svg> Ripetizioni: 15</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f3-ex2-desc">Esegui movimenti trascinando con il moncone una banda elastica sotto sforzo. Serve ad abituare la colonna al peso sbilanciato che l'invasatura bionica creerà durante la giornata.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase3')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+
+            <div class="exercise-block">
+                <div class="ex-video-col"><video src="video_fase3_ex3.mp4" autoplay loop muted playsinline></video></div>
+                <div class="ex-info-col">
+                    <div class="ex-number">Esercizio 03</div>
+                    <h2 class="ex-title">Core Stability Adattata</h2>
+                    <div class="ex-metrics">
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-serie"></use></svg> Serie: 3</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-tempo"></use></svg> Tempo: 45 Sec</span>
+                        <span class="metric-badge"><svg class="metric-icon"><use href="#icon-pausa"></use></svg> Riposo: 60 Sec</span>
+                    </div>
+                    <p class="ex-desc" id="f3-ex3-desc">Assumi una posizione di plank asimmetrica scaricando il peso in modo controllato. Un Core d'acciaio è essenziale per la gestione della deambulazione o della mobilità bionica.</p>
+                    <button class="confirm-btn interactive-el" onclick="completeExercise(this, 'fase3')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                        Conferma Esecuzione
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // 0. MEMORIA PROFILO E TESTI CAMALEONTICI
+        // ==========================================
+        window.addEventListener('load', () => {
+            const profile = localStorage.getItem('baionicol_profile');
+            if (!profile) { window.location.href = '1.html'; return; }
+
+            const badge = document.getElementById('profile-badge');
+            badge.style.display = 'block';
+
+            if (profile === 'superiore') {
+                badge.innerText = "[⚙️ Profilo: Arto Superiore]";
+                
+                // TESTI SUPERIORE
+                document.getElementById('card-desc-2').innerText = "Costruiamo la struttura fisica. Un avambraccio denso e forte è l'unico modo per sopportare le forze meccaniche e il peso della mano bionica.";
+                document.getElementById('f1-ex1-desc').innerText = "Esegui movimenti passivi e attivi assistiti per la spalla e il gomito. Aiutati sollevando il moncone con il braccio sano per prevenire retrazioni tendinee.";
+                document.getElementById('f1-ex2-desc').innerText = "Immagina di chiudere e aprire la mano fantasma in modo scattante. Contrai i muscoli dell'avambraccio per 1 solo secondo, poi rilascia.";
+                document.getElementById('f1-ex3-desc').innerText = "Immagina di stringere un oggetto con forza nella mano amputata. Mantieni questa contrazione in modo costante e profondo per 3 secondi esatti.";
+                
+                document.getElementById('f2-ex1-title').innerText = "Flesso-Estensione Gomito";
+                document.getElementById('f2-ex1-desc').innerText = "Applica una polsiera zavorrata. Esegui movimenti completi di flessione ed estensione del gomito contro la gravità. Movimento lento.";
+                document.getElementById('f2-ex2-title').innerText = "Rematore Theraband";
+                document.getElementById('f2-ex2-desc').innerText = "Fissa una banda elastica in basso e agganciala al moncone. Tira verso il busto per rinforzare i muscoli dorsali.";
+                document.getElementById('f2-ex3-title').innerText = "Alzate Laterali Spalla";
+                document.getElementById('f2-ex3-desc').innerText = "Esegui una trazione laterale con l'elastico. Questo rinforza il muscolo deltoide, che dovrà sollevare l'intero peso del braccio bionico.";
+                document.getElementById('f2-ex4-title').innerText = "Isometria Avambraccio";
+                document.getElementById('f2-ex4-desc').innerText = "Spingi delicatamente l'apice del moncone contro un cuscino, attivando al 100% flessori ed estensori.";
+                
+                document.getElementById('f3-ex1-desc').innerText = "Contrai volontariamente e con la massima violenza flessori ed estensori dell'avambraccio INSIEME per 1-2 secondi. Simula il comando di Switch della protesi.";
+                document.getElementById('f3-ex2-title').innerText = "Trazione Busto";
+                document.getElementById('f3-ex2-desc').innerText = "Esegui movimenti di rotazione del busto trascinando con il braccio una banda elastica. Previene asimmetrie vertebrali da sbilanciamento del peso.";
+                document.getElementById('f3-ex3-desc').innerText = "Plank a terra scaricando il peso in modo asimmetrico sull'avambraccio residuo e su quello sano su base morbida.";
+            } 
+            else if (profile === 'inferiore') {
+                badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
+                
+                // TESTI INFERIORE
+                document.getElementById('card-desc-2').innerText = "Costruiamo la base di appoggio. Quadricipiti e glutei densi sono fondamentali per gestire l'impatto a terra e l'idraulica del ginocchio elettronico.";
+                document.getElementById('f1-ex1-desc').innerText = "Esegui movimenti passivi e attivi assistiti per l'anca e il ginocchio residuo. Previene l'accorciamento dei muscoli flessori dell'anca.";
+                document.getElementById('f1-ex2-desc').innerText = "Immagina di flettere ed estendere le dita del piede fantasma. Contrai i muscoli del polpaccio/coscia in modo scattante per 1 secondo e rilascia.";
+                document.getElementById('f1-ex3-desc').innerText = "Immagina di premere con forza il tallone a terra. Mantieni la contrazione del moncone per 3 secondi per mappare il senso di carico.";
+                
+                document.getElementById('f2-title').innerText = "Fase 2: Resistenza al Carico";
+                document.getElementById('f2-ex1-title').innerText = "Estensione Ginocchio Zavorrata";
+                document.getElementById('f2-ex1-desc').innerText = "Applica una cavigliera zavorrata. Da seduto, esegui l'estensione del ginocchio per rinforzare il quadricipite.";
+                document.getElementById('f2-ex2-title').innerText = "Leg Curl Elastico";
+                document.getElementById('f2-ex2-desc').innerText = "Fissa una banda elastica e agganciala al moncone. Esegui trazioni posteriori per rinforzare i femorali.";
+                document.getElementById('f2-ex3-title').innerText = "Abduzione Anca";
+                document.getElementById('f2-ex3-desc').innerText = "Esegui abduzioni laterali della gamba con elastico. Fondamentale per la stabilità del bacino e prevenire l'andatura claudicante.";
+                document.getElementById('f2-ex4-title').innerText = "Isometria Quadricipite";
+                document.getElementById('f2-ex4-desc').innerText = "Da disteso, spingi l'apice posteriore del moncone contro il materasso simulando il trasferimento totale del peso corporeo sull'arto.";
+                
+                document.getElementById('f3-ex1-desc').innerText = "Contrai quadricipite e femorale INSIEME per 1-2 secondi. Rilascia per 4 secondi. Insegna la stabilizzazione d'emergenza articolare.";
+                document.getElementById('f3-ex2-title').innerText = "Gait Training Asimmetrico";
+                document.getElementById('f3-ex2-desc').innerText = "In piedi con supporto elastico, simula la fase di spinta del passo (toe-off) caricando peso dinamico sul moncone e rientrando.";
+                document.getElementById('f3-ex3-desc').innerText = "Assumi posizione di Plank modificata, distribuendo il carico sul moncone e sulla gamba sana per abituare il core alla futura deambulazione.";
+            }
+        });
+
+       
+
+       
+        // ==========================================
+        // 2. GESTIONE CAROUSEL E NAVIGAZIONE VISTE
+        // ==========================================
+        const cards = document.querySelectorAll('.super-card');
+        let currentIndex = 0;
+
+        function updateCarousel() {
+            if(window.innerWidth <= 1200) return; 
+            cards.forEach((card, index) => {
+                card.classList.remove('active', 'prev', 'next', 'hidden-card');
+                if (index === currentIndex) card.classList.add('active');
+                else if (index === currentIndex - 1 || (currentIndex === 0 && index === cards.length - 1)) card.classList.add('prev');
+                else if (index === currentIndex + 1 || (currentIndex === cards.length - 1 && index === 0)) card.classList.add('next');
+                else card.classList.add('hidden-card');
+            });
+        }
+
+        function nextCard() { currentIndex = (currentIndex + 1) % cards.length; updateCarousel(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCarousel(); }
+        function selectCard(index) { if (index !== currentIndex) { currentIndex = index; updateCarousel(); } }
+
+        updateCarousel();
+
+        function openRoutine(routineId) {
+            document.getElementById('view-hub').classList.add('hidden');
+            document.getElementById('btn-back-paziente').classList.add('hidden');
+            document.getElementById('profile-badge').style.display = 'none';
+            document.getElementById('btn-back-hub').classList.remove('hidden');
+
+            resetRoutine(routineId);
+
+            setTimeout(() => {
+                document.getElementById('view-' + routineId).classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 400); 
+        }
+
+        function showHub() {
+            document.getElementById('view-fase1').classList.add('hidden');
+            document.getElementById('view-fase2').classList.add('hidden');
+            document.getElementById('view-fase3').classList.add('hidden');
+            document.getElementById('btn-back-hub').classList.add('hidden');
+            document.getElementById('btn-back-paziente').classList.remove('hidden');
+            document.getElementById('profile-badge').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('view-hub').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 400);
+        }
+
+        // ==========================================
+        // 3. GAMIFICATION: AGGIUNTA SESSIONI AL COMPLETAMENTO
+        // ==========================================
+        const checkSvg = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+        const uncheckSvg = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+
+        function completeExercise(btn, routineId) {
+            const block = btn.closest('.exercise-block');
+            block.classList.add('completed');
+            btn.innerHTML = `${checkSvg} ESERCIZIO COMPLETATO`;
+
+            const routineContainer = document.getElementById('view-' + routineId);
+            const totalExercises = routineContainer.querySelectorAll('.exercise-block').length;
+            const completedExercises = routineContainer.querySelectorAll('.exercise-block.completed').length;
+            
+            const percentage = Math.round((completedExercises / totalExercises) * 100);
+            
+            document.getElementById('prog-bar-' + routineId).style.width = percentage + '%';
+            document.getElementById('prog-text-' + routineId).innerText = percentage + '%';
+
+            if (percentage === 100) {
+                SoundEngine.success(); 
+                setTimeout(() => {
+                    document.getElementById('success-modal').style.display = 'flex';
+                }, 800); 
+            }
+        }
+
+        // QUESTA E' LA MAGIA: Salva +1 sessione in memoria quando chiudi la modale di successo!
+        function chiudiModalEShowHub() {
+            let currentSessions = parseInt(localStorage.getItem('baionicol_sessions')) || 0;
+            localStorage.setItem('baionicol_sessions', currentSessions + 1);
+            
+            document.getElementById('success-modal').style.display = 'none';
+            showHub();
+        }
+
+        function resetRoutine(routineId) {
+            const routineContainer = document.getElementById('view-' + routineId);
+            const blocks = routineContainer.querySelectorAll('.exercise-block');
+            blocks.forEach(block => {
+                block.classList.remove('completed');
+                const btn = block.querySelector('.confirm-btn');
+                btn.innerHTML = `${uncheckSvg} Conferma Esecuzione`;
+            });
+            document.getElementById('prog-bar-' + routineId).style.width = '0%';
+            document.getElementById('prog-text-' + routineId).innerText = '0%';
+        }
+    </script>
+<script src="baionicol-core.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Invasatura | BAIONICOL</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="baionicol-core.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+        .content-container { padding: 100px 4vw 20px 4vw; max-width: 1700px; margin: 0 auto; position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; }
+        
+        .page-header { text-align: center; margin-bottom: 40px; }
+        .page-title { font-size: 50px; color: var(--cyan-neon); margin-bottom: 5px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+        .page-subtitle { font-size: 20px; color: var(--text-muted); }
+
+        /* --- LAYOUT A GRIGLIA (3 COLONNE) --- */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; flex: 1; align-items: stretch; margin-bottom: 60px; }
+
+        .panel { background: rgba(5, 5, 5, 0.75); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px 30px; backdrop-filter: blur(15px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: all 0.3s ease;} 
+        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--cyan-neon); opacity: 0.5; }
+        
+        .panel-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .panel-icon { width: 35px; height: 35px; color: var(--cyan-neon); filter: drop-shadow(0 0 5px var(--cyan-neon)); }
+        .panel-title { font-size: 26px; color: var(--text-main); margin: 0; }
+
+        /* --- MODULO 1: VOLUME --- */
+        .volume-display { font-family: 'VT323', monospace; font-size: 60px; color: var(--cyan-neon); text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); line-height: 1;}
+        .volume-sub { text-align: center; font-size: 18px; color: var(--text-muted); margin-bottom: 30px; font-family: 'Space Grotesk'; }
+        
+        .slider-container { margin-top: auto; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 15px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 30px; position: relative; z-index: 10; cursor: pointer; }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-thumb { height: 26px; width: 26px; border-radius: 50%; background: var(--cyan-neon); -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 15px var(--cyan-neon); }
+
+        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 16px; line-height: 1.5; border-left: 4px solid var(--cyan-neon); background: rgba(0, 243, 255, 0.05); transition: all 0.3s; }
+
+        /* --- MODULO 2: CUTE --- */
+        .skin-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        .skin-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: var(--text-main); padding: 18px 20px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 16px; cursor: pointer; transition: 0.3s; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .skin-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+        
+        .skin-btn.selected-green { background: rgba(57, 255, 20, 0.1); border-color: var(--green-neon); color: var(--green-neon); box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); }
+        .skin-btn.selected-orange { background: rgba(255, 170, 0, 0.1); border-color: var(--orange-neon); color: var(--orange-neon); box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); }
+        .skin-btn.selected-red { background: rgba(255, 51, 102, 0.1); border-color: var(--warning-neon); color: var(--warning-neon); box-shadow: 0 0 15px rgba(255, 51, 102, 0.2); }
+
+        .diag-output { margin-top: auto; padding: 20px; border-radius: 10px; font-family: 'Rajdhani'; font-size: 17px; line-height: 1.4; border: 1px solid transparent; background: rgba(0,0,0,0.5); text-align: left; color: var(--text-muted); transition: 0.4s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; gap: 5px;}
+
+        /* --- MODULO 3: MANUTENZIONE --- */
+        .task-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .task-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .task-item:hover { background: rgba(0, 243, 255, 0.05); border-color: var(--cyan-neon); }
+        .task-text { font-size: 18px; color: var(--text-main); transition: 0.3s; }
+        
+        .check-circle { width: 28px; height: 28px; border: 2px solid var(--text-muted); border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .check-circle svg { width: 16px; height: 16px; opacity: 0; stroke: var(--bg-color); stroke-width: 3; transition: 0.3s; }
+
+        .task-item.completed { background: rgba(57, 255, 20, 0.1); border-color: var(--green-neon); }
+        .task-item.completed .task-text { color: var(--green-neon); text-decoration: line-through; opacity: 0.8; }
+        .task-item.completed .check-circle { background: var(--green-neon); border-color: var(--green-neon); box-shadow: 0 0 10px var(--green-neon); }
+        .task-item.completed .check-circle svg { opacity: 1; }
+
+        .progress-container { margin-top: auto; }
+        .progress-header { display: flex; justify-content: space-between; font-family: 'VT323', monospace; font-size: 22px; color: var(--cyan-neon); margin-bottom: 10px; }
+        .progress-track { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--cyan-neon); transition: width 0.5s ease; box-shadow: 0 0 10px var(--cyan-neon); }
+
+        /* SCHERMATA SUCCESSO GAMIFICATION */
+        #success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
+        #success-modal h1 { color: var(--green-neon); font-size: 60px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
+        #success-modal p { color: var(--text-main); font-size: 24px; margin-bottom: 40px; font-family: 'Rajdhani'; }
+        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
+        .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }
+
+        @media (max-width: 1200px) {
+            * { cursor: auto !important; }
+            .cursor-ring { display: none !important; }
+            body { overflow: auto; height: auto;}
+            .content-container { height: auto; padding-top: 150px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .hud-arc { display: none; }
+            header { flex-direction: column; gap: 15px; padding: 15px; position: relative; height: auto;}
+            .header-actions, .logo, .hud-status { position: relative; left: auto; right: auto; top: auto; transform: none; text-align: center; justify-content: center;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-ring" id="cursor-ring"></div>
+    <div class="hud-overlay">
+        <div class="hud-arc arc-left"></div>
+        <div class="hud-arc arc-right"></div>
+    </div>
+
+    <header>
+        <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
+        <a href="1.html" class="logo interactive-el">BAIONICOL</a>
+        <div class="header-actions">
+            <div id="profile-badge" class="profile-badge"></div>
+            <a href="paziente.html?return=true" class="back-btn interactive-el">&larr; Torna all'Area Paziente</a>
+        </div>
+    </header>
+
+    <div id="success-modal">
+        <h1>MANUTENZIONE COMPLETATA</h1>
+        <p>Igiene e calibrazione verificate. Sensori operativi. Dati inviati al registro.</p>
+        <button class="modal-btn interactive-el" onclick="chiudiModalEShowPaziente()">Aggiorna Sincronizzazione Neurale</button>
+    </div>
+
+    <div class="content-container">
+        <div class="page-header">
+            <h1 class="page-title">Gestione Invasatura</h1>
+            <p class="page-subtitle">Check-up hardware quotidiano e compensazione dei volumi.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <div class="panel" id="panel-volume">
+                <div class="panel-header">
+                    <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <h2 class="panel-title">Compensazione Volume</h2>
+                </div>
+                
+                <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 20px;">Regola lo slider in base alla sensazione attuale dell'invasatura per calcolare lo spessore necessario.</p>
+
+                <div class="volume-display" id="ply-output">0 PLY</div>
+                <div class="volume-sub">Calzata Attuale: <span style="color: var(--green-neon);" id="fit-status">Perfetta</span></div>
+
+                <div class="slider-container">
+                    <div class="slider-labels">
+                        <span>Larga / Scivola</span>
+                        <span>Stretta / Dolore</span>
+                    </div>
+                    <input type="range" class="slider-input interactive-el" id="slide-volume" min="-3" max="3" value="0" oninput="calcolaVolume(this.value)">
+                </div>
+
+                <div class="result-box" id="volume-advice">
+                    Il volume del moncone è stabile. Non è necessario aggiungere o rimuovere calze di spessore.
+                </div>
+            </div>
+
+            <div class="panel" id="panel-cute">
+                <div class="panel-header">
+                    <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="3"></circle></svg>
+                    <h2 class="panel-title">Scanner Cutaneo</h2>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 20px;">Seleziona l'anomalia visibile sulla pelle dopo aver rimosso l'invasatura.</p>
+
+                <div class="skin-grid">
+                    <button class="skin-btn interactive-el" onclick="setSkinDiag('ok', this)">
+                        Pelle Intatta / Normale <span style="color: var(--green-neon);">●</span>
+                    </button>
+                    <button class="skin-btn interactive-el" onclick="setSkinDiag('rosso', this)">
+                        Arrossamento Persistente (>15 min) <span style="color: var(--orange-neon);">●</span>
+                    </button>
+                    <button class="skin-btn interactive-el" onclick="setSkinDiag('piaga', this)">
+                        Vescica, Abrasioni o Piaghe <span style="color: var(--warning-neon);">●</span>
+                    </button>
+                </div>
+
+                <div class="diag-output" id="skin-advice">
+                    In attesa di scansione visiva...
+                </div>
+            </div>
+
+            <div class="panel" id="panel-manu">
+                <div class="panel-header">
+                    <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <h2 class="panel-title">Task Manutenzione</h2>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 20px;">Checklist quotidiana per preservare il silicone e prevenire infezioni batteriche.</p>
+
+                <div class="task-list">
+                    <div class="task-item interactive-el" onclick="toggleTask(this)">
+                        <span class="task-text">1. Lavaggio interno liner con sapone neutro.</span>
+                        <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    </div>
+                    <div class="task-item interactive-el" onclick="toggleTask(this)">
+                        <span class="task-text">2. Asciugatura tamponata (No fonti calore).</span>
+                        <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    </div>
+                    <div class="task-item interactive-el" onclick="toggleTask(this)">
+                        <span class="task-text" id="task-3-text">3. Pulizia valvola e perno di ancoraggio.</span>
+                        <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-header"><span>Status Pulizia</span><span id="manu-perc">0%</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="manu-bar"></div></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 0. MEMORIA PROFILO (CAMALEONTE)
+        // ==========================================
+        let isSuperiore = true;
+
+        window.addEventListener('load', () => {
+            const profile = localStorage.getItem('baionicol_profile');
+            if (!profile) { window.location.href = '1.html'; return; }
+
+            const badge = document.getElementById('profile-badge');
+            badge.style.display = 'block';
+
+            if (profile === 'superiore') {
+                isSuperiore = true;
+                badge.innerText = "[⚙️ Profilo: Arto Superiore]";
+                document.getElementById('task-3-text').innerText = "3. Pulizia sensori mioelettrici nell'invasatura.";
+            } else {
+                isSuperiore = false;
+                badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
+                document.getElementById('task-3-text').innerText = "3. Pulizia valvola di sfiato e perno (Pin).";
+            }
+        });
+
+        function resetProfile() {
+            if(confirm("Vuoi ricalibrare l'architettura?")) {
+                localStorage.removeItem('baionicol_profile');
+                window.location.href = '1.html';
+            }
+        }
+
+        
+
+        // ==========================================
+        // 3. LOGICA SCANNER CUTANEO
+        // ==========================================
+        function setSkinDiag(state, btn) {
+            document.querySelectorAll('.skin-btn').forEach(b => {
+                b.classList.remove('selected-green', 'selected-orange', 'selected-red');
+            });
+            
+            const output = document.getElementById('skin-advice');
+            const panel = document.getElementById('panel-cute');
+
+            if (state === 'ok') {
+                btn.classList.add('selected-green');
+                SoundEngine.good();
+                output.style.borderColor = 'var(--green-neon)'; output.style.color = 'var(--green-neon)';
+                output.style.background = 'rgba(57, 255, 20, 0.05)';
+                panel.style.borderColor = "rgba(57, 255, 20, 0.4)";
+                output.innerText = "Parametri cutanei ottimali. L'aderenza del silicone non ha creato danni da frizione.";
+            } 
+            else if (state === 'rosso') {
+                btn.classList.add('selected-orange');
+                SoundEngine.bad();
+                output.style.borderColor = 'var(--orange-neon)'; output.style.color = 'var(--orange-neon)';
+                output.style.background = 'rgba(255, 170, 0, 0.05)';
+                panel.style.borderColor = "rgba(255, 170, 0, 0.4)";
+                output.innerText = "ATTENZIONE: Pressione asimmetrica. Monitorare la zona. Se l'arrossamento è su una sporgenza ossea, potrebbe servire una modifica all'invasatura.";
+            } 
+            else if (state === 'piaga') {
+                btn.classList.add('selected-red');
+                SoundEngine.bad();
+                output.style.borderColor = 'var(--warning-neon)'; output.style.color = 'var(--warning-neon)';
+                output.style.background = 'rgba(255, 51, 102, 0.05)';
+                panel.style.borderColor = "var(--warning-neon)";
+                output.innerHTML = "<strong style='font-family: Space Grotesk; font-size: 18px; letter-spacing: 1px;'>⚠️ CRITICITÀ RILEVATA</strong>Sospendere l'uso della protesi per evitare necrosi o infezioni. Applicare medicazione idrocolloidale e contattare il tecnico ortopedico.";
+            }
+        }
+
+        // ==========================================
+        // 4. LOGICA TASK MANUTENZIONE E GAMIFICATION
+        // ==========================================
+        function toggleTask(item) {
+            SoundEngine.click();
+            item.classList.toggle('completed');
+            
+            const total = document.querySelectorAll('.task-item').length;
+            const completed = document.querySelectorAll('.task-item.completed').length;
+            const perc = Math.round((completed / total) * 100);
+            
+            document.getElementById('manu-bar').style.width = perc + '%';
+            document.getElementById('manu-perc').innerText = perc + '%';
+
+            const panel = document.getElementById('panel-manu');
+            if (perc === 100) {
+                panel.style.borderColor = "var(--cyan-neon)";
+                SoundEngine.success();
+                setTimeout(() => { document.getElementById('success-modal').style.display = 'flex'; }, 800);
+            } else {
+                panel.style.borderColor = "var(--glass-border)";
+            }
+        }
+
+        function chiudiModalEShowPaziente() {
+            // Aggiunge +1 alla Sincronizzazione Neurale di paziente.html
+            let currentSessions = parseInt(localStorage.getItem('baionicol_sessions')) || 0;
+            localStorage.setItem('baionicol_sessions', currentSessions + 1);
+            
+            window.location.href = 'paziente.html?return=true';
+        }
+
+    </script>
+<script src="baionicol-core.js"></script>
+</body>
+</html>
