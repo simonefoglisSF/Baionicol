@@ -78,106 +78,83 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 
 .reticle-center { width: 15px; height: 10px; border: 2px solid var(--cyan-neon); border-top: none; }
 /* =========================================
-   SUPER-PATCH PER LAPTOP (Schermi 13" e 15")
+   MASTER RESPONSIVE PATCH (TUTTI I DISPOSITIVI)
    ========================================= */
 
+/* 1. LAPTOP & PICCOLI SCHERMI (Fino a 1440px o schermi bassi) */
 @media (max-width: 1440px), (max-height: 850px) {
-    
-    /* 1. SBLOCCO GLOBALE E RESPIRAZIONE */
     body { overflow-y: auto !important; overflow-x: hidden !important; }
-    .content-container, .dashboard-container { 
-        height: auto !important; min-height: 100vh; 
-        padding-top: 100px !important; padding-bottom: 50px !important; 
-    }
-    
-    /* 2. HEADER PIÙ COMPATTO */
+    .content-container, .dashboard-container { height: auto !important; min-height: 100vh; padding-top: 100px !important; padding-bottom: 50px !important; }
     header { height: 75px !important; }
     .logo { font-size: 32px !important; }
-    .hud-status { font-size: 18px !important; left: 30px !important; }
-    .header-actions { right: 30px !important; }
+    .hud-status { font-size: 18px !important; left: 20px !important; }
+    .header-actions { right: 20px !important; gap: 10px !important;}
     
-    /* 3. PAZIENTE.HTML - Compatta la Dashboard */
-    .dashboard-container { gap: 20px !important; }
-    .spline-section { width: 35vw !important; } /* Stringe lo spazio del robot */
-    .sync-panel, .calibration-panel { padding: 18px !important; min-height: auto !important; }
-    .dashboard-btn { padding: 15px !important; gap: 15px !important; }
-    .val-display { font-size: 28px !important; }
-    .column-header h1 { font-size: 32px !important; }
-
-    /* 4. ALLENAMENTO.HTML - Rimpicciolisce le Card Girevoli */
+    /* Riduce le card in Allenamento */
     .carousel-wrapper { min-height: 480px !important; height: 50vh !important; }
     .super-card { width: 400px !important; height: 460px !important; padding: 25px 20px !important; }
-    .card-title { font-size: 34px !important; margin-bottom: 5px !important; }
-    .card-desc { font-size: 16px !important; margin-bottom: 10px !important; line-height: 1.4 !important;}
-    .card-icon-svg { width: 60px !important; height: 60px !important; margin-bottom: 10px !important; }
-    .start-btn { padding: 12px 20px !important; font-size: 18px !important; width: 100% !important; }
     
-    /* 5. INVASATURA.HTML e CLINICA.HTML - Stringe le griglie a 3 colonne */
+    /* Stringe i pannelli in Clinica e Invasatura */
     .dashboard-grid, .hub-grid { gap: 15px !important; }
-    .panel { padding: 20px 25px !important; }
-    .hub-card { min-height: 320px !important; padding: 30px 20px !important; }
-    .hub-card svg { width: 55px !important; height: 55px !important; margin-bottom: 15px !important; }
-    .volume-display { font-size: 45px !important; margin: 10px 0 !important; }
-    .panel-title { font-size: 22px !important; margin-bottom: 15px !important; }
-    
-    /* 6. TESTI GENERALI */
-    .page-title { font-size: 42px !important; }
-    .hub-title { font-size: 36px !important; }
+    .panel, .hub-card { padding: 20px !important; }
 }
-/* =========================================
-   SUPER-PATCH PER SMARTPHONE (Schermi < 768px)
-   ========================================= */
 
+/* 2. TABLET E IPAD (Fino a 1024px) */
+@media (max-width: 1024px) {
+    /* Impagina l'Area Paziente in verticale */
+    .dashboard-container { flex-direction: column !important; align-items: center !important; }
+    .left-column, .right-column { width: 100% !important; max-width: 100% !important; }
+    .spline-section { width: 100vw !important; height: 40vh !important; position: relative !important; transform: none !important; left: auto !important; top: auto !important; margin: 20px 0 !important; }
+    
+    /* Griglie a 2 colonne anziché 3 */
+    .hub-grid, .dashboard-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .hud-arc { display: none !important; } /* Nasconde archi laterali per recuperare spazio */
+}
+
+/* 3. SMARTPHONE (Fino a 768px) */
 @media (max-width: 768px) {
+    /* FIX CRITICO: Nasconde i 3D su telefono per salvare batteria e non bloccare il tocco */
+    spline-viewer, .spline-section, #3d-container, .mascot-container { display: none !important; }
     
-    /* 1. RESET GLOBALE SPAZI E BLOCCO SCROLL ORIZZONTALE */
     body { overflow-x: hidden !important; }
-    .content-container, .dashboard-container {
-        padding: 100px 15px 30px 15px !important;
-        overflow-x: hidden !important;
-    }
+    .content-container, .dashboard-container { padding: 120px 15px 30px 15px !important; }
+    
+    /* Header diventa una compatta "App Bar" */
+    header { flex-direction: column !important; justify-content: center !important; height: auto !important; padding: 15px !important; gap: 10px !important; position: fixed !important; background: rgba(5,5,5,0.95) !important;}
+    .logo, .hud-status, .header-actions { position: relative !important; left: auto !important; right: auto !important; top: auto !important; transform: none !important; text-align: center !important; width: 100% !important; justify-content: center !important; flex-wrap: wrap !important;}
+    .hud-clock { display: none !important; } 
 
-    /* 2. HEADER APP-STYLE (Ultra compatto) */
-    header { height: auto !important; padding: 10px !important; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 10px !important; position: fixed !important;}
-    .logo { font-size: 26px !important; position: static !important; transform: none !important; margin: 0 !important; }
-    .hud-status { font-size: 14px !important; position: static !important; transform: none !important; margin: 0 !important; }
-    .header-actions { position: static !important; width: 100%; justify-content: center !important; flex-wrap: wrap !important; gap: 10px !important; transform: none !important;}
-    .back-btn, .profile-badge { font-size: 12px !important; padding: 8px 12px !important; margin: 0 !important;}
-
-    /* 3. TESTI E TITOLI (Adattati per non sbordare) */
-    h1, .page-title { font-size: 28px !important; text-align: center !important; line-height: 1.1 !important; }
+    /* Ridimensionamento Testi Base */
+    h1, .page-title, .hub-title { font-size: 32px !important; text-align: center !important; line-height: 1.1 !important;}
     .page-subtitle { font-size: 16px !important; text-align: center !important; }
-    .hub-title { font-size: 26px !important; text-align: center !important; }
-    .panel-title { font-size: 20px !important; text-align: center; justify-content: center; flex-direction: column; gap: 10px; }
-    
-    /* 4. GRIGLIE IN SINGOLA COLONNA */
-    .hub-grid, .dashboard-grid, .symptom-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
-    .panel, .hub-card { padding: 20px 15px !important; }
-    
-    /* 5. ALLENAMENTO (Rende tutto "Tappabile" col pollice) */
-    .super-card { width: 100% !important; height: auto !important; padding: 20px 15px !important; }
-    .ex-video-col { min-height: 220px !important; }
-    .ex-info-col { padding: 20px 15px !important; }
-    .metric-badge { font-size: 16px !important; width: 100%; justify-content: center; }
-    .ex-title { font-size: 24px !important; text-align: center; }
-    .confirm-btn { width: 100%; justify-content: center; font-size: 14px !important; }
-    .routine-header h1 { font-size: 32px !important; }
 
-    /* 6. SCHERMATA BOOT E DIALOGHI (1.html) */
-    .boot-line { font-size: 16px !important; }
-    .hero h1 { font-size: 20px !important; }
-    .hero-dialogue-box { width: 95% !important; padding: 20px !important; transform: translateX(-50%) !important;}
+    /* Tutte le griglie diventano una singola colonna a scorrimento */
+    .hub-grid, .dashboard-grid, .symptom-grid { grid-template-columns: 1fr !important; }
     
-    /* 7. MODALI E TICKET */
-    .ticket-box, .calib-box { width: 95% !important; padding: 20px 15px !important; }
-    #success-modal h1 { font-size: 32px !important; }
-    .modal-btn { font-size: 16px !important; padding: 15px 20px !important; width: 90%; }
-    .ticket-header { font-size: 22px !important; }
-    .ticket-content { font-size: 16px !important; }
+    /* Riadattamento Allenamento (tappabile col pollice) */
+    .carousel-wrapper { height: auto !important; padding: 20px 0 !important; overflow: visible !important; display: block !important; }
+    .super-card { width: 100% !important; height: auto !important; position: relative !important; transform: none !important; opacity: 1 !important; display: none !important; margin-bottom: 20px !important;}
+    .super-card.active { display: flex !important; }
+    
+    .exercise-block { flex-direction: column !important; }
+    .ex-video-col { width: 100% !important; border-right: none !important; border-bottom: 2px solid var(--glass-border) !important; min-height: 250px !important; }
+    .ex-info-col { width: 100% !important; padding: 20px 15px !important; }
+    .metric-badge { width: 100% !important; justify-content: center !important; font-size: 18px !important; }
+    .confirm-btn { width: 100% !important; justify-content: center !important; font-size: 16px !important; }
 
-    /* 8. RIMOZIONE MODELLI 3D SU MOBILE (Migliora prestazioni e layout) */
-    spline-viewer, .spline-section, #3d-container, .mascot-container { 
-        display: none !important; 
-    }
+    /* Modali, Emergenza e Ticket a tutto schermo */
+    .calib-box, .ticket-box, .emergency-fullscreen { width: 95% !important; padding: 25px 15px !important; }
+    .calib-options { flex-direction: column !important; gap: 15px !important; }
+    .calib-btn { width: 100% !important; font-size: 18px !important; padding: 15px !important; }
+    
+    #success-modal h1 { font-size: 40px !important; }
+    .modal-btn { font-size: 16px !important; width: 90% !important; padding: 15px !important; }
+    
+    /* Layout Schermata Matrix (1.html) */
+    .hero h1 { font-size: 28px !important; min-height: 80px !important;}
+    .hero-dialogue-box { position: relative !important; top: auto !important; left: auto !important; transform: none !important; width: 95% !important; max-width: 100% !important; margin: 0 auto !important; margin-top: 140px !important;}
+    .main-area-btn { position: relative !important; left: auto !important; right: auto !important; top: auto !important; width: 90% !important; margin: 20px auto !important; transform: scale(1) !important; }
+    .main-area-btn.show-area { transform: scale(1) !important; }
+}
 
 
