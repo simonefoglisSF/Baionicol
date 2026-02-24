@@ -157,7 +157,7 @@
             <div class="status-dot"></div>Sistema: Online
         </div>
         
-        <a href="1.html" class="logo interactive-el">BAIONICOL</a>
+        <a href="index.html" class="logo interactive-el">BAIONICOL</a>
         
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
@@ -483,7 +483,7 @@
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            if (!profile) { window.location.href = '1.html'; return; }
+            if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             badge.style.display = 'block';
@@ -642,4 +642,5 @@
     </script>
 <script src="baionicol-core.js"></script>
 </body>
+
 </html>
