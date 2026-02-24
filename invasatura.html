@@ -229,6 +229,48 @@
                 window.location.href = 'index.html';
             }
         }
+        // ==========================================
+        // 2. LOGICA CALCOLATORE VOLUME
+        // ==========================================
+        let lastSliderVal = 0;
+        function calcolaVolume(val) {
+            val = parseInt(val);
+            if(val !== lastSliderVal) { SoundEngine.sliderTick(); lastSliderVal = val; }
+            
+            const display = document.getElementById('ply-output');
+            const status = document.getElementById('fit-status');
+            const advice = document.getElementById('volume-advice');
+            const panel = document.getElementById('panel-volume');
+
+            let ply = Math.abs(val) * 2; // Ogni tick equivale a 2 Ply
+            
+            if (val === 0) {
+                display.innerText = "0 PLY"; display.style.color = "var(--cyan-neon)";
+                status.innerText = "Perfetta"; status.style.color = "var(--green-neon)";
+                advice.innerText = "Il volume del moncone è stabile. Non è necessario aggiungere o rimuovere calze di spessore.";
+                advice.style.borderColor = "var(--cyan-neon)"; advice.style.color = "var(--text-main)";
+                panel.style.borderColor = "var(--glass-border)";
+            } 
+            else if (val < 0) {
+                // E' larga (Serve aggiungere)
+                display.innerText = `+${ply} PLY`; display.style.color = "var(--orange-neon)";
+                status.innerText = "Allentata"; status.style.color = "var(--orange-neon)";
+                advice.style.borderColor = "var(--orange-neon)"; advice.style.color = "var(--orange-neon)";
+                panel.style.borderColor = "rgba(255, 170, 0, 0.4)";
+                
+                if (isSuperiore) advice.innerText = `Moncone rimpicciolito. Rischio perdita di contatto con i sensori mioelettrici. Aggiungi calze per un totale di ${ply} Ply sopra il liner in silicone.`;
+                else advice.innerText = `Moncone rimpicciolito. Rischio di affondamento nell'invasatura e pistonnage. Aggiungi ${ply} Ply di calze sopra il liner in silicone.`;
+            } 
+            else if (val > 0) {
+                // E' stretta (Serve togliere o fermarsi)
+                display.innerText = `RIMUOVI`; display.style.color = "var(--warning-neon)";
+                status.innerText = "Compressione"; status.style.color = "var(--warning-neon)";
+                advice.style.borderColor = "var(--warning-neon)"; advice.style.color = "var(--warning-neon)";
+                panel.style.borderColor = "rgba(255, 51, 102, 0.4)";
+
+                advice.innerText = `Moncone gonfio (edema o ritenzione). Togli eventuali calze aggiuntive. Se il dolore persiste senza calze, rimuovi la protesi per 30 min.`;
+            }
+        }
 
         
 
@@ -306,4 +348,5 @@
 </body>
 
 </html>
+
 
