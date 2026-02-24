@@ -3,6 +3,7 @@
    ========================================= */
 
 /* --- VARIABILI GLOBALI --- */
+/* --- VARIABILI GLOBALI --- */
 :root {
     --bg-color: #050505;
     --surface-color: #111111;
@@ -10,6 +11,7 @@
     --green-neon: #39ff14;
     --warning-neon: #ff3366;
     --amber-neon: #ffaa00;
+    --orange-neon: #ffaa00; /* <--- AGGIUNGI QUESTA RIGA! */
     --blue-neon: #0088ff;
     --danger-neon: #ff3333;
     --safe-neon: #00ffcc;
@@ -177,4 +179,5 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
     spline-viewer, .spline-section, #3d-container, .mascot-container { 
         display: none !important; 
     }
+
 
