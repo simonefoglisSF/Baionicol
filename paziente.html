@@ -95,22 +95,6 @@
         @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        /* --- RESPONSIVE MOBILE --- */
-        @media (max-width: 1024px) {
-            * { cursor: auto !important; } 
-            .cursor-ring { display: none !important; }
-            body { overflow: auto; }
-            .dashboard-container { flex-direction: column; justify-content: flex-start; align-items: center; height: auto; padding: 120px 20px 50px 20px; gap: 40px; }
-            .spline-section { position: relative; left: auto; top: auto; transform: none; width: 100vw; height: 40vh; order: 2; }
-            .left-column { order: 1; width: 100%; max-width: 100%; }
-            .right-column { order: 3; width: 100%; max-width: 100%; }
-            .hud-arc { display: none; }
-            header { padding: 15px 20px; }
-            .logo { position: relative; left: auto; top: auto; transform: none;}
-            .hud-status { position: relative; left: auto; top: auto; transform: none;}
-            .header-actions { position: relative; right: auto; top: auto; transform: none;}
-        }
     </style>
 </head>
 <body>
@@ -472,3 +456,4 @@
 </body>
 
 </html>
+
