@@ -129,25 +129,7 @@ spline-viewer {
         #success-modal h1 { color: var(--green-neon); font-size: 60px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
         #success-modal p { color: var(--text-main); font-size: 24px; margin-bottom: 40px; font-family: 'Rajdhani'; }
         .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
-        .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }
-
-        /* SVG NASCOSTI PER I BOTTONI */
-        svg.defs { display: none; }
-
-        @media (max-width: 1200px) {
-            * { cursor: auto !important; }
-            .cursor-ring { display: none !important; }
-            body { overflow: auto; height: auto;}
-            .content-container { height: auto; }
-            .hub-layout { flex-direction: column; height: auto; }
-            .mascot-container { width: 100%; height: 350px; }
-            .therapy-display { flex-direction: column; height: auto; border: none; background: transparent; box-shadow: none; backdrop-filter: none; }
-            .video-side { width: 100%; height: 40vh; border-right: none; border-bottom: 2px solid var(--glass-border); border-radius: 15px 15px 0 0; background: rgba(0,0,0,0.8); }
-            .text-side { width: 100%; padding: 30px 0; overflow-y: visible; }
-            .hud-arc, .hud-reticle-top { display: none; }
-            header { flex-direction: column; gap: 15px; padding: 15px 20px; position: relative; height: auto;}
-            .header-actions, .logo, .hud-status { position: relative; left: auto; right: auto; top: auto; transform: none; text-align: center; justify-content: center; flex-wrap: wrap;}
-        }
+        .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }        
     </style>
 </head>
 <body>
@@ -564,3 +546,4 @@ spline-viewer {
 </body>
 
 </html>
+
