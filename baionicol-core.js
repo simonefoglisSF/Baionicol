@@ -114,7 +114,7 @@ function resetProfile() {
     SoundEngine.click();
     if(confirm("ATTENZIONE: Vuoi ricalibrare l'architettura del sistema? Tutti i moduli si formatteranno. Verrai reindirizzato al terminale principale.")) {
         localStorage.removeItem('baionicol_profile');
-        window.location.href = '1.html';
+        window.location.href = 'index.html';
     }
 }
 
@@ -122,4 +122,5 @@ function resetProfile() {
 function animateAndNavigate(targetUrl) {
     document.body.classList.add('zoom-in');
     setTimeout(() => { window.location.href = targetUrl; }, 550);
+
 }
