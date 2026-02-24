@@ -73,4 +73,38 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 .arc-right { right: -7.5vw; border-left: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
 .hud-reticle-top { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 15px; opacity: 0.3; }
 .reticle-line { width: 60px; height: 2px; background-color: var(--cyan-neon); }
+
 .reticle-center { width: 15px; height: 10px; border: 2px solid var(--cyan-neon); border-top: none; }
+/* =========================================
+   RETE DI SICUREZZA PER LAPTOP E SCHERMI PICCOLI
+   ========================================= */
+
+@media (max-width: 1440px), (max-height: 850px) {
+    
+    /* 1. Sblocca lo scroll vitale se lo schermo è troppo "basso" o stretto */
+    body { 
+        overflow-y: auto !important; 
+        overflow-x: hidden !important;
+    }
+    
+    /* 2. Restringe l'Header per recuperare spazio in altezza */
+    header { height: 75px; }
+    .logo { font-size: 32px; }
+    .hud-status { font-size: 18px; left: 30px; }
+    .header-actions { right: 30px; }
+    .back-btn { font-size: 16px; padding: 8px 15px; }
+    .hud-clock { font-size: 18px; }
+
+    /* 3. Dà respiro ai contenitori permettendo loro di allungarsi */
+    .content-container { 
+        height: auto !important; 
+        min-height: 100vh; 
+        padding-top: 100px !important; 
+        padding-bottom: 50px !important; 
+    }
+
+    /* 4. Rimpicciolisce leggermente la base dei font giganti */
+    .page-title { font-size: 40px !important; }
+    .hub-title { font-size: 34px !important; }
+    .panel-title { font-size: 24px !important; }
+}
