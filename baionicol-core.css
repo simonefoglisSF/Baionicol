@@ -76,35 +76,49 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 
 .reticle-center { width: 15px; height: 10px; border: 2px solid var(--cyan-neon); border-top: none; }
 /* =========================================
-   RETE DI SICUREZZA PER LAPTOP E SCHERMI PICCOLI
+   SUPER-PATCH PER LAPTOP (Schermi 13" e 15")
    ========================================= */
 
 @media (max-width: 1440px), (max-height: 850px) {
     
-    /* 1. Sblocca lo scroll vitale se lo schermo è troppo "basso" o stretto */
-    body { 
-        overflow-y: auto !important; 
-        overflow-x: hidden !important;
+    /* 1. SBLOCCO GLOBALE E RESPIRAZIONE */
+    body { overflow-y: auto !important; overflow-x: hidden !important; }
+    .content-container, .dashboard-container { 
+        height: auto !important; min-height: 100vh; 
+        padding-top: 100px !important; padding-bottom: 50px !important; 
     }
     
-    /* 2. Restringe l'Header per recuperare spazio in altezza */
-    header { height: 75px; }
-    .logo { font-size: 32px; }
-    .hud-status { font-size: 18px; left: 30px; }
-    .header-actions { right: 30px; }
-    .back-btn { font-size: 16px; padding: 8px 15px; }
-    .hud-clock { font-size: 18px; }
+    /* 2. HEADER PIÙ COMPATTO */
+    header { height: 75px !important; }
+    .logo { font-size: 32px !important; }
+    .hud-status { font-size: 18px !important; left: 30px !important; }
+    .header-actions { right: 30px !important; }
+    
+    /* 3. PAZIENTE.HTML - Compatta la Dashboard */
+    .dashboard-container { gap: 20px !important; }
+    .spline-section { width: 35vw !important; } /* Stringe lo spazio del robot */
+    .sync-panel, .calibration-panel { padding: 18px !important; min-height: auto !important; }
+    .dashboard-btn { padding: 15px !important; gap: 15px !important; }
+    .val-display { font-size: 28px !important; }
+    .column-header h1 { font-size: 32px !important; }
 
-    /* 3. Dà respiro ai contenitori permettendo loro di allungarsi */
-    .content-container { 
-        height: auto !important; 
-        min-height: 100vh; 
-        padding-top: 100px !important; 
-        padding-bottom: 50px !important; 
-    }
-
-    /* 4. Rimpicciolisce leggermente la base dei font giganti */
-    .page-title { font-size: 40px !important; }
-    .hub-title { font-size: 34px !important; }
-    .panel-title { font-size: 24px !important; }
+    /* 4. ALLENAMENTO.HTML - Rimpicciolisce le Card Girevoli */
+    .carousel-wrapper { min-height: 480px !important; height: 50vh !important; }
+    .super-card { width: 400px !important; height: 460px !important; padding: 25px 20px !important; }
+    .card-title { font-size: 34px !important; margin-bottom: 5px !important; }
+    .card-desc { font-size: 16px !important; margin-bottom: 10px !important; line-height: 1.4 !important;}
+    .card-icon-svg { width: 60px !important; height: 60px !important; margin-bottom: 10px !important; }
+    .start-btn { padding: 12px 20px !important; font-size: 18px !important; width: 100% !important; }
+    
+    /* 5. INVASATURA.HTML e CLINICA.HTML - Stringe le griglie a 3 colonne */
+    .dashboard-grid, .hub-grid { gap: 15px !important; }
+    .panel { padding: 20px 25px !important; }
+    .hub-card { min-height: 320px !important; padding: 30px 20px !important; }
+    .hub-card svg { width: 55px !important; height: 55px !important; margin-bottom: 15px !important; }
+    .volume-display { font-size: 45px !important; margin: 10px 0 !important; }
+    .panel-title { font-size: 22px !important; margin-bottom: 15px !important; }
+    
+    /* 6. TESTI GENERALI */
+    .page-title { font-size: 42px !important; }
+    .hub-title { font-size: 36px !important; }
 }
