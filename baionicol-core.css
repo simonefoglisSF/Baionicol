@@ -122,3 +122,57 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
     .page-title { font-size: 42px !important; }
     .hub-title { font-size: 36px !important; }
 }
+/* =========================================
+   SUPER-PATCH PER SMARTPHONE (Schermi < 768px)
+   ========================================= */
+
+@media (max-width: 768px) {
+    
+    /* 1. RESET GLOBALE SPAZI E BLOCCO SCROLL ORIZZONTALE */
+    body { overflow-x: hidden !important; }
+    .content-container, .dashboard-container {
+        padding: 100px 15px 30px 15px !important;
+        overflow-x: hidden !important;
+    }
+
+    /* 2. HEADER APP-STYLE (Ultra compatto) */
+    header { height: auto !important; padding: 10px !important; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 10px !important; position: fixed !important;}
+    .logo { font-size: 26px !important; position: static !important; transform: none !important; margin: 0 !important; }
+    .hud-status { font-size: 14px !important; position: static !important; transform: none !important; margin: 0 !important; }
+    .header-actions { position: static !important; width: 100%; justify-content: center !important; flex-wrap: wrap !important; gap: 10px !important; transform: none !important;}
+    .back-btn, .profile-badge { font-size: 12px !important; padding: 8px 12px !important; margin: 0 !important;}
+
+    /* 3. TESTI E TITOLI (Adattati per non sbordare) */
+    h1, .page-title { font-size: 28px !important; text-align: center !important; line-height: 1.1 !important; }
+    .page-subtitle { font-size: 16px !important; text-align: center !important; }
+    .hub-title { font-size: 26px !important; text-align: center !important; }
+    .panel-title { font-size: 20px !important; text-align: center; justify-content: center; flex-direction: column; gap: 10px; }
+    
+    /* 4. GRIGLIE IN SINGOLA COLONNA */
+    .hub-grid, .dashboard-grid, .symptom-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
+    .panel, .hub-card { padding: 20px 15px !important; }
+    
+    /* 5. ALLENAMENTO (Rende tutto "Tappabile" col pollice) */
+    .super-card { width: 100% !important; height: auto !important; padding: 20px 15px !important; }
+    .ex-video-col { min-height: 220px !important; }
+    .ex-info-col { padding: 20px 15px !important; }
+    .metric-badge { font-size: 16px !important; width: 100%; justify-content: center; }
+    .ex-title { font-size: 24px !important; text-align: center; }
+    .confirm-btn { width: 100%; justify-content: center; font-size: 14px !important; }
+    .routine-header h1 { font-size: 32px !important; }
+
+    /* 6. SCHERMATA BOOT E DIALOGHI (1.html) */
+    .boot-line { font-size: 16px !important; }
+    .hero h1 { font-size: 20px !important; }
+    .hero-dialogue-box { width: 95% !important; padding: 20px !important; transform: translateX(-50%) !important;}
+    
+    /* 7. MODALI E TICKET */
+    .ticket-box, .calib-box { width: 95% !important; padding: 20px 15px !important; }
+    #success-modal h1 { font-size: 32px !important; }
+    .modal-btn { font-size: 16px !important; padding: 15px 20px !important; width: 90%; }
+    .ticket-header { font-size: 22px !important; }
+    .ticket-content { font-size: 16px !important; }
+
+    /* 8. FIX FONDAMENTALE 3D SPLINE (Permette di scorrere col dito sul robot) */
+    spline-viewer { pointer-events: none !important; }
+}
