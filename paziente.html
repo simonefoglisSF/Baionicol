@@ -127,11 +127,11 @@
             <div class="status-dot"></div>Sistema: Online
         </div>
         
-        <a href="1.html" class="logo interactive-el">BAIONICOL</a>
+        <a href="index.html" class="logo interactive-el">BAIONICOL</a>
         
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
-            <a href="1.html?return=true" class="back-btn interactive-el">&larr; Torna al Terminale</a>
+            <a href="index.html?return=true" class="back-btn interactive-el">&larr; Torna al Terminale</a>
         </div>
     </header>
 
@@ -260,7 +260,7 @@
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            if (!profile) { window.location.href = '1.html'; return; }
+            if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             const splineModel = document.getElementById('spline-model');
@@ -295,7 +295,7 @@
         function resetProfile() {
             if(confirm("Vuoi ricalibrare l'architettura del sistema? Verrai reindirizzato al terminale principale.")) {
                 localStorage.removeItem('baionicol_profile');
-                window.location.href = '1.html';
+                window.location.href = 'index.html';
             }
         }
 
@@ -470,4 +470,5 @@
     </script>
  <script src="baionicol-core.js"></script>
 </body>
+
 </html>
