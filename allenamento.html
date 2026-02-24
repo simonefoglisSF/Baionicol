@@ -528,7 +528,6 @@
         let currentIndex = 0;
 
         function updateCarousel() {
-            if(window.innerWidth <= 1200) return; 
             cards.forEach((card, index) => {
                 card.classList.remove('active', 'prev', 'next', 'hidden-card');
                 if (index === currentIndex) card.classList.add('active');
@@ -625,4 +624,5 @@
 </body>
 
 </html>
+
 
