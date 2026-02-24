@@ -159,22 +159,6 @@
         .ticket-barcode { font-family: 'Libre Barcode 39 Text', cursive, monospace; font-size: 50px; text-align: center; margin-top: 20px; opacity: 0.7; letter-spacing: -2px; }
         .close-modal-btn { background: transparent; border: 1px solid currentColor; color: currentColor; padding: 12px 20px; font-family: 'Space Grotesk'; font-size: 18px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 5px; font-weight: bold;}
         .close-modal-btn:hover { background: currentColor; color: var(--bg-color); }
-
-        /* SBLOCCO SCROLL SU MOBILE */
-        @media (max-width: 1000px) {
-            * { cursor: auto !important; }
-            .cursor-ring { display: none !important; }
-            body { overflow-y: auto; height: auto; display: block; }
-            .content-container { height: auto; padding: 110px 20px 50px 20px; display: block; }
-            .hub-grid { grid-template-columns: 1fr; }
-            .symptom-grid { grid-template-columns: 1fr; }
-            .radio-group { flex-direction: column; }
-            .hud-arc { display: none; }
-            header { flex-direction: column; gap: 15px; padding: 15px; position: relative; height: auto;}
-            .header-actions, .logo, .hud-status { position: relative; left: auto; top: auto; right: auto; transform: none; text-align: center; flex-wrap: wrap; justify-content: center;}
-            .view-section { transform: none; padding: 0;}
-            .view-section.active { display: block; transform: none;}
-        }
     </style>
 </head>
 <body>
@@ -656,4 +640,5 @@
 </body>
 
 </html>
+
 
