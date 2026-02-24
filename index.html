@@ -156,25 +156,6 @@
         .area-left { left: 15%; top: 45%; }
         .area-right { right: 15%; top: 45%; }
         .main-area-btn.show-area { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
-
-        /* --- RESPONSIVE MOBILE --- */
-        @media (max-width: 968px) {
-            * { cursor: auto !important; }
-            .cursor-ring { display: none !important; }
-            .hud-arc, .hud-reticle-top, .hud-dial { display: none; }
-            header { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; height: auto; padding: 15px; }
-            .hud-status, .logo, .header-actions { position: relative; left: auto; right: auto; top: auto; transform: none; margin: 5px 0; justify-content: center;}
-            .profile-badge { font-size: 12px; }
-            spline-viewer { transform: scale(0.6); transform-origin: center top; margin-top: 15%; }
-            .hero-dialogue-box { position: absolute !important; top: 10% !important; left: 50% !important; transform: translateX(-50%) !important; width: 90%; max-width: 90%; padding: 25px 15px !important; }
-            .hero h1 { font-size: 28px !important; min-height: 80px; }
-            .calib-options { flex-direction: column; }
-            
-            .main-area-btn { position: absolute; left: 50% !important; width: 90%; padding: 25px 15px !important; gap: 10px !important; margin: 0; }
-            .area-right { top: auto !important; bottom: 3% !important; }
-            .area-left { top: auto !important; bottom: calc(3% + 150px) !important; }
-            .main-area-btn.show-area { transform: translateX(-50%) scale(1) !important; }
-        }
     </style>
 </head>
 <body>
@@ -524,3 +505,4 @@
 
 </body>
 </html>
+
