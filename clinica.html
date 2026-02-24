@@ -148,8 +148,8 @@
         .step-text p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
         .step-text strong { color: var(--danger-neon); font-family: 'Space Grotesk'; font-weight: normal; }
 
-        .close-modal-btn { background: rgba(255, 51, 51, 0.1); border: 2px solid var(--danger-neon); color: var(--danger-neon); padding: 18px 20px; font-family: 'Space Grotesk'; font-size: 20px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 8px; font-weight: bold; letter-spacing: 2px;}
-        .close-modal-btn:hover { background: var(--danger-neon); color: #000; box-shadow: 0 0 30px var(--danger-neon); }
+        .emerg-close-btn { background: rgba(255, 51, 51, 0.1); border: 2px solid var(--danger-neon); color: var(--danger-neon); padding: 18px 20px; font-family: 'Space Grotesk'; font-size: 20px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 8px; font-weight: bold; letter-spacing: 2px;}
+        .emerg-close-btn:hover { background: var(--danger-neon); color: #000; box-shadow: 0 0 30px var(--danger-neon); }
 
         /* --- MODAL TICKET --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.4s ease; }
@@ -367,7 +367,7 @@
                     </div>
                 </div>
 
-                <button class="close-modal-btn interactive-el" onclick="showHub()">CHIUDI PROTOCOLLO (DISATTIVA ALLARME)</button>
+                <button class="emerg-close-btn interactive-el" onclick="showHub()">CHIUDI PROTOCOLLO (DISATTIVA ALLARME)</button>
             </div>
         </div>
 
@@ -656,3 +656,4 @@
 </body>
 
 </html>
+
