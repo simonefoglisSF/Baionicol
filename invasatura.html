@@ -96,7 +96,7 @@
 
     <header>
         <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
-        <a href="1.html" class="logo interactive-el">BAIONICOL</a>
+        <a href="index.html" class="logo interactive-el">BAIONICOL</a>
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge"></div>
             <a href="paziente.html?return=true" class="back-btn interactive-el">&larr; Torna all'Area Paziente</a>
@@ -206,7 +206,7 @@
 
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            if (!profile) { window.location.href = '1.html'; return; }
+            if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             badge.style.display = 'block';
@@ -225,7 +225,7 @@
         function resetProfile() {
             if(confirm("Vuoi ricalibrare l'architettura?")) {
                 localStorage.removeItem('baionicol_profile');
-                window.location.href = '1.html';
+                window.location.href = 'index.html';
             }
         }
 
@@ -303,4 +303,5 @@
     </script>
 <script src="baionicol-core.js"></script>
 </body>
+
 </html>
