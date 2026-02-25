@@ -365,17 +365,16 @@
             hover: () => SoundEngine.playTone(1500, 'sine', 0.05, 0.02),
             dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); },
             click: () => SoundEngine.playTone(200, 'square', 0.1, 0.06),
-            
-            // IL NUOVO SUONO DELLA MACCHINA DA SCRIVERE (Breve, veloce e leggermente randomico per sembrare una tastiera)
             typeTick: () => SoundEngine.playTone(1200 + Math.random() * 400, 'square', 0.015, 0.01) 
         };
 
-        // RISVEGLIO AGGRESSIVO AUDIO: Aggira il blocco del browser sbloccando l'audio appena "schiacci" un tasto del mouse o della tastiera
+        // RISVEGLIO AGGRESSIVO AUDIO
         document.addEventListener('mousedown', () => { SoundEngine.init(); }, { once: true });
         document.addEventListener('keydown', () => { SoundEngine.init(); }, { once: true });
+        document.addEventListener('click', () => { SoundEngine.init(); }, { once: true });
 
         // ==========================================
-        // 2. CURSORE E UI
+        // 2. CURSORE E UI (Corretto: Solo una volta!)
         // ==========================================
         const cursorRing = document.getElementById('cursor-ring');
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, ringX = mouseX, ringY = mouseY;
@@ -389,19 +388,12 @@
 
         document.querySelectorAll('.interactive-el').forEach(el => {
             el.addEventListener('mouseenter', () => { 
-                SoundEngine.init(); // Tenta uno sblocco forzato anche sull'hover (per browser più permissivi)
+                SoundEngine.init(); 
                 if(cursorRing) cursorRing.classList.add('hovering'); 
                 SoundEngine.hover(); 
             });
             el.addEventListener('mouseleave', () => { if(cursorRing) cursorRing.classList.remove('hovering'); });
         });
-
-        function updateClock() {
-            const now = new Date();
-            const clockEl = document.getElementById('clock');
-            if(clockEl) clockEl.textContent = 'Time: ' + now.toLocaleTimeString('it-IT', { hour12: false });
-        }
-        setInterval(updateClock, 1000); updateClock();
 
         function getGreeting() {
             const hour = new Date().getHours();
@@ -420,10 +412,7 @@
                         tag += '>'; element.innerHTML += tag; i++; setTimeout(type, speed);
                     } else {
                         element.innerHTML += text.charAt(i); 
-                        
-                        // SUONA SOLO SE NON E' UNO SPAZIO VUOTO
                         if (text.charAt(i) !== ' ') SoundEngine.typeTick(); 
-                        
                         i++; setTimeout(type, speed);
                     }
                 } else if (callback) { setTimeout(callback, 500); }
@@ -431,85 +420,98 @@
             type();
         }
 
-        // SBLOCCO AUDIO UNIVERSALE: Risveglia l'audio al primo click in qualsiasi punto (Fissa il bug del ritorno)
-        document.addEventListener('click', () => { SoundEngine.init(); }, { once: true });
-
         // ==========================================
-        // 2. CURSORE E UI
+        // 3. LOGICA PROFILO E TRANSIZIONI
         // ==========================================
-        const cursorRing = document.getElementById('cursor-ring');
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, ringX = mouseX, ringY = mouseY;
-        document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-        function animateCursor() {
-            ringX += (mouseX - ringX) * 0.2; ringY += (mouseY - ringY) * 0.2;
-            if(cursorRing) cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
+        function applyProfile() {
+            const profile = localStorage.getItem('baionicol_profile');
+            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; 
+            const badge = document.getElementById('profile-badge');
+            const container3D = document.getElementById('3d-container');
+            const descClinica = document.getElementById('desc-clinica');
 
-        document.querySelectorAll('.interactive-el').forEach(el => {
-            el.addEventListener('mouseenter', () => { if(cursorRing) cursorRing.classList.add('hovering'); SoundEngine.hover(); });
-            el.addEventListener('mouseleave', () => { if(cursorRing) cursorRing.classList.remove('hovering'); });
-        });
+            if(badge) badge.style.display = 'block';
 
-        function updateClock() {
-            const now = new Date();
-            const clockEl = document.getElementById('clock');
-            if(clockEl) clockEl.textContent = 'Time: ' + now.toLocaleTimeString('it-IT', { hour12: false });
-        }
-        setInterval(updateClock, 1000); updateClock();
-
-        function getGreeting() {
-            const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) return "Buongiorno";
-            if (hour >= 12 && hour < 18) return "Buon pomeriggio";
-            return "Buonasera";
-        }
-
-        function typeWriterEffect(text, elementId, speed, callback) {
-            let i = 0; const element = document.getElementById(elementId); element.innerHTML = ""; 
-            function type() {
-                if (i < text.length) {
-                    if(text.charAt(i) === '<') {
-                        let tag = "";
-                        while(text.charAt(i) !== '>' && i < text.length) { tag += text.charAt(i); i++; }
-                        tag += '>'; element.innerHTML += tag; i++; setTimeout(type, speed);
-                    } else {
-                        element.innerHTML += text.charAt(i); i++; setTimeout(type, speed);
-                    }
-                } else if (callback) { setTimeout(callback, 500); }
+            if(profile === 'superiore') {
+                if(badge) badge.innerText = "[⚙️ Profilo: Arto Superiore]";
+                if(descClinica) descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
+                if (window.innerWidth > 968 && !isEco && container3D) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                else if(container3D) container3D.innerHTML = ''; 
+            } else if(profile === 'inferiore') {
+                if(badge) badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
+                if(descClinica) descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
+                if (window.innerWidth > 968 && !isEco && container3D) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                else if(container3D) container3D.innerHTML = ''; 
             }
-            type();
+        }
+
+        function avviaDialogo() {
+            const profile = localStorage.getItem('baionicol_profile');
+            const profileName = profile === 'superiore' ? 'Arto Superiore' : 'Arto Inferiore';
+            const dialogueBox = document.getElementById('dialogue-box');
+            if(dialogueBox) dialogueBox.style.display = 'block';
+            
+            setTimeout(() => {
+                if(dialogueBox) dialogueBox.classList.add('show-dialogue');
+                setTimeout(() => {
+                    const fullText = `"${getGreeting()} <span class='highlight-name'>Operatore</span>,<br>protocolli per <span style='color: var(--cyan-neon);'>${profileName}</span> allineati.<br>Come procediamo?"`;
+                    typeWriterEffect(fullText, 'mascot-text', 35, () => mostraOpzioni());
+                }, 800);
+            }, 100);
         }
 
         function mostraOpzioni() {
-            document.getElementById('dialogue-box').style.opacity = '0';
-            document.getElementById('dialogue-box').style.pointerEvents = 'none';
+            const dialogueBox = document.getElementById('dialogue-box');
+            if(dialogueBox) { dialogueBox.style.opacity = '0'; dialogueBox.style.pointerEvents = 'none'; }
             document.querySelectorAll('.main-area-btn').forEach((area, index) => {
                 setTimeout(() => { area.classList.add('show-area'); }, 200 + (index * 200)); 
             });
         }
 
         function animateAndNavigate(targetUrl) {
-            SoundEngine.init(); // Sicurezza extra
-            SoundEngine.click(); // Suono di pressione
-            
-            // ANTI-LAG: Nascondiamo il robot 3D esattamente 1 millisecondo prima dello zoom.
-            // Questo libera il 100% della scheda video, permettendo un'animazione fluidissima!
+            SoundEngine.init(); 
+            SoundEngine.click(); 
             document.querySelectorAll('spline-viewer').forEach(el => el.style.display = 'none');
-            
             document.body.classList.add('zoom-in');
             setTimeout(() => { window.location.href = targetUrl; }, 550);
         }
 
-        // ==========================================
-        // 3. LOGICA PROFILO
-        // ==========================================
-        const container3D = document.getElementById('3d-container');
-        const badge = document.getElementById('profile-badge');
+        function simulateLoading(lineId, spanId, targetText, successColor, nextStepCallback) {
+            const line = document.getElementById(lineId);
+            if(line) line.style.opacity = '1';
+            const span = document.getElementById(spanId);
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 25) + 5;
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    if(span) span.innerHTML = ` <span style="color: ${successColor};">[ ${targetText} ]</span>`;
+                    if(nextStepCallback) nextStepCallback();
+                } else {
+                    if(span) span.innerHTML = ` <span class="boot-progress">[ ${progress}% ]</span>`;
+                }
+            }, 60);
+        }
+
+        function eseguiEffettoCRT() {
+            const bootScreen = document.getElementById('boot-screen');
+            if(!bootScreen) return;
+            bootScreen.querySelectorAll('.boot-line').forEach(line => line.style.display = 'none');
+            bootScreen.classList.add('crt-collapse');
+            
+            setTimeout(() => {
+                bootScreen.style.display = 'none';
+                if(!localStorage.getItem('baionicol_profile')) {
+                    const overlay = document.getElementById('calibration-overlay');
+                    if(overlay) { overlay.style.display = 'flex'; setTimeout(() => { overlay.style.opacity = '1'; }, 100); }
+                } else {
+                    applyProfile(); avviaDialogo();
+                }
+            }, 600); 
+        }
 
         function setProfile(type) {
-            SoundEngine.init(); // Sicurezza extra
+            SoundEngine.init(); 
             SoundEngine.dataSave();
             localStorage.setItem('baionicol_profile', type); 
             document.getElementById('calibration-overlay').style.opacity = '0';
@@ -519,93 +521,10 @@
             }, 500);
         }
 
-        function resetProfile() {
-            SoundEngine.init();
-            SoundEngine.hover();
-            if(confirm("Vuoi ricalibrare l'architettura del sistema?")) {
-                localStorage.removeItem('baionicol_profile');
-                location.reload();
-            }
-        }
-
-        function applyProfile() {
-            const profile = localStorage.getItem('baionicol_profile');
-            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // <--- LEGGE LA MEMORIA ECO
-            badge.style.display = 'block';
-            const descClinica = document.getElementById('desc-clinica');
-
-            if(profile === 'superiore') {
-                badge.innerText = "[⚙️ Profilo: Arto Superiore]";
-                descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
-                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
-                if (window.innerWidth > 968 && !isEco) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                else container3D.innerHTML = ''; 
-            } else if(profile === 'inferiore') {
-                badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
-                descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
-                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
-                if (window.innerWidth > 968 && !isEco) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                else container3D.innerHTML = ''; 
-            }
-        }
-
-        function avviaDialogo() {
-            const profile = localStorage.getItem('baionicol_profile');
-            const profileName = profile === 'superiore' ? 'Arto Superiore' : 'Arto Inferiore';
-            const dialogueBox = document.getElementById('dialogue-box');
-            dialogueBox.style.display = 'block';
-            
-            setTimeout(() => {
-                dialogueBox.classList.add('show-dialogue');
-                setTimeout(() => {
-                    const fullText = `"${getGreeting()} <span class='highlight-name'>Operatore</span>,<br>protocolli per <span style='color: var(--cyan-neon);'>${profileName}</span> allineati.<br>Come procediamo?"`;
-                    typeWriterEffect(fullText, 'mascot-text', 35, () => mostraOpzioni());
-                }, 800);
-            }, 100);
-        }
-
         // ==========================================
-        // 4. ANIMAZIONE BOOT
+        // 4. INIZIALIZZAZIONE CENTRALE E ECO MODE
         // ==========================================
-        function simulateLoading(lineId, spanId, targetText, successColor, nextStepCallback) {
-            document.getElementById(lineId).style.opacity = '1';
-            const span = document.getElementById(spanId);
-            let progress = 0;
-            let interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 25) + 5;
-                if(progress >= 100) {
-                    clearInterval(interval);
-                    span.innerHTML = ` <span style="color: ${successColor};">[ ${targetText} ]</span>`;
-                    if(nextStepCallback) nextStepCallback();
-                } else {
-                    span.innerHTML = ` <span class="boot-progress">[ ${progress}% ]</span>`;
-                }
-            }, 60);
-        }
-
-        function eseguiEffettoCRT() {
-            const bootScreen = document.getElementById('boot-screen');
-            bootScreen.querySelectorAll('.boot-line').forEach(line => line.style.display = 'none');
-            bootScreen.classList.add('crt-collapse');
-            
-            setTimeout(() => {
-                bootScreen.style.display = 'none';
-                if(!localStorage.getItem('baionicol_profile')) {
-                    const overlay = document.getElementById('calibration-overlay');
-                    overlay.style.display = 'flex';
-                    setTimeout(() => { overlay.style.opacity = '1'; }, 100);
-                } else {
-                    applyProfile(); avviaDialogo();
-                }
-            }, 600); 
-        }
-
-        // ==========================================
-        // 5. INIZIALIZZAZIONE CENTRALE E ECO MODE
-        // ==========================================
-        // L'attivazione è ora ISTANTANEA. Non aspetta più il caricamento di Spline.
         (() => {
-            
             // --- A) GESTIONE ECO MODE ---
             const ecoBtn = document.getElementById('eco-toggle-btn');
             if (ecoBtn) {
@@ -652,11 +571,13 @@
             const btnStartBoot = document.getElementById('btn-start-boot');
 
             if (urlParams.get('return') === 'true') {
-                standbyScreen.style.display = 'none'; 
-                bootScreen.style.display = 'none'; 
-                dialogueBox.style.display = 'none'; 
-                dialogueBox.style.opacity = '0'; 
-                dialogueBox.style.pointerEvents = 'none'; 
+                if(standbyScreen) standbyScreen.style.display = 'none'; 
+                if(bootScreen) bootScreen.style.display = 'none'; 
+                if(dialogueBox) {
+                    dialogueBox.style.display = 'none'; 
+                    dialogueBox.style.opacity = '0'; 
+                    dialogueBox.style.pointerEvents = 'none'; 
+                }
                 
                 document.body.classList.add('zoom-normal');
                 applyProfile(); 
@@ -667,11 +588,13 @@
             } else if (btnStartBoot) {
                 btnStartBoot.addEventListener('click', () => {
                     
-                    SoundEngine.init(); // Accende l'audio in sicurezza al click!
+                    SoundEngine.init(); // Accende l'audio
                     
-                    standbyScreen.style.display = 'none';
+                    if(standbyScreen) standbyScreen.style.display = 'none';
                     setTimeout(() => { 
-                        document.getElementById('line1').style.opacity = '1'; SoundEngine.bootBeepDynamic(1); 
+                        const line1 = document.getElementById('line1');
+                        if(line1) line1.style.opacity = '1'; 
+                        SoundEngine.bootBeepDynamic(1); 
                         setTimeout(() => {
                             simulateLoading('line2', 'prog2', 'OK', 'var(--green-neon)', () => { SoundEngine.bootBeepDynamic(2);
                                 setTimeout(() => {
@@ -679,7 +602,8 @@
                                         setTimeout(() => {
                                             simulateLoading('line4', 'prog4', 'ATTIVO', 'var(--green-neon)', () => { SoundEngine.bootBeepDynamic(4);
                                                 setTimeout(() => {
-                                                    document.getElementById('line5').style.opacity = '1';
+                                                    const line5 = document.getElementById('line5');
+                                                    if(line5) line5.style.opacity = '1';
                                                     SoundEngine.bootSuccess();
                                                     setTimeout(eseguiEffettoCRT, 1200);
                                                 }, 400);
@@ -696,11 +620,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
