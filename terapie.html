@@ -177,10 +177,7 @@ spline-viewer {
             <h1 class="hub-title">Protocolli di Ricalibrazione Neurale</h1>
             <div class="hub-layout">
                 
-                <div class="mascot-container">
-                    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.60/build/spline-viewer.js"></script>
-			<spline-viewer url="https://prod.spline.design/eto9tA806aaR8HFr/scene.splinecode"></spline-viewer>
-                </div>
+                <div class="mascot-container" id="terapie-3d-container"></div>
 
                 <div class="options-container">
                     <button class="therapy-btn btn-tessuti interactive-el" onclick="showTherapy('tessuti')">
@@ -372,11 +369,21 @@ spline-viewer {
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
+            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // Legge la memoria ECO
             
             if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             badge.style.display = 'block';
+
+            // INIETTA IL 3D SOLO SE SIAMO SU PC E L'ECO MODE E' SPENTO!
+            const container3D = document.getElementById('terapie-3d-container');
+            if(window.innerWidth > 968 && !isEco) {
+                container3D.innerHTML = `
+                    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.60/build/spline-viewer.js"><\/script>
+                    <spline-viewer url="https://prod.spline.design/eto9tA806aaR8HFr/scene.splinecode"></spline-viewer>
+                `;
+            }
             
             // LA MAGIA CAMALEONTICA: Cambia TUTTI i testi in base al profilo
             if(profile === 'superiore') {
@@ -546,4 +553,5 @@ spline-viewer {
 </body>
 
 </html>
+
 
