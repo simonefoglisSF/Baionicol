@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terapie | BAIONICOL</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="baionicol-core.css">
+<link rel="stylesheet" href="baionicol-core.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
@@ -370,23 +370,28 @@ spline-viewer {
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // Legge la memoria ECO
+            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // Legge la memoria Eco
             
             if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             badge.style.display = 'block';
 
-            // INIETTA IL 3D SOLO SE SIAMO SU PC E L'ECO MODE E' SPENTO!
+            // GESTIONE INTELLIGENTE DEL ROBOT 3D
             const container3D = document.getElementById('terapie-3d-container');
-            if(window.innerWidth > 968 && !isEco) {
-                container3D.innerHTML = `
-                    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.60/build/spline-viewer.js"><\/script>
-                    <spline-viewer url="https://prod.spline.design/eto9tA806aaR8HFr/scene.splinecode"></spline-viewer>
-                `;
+            if (isEco) {
+                // Se Eco Mode è ON: Distrugge fisicamente il contenitore. Zero layout rotto, zero cache!
+                if(container3D) container3D.remove();
+            } else if (window.innerWidth > 968) {
+                // Se Eco Mode è OFF e siamo su PC: Inietta il robot
+                if(container3D) {
+                    container3D.innerHTML = `
+                        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.60/build/spline-viewer.js"><\/script>
+                        <spline-viewer url="https://prod.spline.design/eto9tA806aaR8HFr/scene.splinecode"></spline-viewer>
+                    `;
+                }
             }
-            
-            // LA MAGIA CAMALEONTICA: Cambia TUTTI i testi in base al profilo
+
             if(profile === 'superiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Superiore]";
                 
