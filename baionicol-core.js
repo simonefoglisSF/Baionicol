@@ -156,54 +156,22 @@ document.addEventListener("DOMContentLoaded", () => {
     videos.forEach(video => {
         videoObserver.observe(video);
     });
-}); // <--- ERA QUESTA LA PARENTESI CHE MANCAVA E CHE SPACCAVA TUTTO!
+});
 
 // ==========================================
-// 6. GESTIONE ECO MODE (Performance Saver)
+// 6. GESTIONE ECO MODE UNIVERSALE (Senza Bottone)
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-    
-    // 1. Legge la memoria e APPLICA SUBITO l'eco mode su tutto il sito, 
-    // anche se il bottone non è stato ancora disegnato nella pagina!
+    // 1. Legge la memoria salvata dalla pagina principale
     const isEcoActive = localStorage.getItem('baionicol_eco_mode') === 'true';
+    
+    // 2. Se l'Eco Mode è ON, applica il risparmio energetico
     if (isEcoActive) {
         document.body.classList.add('eco-active');
-    }
-
-    // 2. Ora cerca il bottone per fargli cambiare colore
-    const ecoBtn = document.getElementById('eco-toggle-btn');
-    if (!ecoBtn) return; // Se non lo trova, si ferma qui (ma il sito è già in Eco Mode!)
-
-    // 3. Colora il bottone in base alla memoria
-    if (isEcoActive) {
-        ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
-        ecoBtn.style.color = 'var(--green-neon)';
-        ecoBtn.style.borderColor = 'var(--green-neon)';
-    } else {
-        ecoBtn.classList.add('show-tooltip');
-        setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
-    }
-
-    // 4. Cosa succede quando l'utente clicca il bottone
-    ecoBtn.addEventListener('click', () => {
-        const isCurrentlyEco = document.body.classList.contains('eco-active');
         
-        if (isCurrentlyEco) {
-            document.body.classList.remove('eco-active');
-            localStorage.setItem('baionicol_eco_mode', 'false');
-            ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
-            ecoBtn.style.color = 'var(--amber-neon)';
-            ecoBtn.style.borderColor = 'var(--amber-neon)';
-            SoundEngine.click(); 
-        } else {
-            document.body.classList.add('eco-active');
-            localStorage.setItem('baionicol_eco_mode', 'true');
-            ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
-            ecoBtn.style.color = 'var(--green-neon)';
-            ecoBtn.style.borderColor = 'var(--green-neon)';
-            ecoBtn.classList.remove('show-tooltip');
-            SoundEngine.success(); 
-        }
-    });
+        // KILLER DI RAM: Trova qualsiasi robot 3D nella pagina e lo disintegra all'istante dal codice!
+        document.querySelectorAll('spline-viewer').forEach(el => el.remove());
+    }
 });
+
 
