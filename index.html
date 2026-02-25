@@ -189,45 +189,48 @@
         body.eco-active spline-viewer, body.eco-active .hero-mascot-placeholder { display: none !important; }
         body.eco-active header, body.eco-active .hero-dialogue-box, body.eco-active .main-area-btn { backdrop-filter: blur(2px) !important; box-shadow: none !important; }
 
-        /* 2. FIX LAYOUT HERO (Verticale per impilare Testo e Bottoni) */
+        /* 2. FIX LAYOUT HERO (Bottoni sempre affiancati) */
         body.eco-active .hero {
-            flex-direction: column !important;
+            display: flex !important;
+            flex-direction: row !important; /* Li affianca orizzontalmente */
             justify-content: center !important;
             align-items: center !important;
             gap: 40px !important;
-            padding-top: 100px !important; /* Spazio dall'header */
+            padding-top: 0 !important;
         }
 
-        /* 3. FIX DIALOGUE BOX (Centrato e sollevato) */
+        /* 3. FIX DIALOGUE BOX (Centro assoluto, fluttuante) */
         body.eco-active .hero-dialogue-box {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            transform: none !important;
-            margin: 0 auto !important;
+            position: absolute !important; /* Si sgancia dal layout dei bottoni */
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin: 0 !important;
             width: 80% !important;
             max-width: 700px !important;
             text-align: center;
-            display: inline-block !important; /* Fix per cursore digitazione */
+            display: inline-block !important;
             border-color: var(--cyan-neon);
             background: rgba(0, 243, 255, 0.05);
+            z-index: 50; /* Sta sopra ai bottoni mentre scrive */
         }
-        body.eco-active #mascot-text { display: inline; } /* Mantiene il cursore a fine riga */
+        body.eco-active #mascot-text { display: inline; }
 
-        /* 4. FIX BOTTONI (Affiancati e proporzionati) */
+        /* 4. FIX BOTTONI (Proporzionati e affiancati) */
         body.eco-active .main-area-btn {
             position: relative !important;
-            display: inline-flex !important; /* Mette i bottoni uno accanto all'altro */
+            display: flex !important;
             left: auto !important;
             right: auto !important;
             top: auto !important;
             bottom: auto !important;
             transform: scale(0.9) !important;
-            margin: 0 20px !important;
+            margin: 0 !important;
             width: 380px !important;
             opacity: 0;
             background: rgba(10, 10, 10, 0.95) !important;
             border-color: var(--cyan-neon) !important;
+            z-index: 40;
         }
 
         body.eco-active .main-area-btn.show-area {
@@ -235,21 +238,13 @@
             transform: scale(1) !important;
         }
 
-        /* 5. RADAR BIOMETRICO (Colore ripristinato) */
+        /* 5. RADAR BIOMETRICO */
         body.eco-active .hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 600px;
-            height: 600px;
+            content: ''; position: absolute; top: 50%; left: 50%; width: 600px; height: 600px;
             background: repeating-radial-gradient(circle, rgba(0, 243, 255, 0.08) 0%, transparent 10%, transparent 20%);
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 0;
+            transform: translate(-50%, -50%); border-radius: 50%; z-index: 0;
             animation: pulseRadar 12s linear infinite;
         }
-
         @keyframes pulseRadar {
             0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.9); opacity: 0.3; }
             50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.1); opacity: 0.7; }
@@ -303,7 +298,6 @@
                 ⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>
             </button>
             <div class="profile-badge" id="profile-badge" style="display: none;">[⚙️ Profilo: In Caricamento...]</div>
-            <a href="index.html?return=true" class="back-btn interactive-el">← Torna al Terminale</a>
         </div>
     </header>
     
@@ -544,25 +538,31 @@
                 if (isEcoActive) {
                     document.body.classList.add('eco-active');
                     ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
-                    ecoBtn.style.color = 'var(--green-neon)'; ecoBtn.style.borderColor = 'var(--green-neon)';
+                    ecoBtn.style.color = 'var(--green-neon)'; 
+                    ecoBtn.style.borderColor = 'var(--green-neon)';
+                    ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; // FIX SFONDO VERDE
                 } else {
                     ecoBtn.classList.add('show-tooltip');
                     setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
                 }
 
                 ecoBtn.addEventListener('click', () => {
-                    SoundEngine.init(); // Attiva audio per sicurezza
+                    SoundEngine.init(); 
                     if (document.body.classList.contains('eco-active')) {
                         document.body.classList.remove('eco-active');
                         localStorage.setItem('baionicol_eco_mode', 'false');
                         ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
-                        ecoBtn.style.color = 'var(--amber-neon)'; ecoBtn.style.borderColor = 'var(--amber-neon)';
+                        ecoBtn.style.color = 'var(--amber-neon)'; 
+                        ecoBtn.style.borderColor = 'var(--amber-neon)';
+                        ecoBtn.style.background = 'rgba(255, 170, 0, 0.1)'; // FIX SFONDO ARANCIONE
                         SoundEngine.hover(); 
                     } else {
                         document.body.classList.add('eco-active');
                         localStorage.setItem('baionicol_eco_mode', 'true');
                         ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
-                        ecoBtn.style.color = 'var(--green-neon)'; ecoBtn.style.borderColor = 'var(--green-neon)';
+                        ecoBtn.style.color = 'var(--green-neon)'; 
+                        ecoBtn.style.borderColor = 'var(--green-neon)';
+                        ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; // FIX SFONDO VERDE
                         ecoBtn.classList.remove('show-tooltip');
                         SoundEngine.bootSuccess(); 
                     }
@@ -616,6 +616,7 @@
     </script>
 </body>
 </html>
+
 
 
 
