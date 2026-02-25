@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BAIONICOL | Terminale Principale</title>
-<link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
@@ -19,7 +19,8 @@
             --glass-bg: rgba(0, 243, 255, 0.04);
             --glass-border: rgba(0, 243, 255, 0.25);
         }
-/* --- RESPONSIVE MOBILE SCHERMATA INIZIALE --- */
+
+        /* --- RESPONSIVE MOBILE SCHERMATA INIZIALE --- */
         @media (max-width: 968px) {
             * { cursor: auto !important; }
             .cursor-ring, .hud-arc, .hud-reticle-top, .hud-dial { display: none !important; }
@@ -30,7 +31,7 @@
             /* 2. HEADER COMPATTO */
             header { display: flex; flex-direction: column; align-items: center; position: relative; height: auto; padding: 15px 10px; background: rgba(5,5,5,0.95); z-index: 1000; gap: 10px;}
             .hud-status, .logo, .header-actions { position: relative; left: auto; right: auto; top: auto; transform: none; margin: 0; justify-content: center; text-align: center; width: 100%; flex-wrap: wrap;}
-            .hud-clock { display: none; } /* Nasconde l'orologio per fare spazio */
+            .hud-clock { display: none; } 
             .profile-badge { font-size: 13px; padding: 8px 12px; margin: 0;}
             
             /* 3. IMPAGINAZIONE FUMETTO E BOTTONI IN COLONNA */
@@ -45,11 +46,12 @@
             .area-title { font-size: 24px !important; }
             .area-desc { font-size: 16px !important; }
             
-            /* 5. MODALE DI CALIBRAZIONE (Se non hai un profilo) */
+            /* 5. MODALE DI CALIBRAZIONE */
             .calib-box { width: 95%; padding: 25px 15px; }
             .calib-options { flex-direction: column; gap: 15px;}
             .calib-btn { padding: 15px; font-size: 18px; width: 100%; }
         }
+
         /* --- CURSORE "CYBER-RADAR" --- */
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2300f3ff'/%3E%3C/svg%3E") 4 4, auto !important; }
         .interactive-el, button, a, .main-area-btn { cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2339ff14'/%3E%3C/svg%3E") 4 4, pointer !important; }
@@ -58,15 +60,9 @@
         .cursor-ring.hovering { width: 50px; height: 50px; border-color: var(--green-neon); border-radius: 8px; border-width: 2px; border-style: dashed; box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow: hidden; 
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
+            font-family: 'Rajdhani', sans-serif; background-color: var(--bg-color); color: var(--text-main); overflow: hidden; 
+            background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
         }
 
         body.zoom-in { transform: scale(1.5); opacity: 0; }
@@ -109,11 +105,9 @@
 
         /* --- BOOT SEQUENCE --- */
         #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: var(--bg-color); z-index: 10000;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-            padding: 50px; font-family: 'VT323', monospace; color: var(--green-neon);
-            font-size: 22px; 
+            padding: 50px; font-family: 'VT323', monospace; color: var(--green-neon); font-size: 22px; 
         }
         #boot-screen::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
@@ -123,7 +117,7 @@
         .boot-line { margin-bottom: 10px; opacity: 0; z-index: 5; position: relative; text-shadow: 0 0 5px var(--green-neon); }
         .boot-progress { color: var(--amber-neon); }
 
-        /* EFFETTO CRT DI SPEGNIMENTO (Transizione Matrix) */
+        /* EFFETTO CRT DI SPEGNIMENTO */
         .crt-collapse { animation: crtOff 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         @keyframes crtOff {
             0% { transform: scale(1, 1); background-color: var(--bg-color); }
@@ -134,10 +128,8 @@
 
         /* --- CALIBRAZIONE OVERLAY --- */
         #calibration-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.9); z-index: 9000; display: none; flex-direction: column;
-            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease;
-            backdrop-filter: blur(10px);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 9000; display: none; flex-direction: column;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease; backdrop-filter: blur(10px);
         }
         .calib-box { background: rgba(5, 5, 5, 0.8); border: 1px solid var(--cyan-neon); padding: 50px; border-radius: 15px; text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2); max-width: 800px; }
         .calib-box h2 { color: var(--cyan-neon); font-size: 36px; letter-spacing: 2px; margin-bottom: 15px; }
@@ -155,10 +147,8 @@
 
         /* --- FUMETTO DIALOGO --- */
         .hero-dialogue-box {
-            position: absolute; left: 5%; top: 50%; transform: translateY(-50%) translateX(-50px);
-            max-width: 32%; padding: 40px 40px 60px 40px;
-            border: 2px solid var(--green-neon); background: rgba(57, 255, 20, 0.05);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); backdrop-filter: blur(5px);
+            position: absolute; left: 5%; top: 50%; transform: translateY(-50%) translateX(-50px); max-width: 32%; padding: 40px 40px 60px 40px;
+            border: 2px solid var(--green-neon); background: rgba(57, 255, 20, 0.05); box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); backdrop-filter: blur(5px);
             z-index: 30; opacity: 0; display: none; transition: opacity 0.8s ease, transform 0.8s ease;
         }
         .hero-dialogue-box.show-dialogue { opacity: 1; transform: translateY(-50%) translateX(0); display: block; }
@@ -169,12 +159,9 @@
 
         /* --- GRANDI OPZIONI --- */
         .main-area-btn {
-            position: absolute; width: 380px; background: var(--glass-bg);
-            border: 2px solid var(--glass-border); border-radius: 20px; padding: 40px 30px; 
-            color: var(--text-main); text-align: center; backdrop-filter: blur(10px);
-            opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.8);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 20px;
+            position: absolute; width: 380px; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 20px; padding: 40px 30px; 
+            color: var(--text-main); text-align: center; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.8);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         }
         .main-area-btn:hover { background: rgba(0, 243, 255, 0.08); border-color: var(--cyan-neon); box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); transform: translateY(-50%) scale(1.05); }
@@ -186,6 +173,7 @@
         .area-left { left: 15%; top: 45%; }
         .area-right { right: 15%; top: 45%; }
         .main-area-btn.show-area { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
+        
         /* ========================================= */
         /* MODALITÀ ECO (SCHERMATA INIZIALE)         */
         /* ========================================= */
@@ -203,10 +191,11 @@
     </style>
 </head>
 <body>
-<div id="standby-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 20000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div id="standby-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 20000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <h1 style="color: var(--cyan-neon); font-size: 50px; margin-bottom: 30px; letter-spacing: 5px; text-shadow: 0 0 20px var(--cyan-neon);">BAIONICOL OS</h1>
-        <button id="btn-start-boot" class="interactive-el" style="background: rgba(57, 255, 20, 0.1); border: 2px solid var(--green-neon); color: var(--green-neon); padding: 20px 40px; font-family: 'VT323', monospace; font-size: 28px; cursor: pointer; border-radius: 8px; animation: pulse 2s infinite; box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);">> INIZIALIZZA TERMINALE _</button>
+        <button id="btn-start-boot" class="interactive-el" style="background: rgba(57, 255, 20, 0.1); border: 2px solid var(--green-neon); color: var(--green-neon); padding: 20px 40px; font-family: 'VT323', monospace; font-size: 28px; cursor: pointer; border-radius: 8px; animation: pulse 2s infinite; box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);"> > INIZIALIZZA TERMINALE _ </button>
     </div>
+
     <div id="boot-screen">
         <div class="boot-line" id="line1">> Inizializzazione BAIONICOL OS v2.4...</div>
         <div class="boot-line" id="line2">> Connessione server biomedici... <span id="prog2"></span></div>
@@ -221,12 +210,10 @@
             <p>Rilevato nuovo operatore. Selezionare l'architettura biomeccanica di riferimento per adattare i protocolli terapeutici e hardware di tutto il sistema.</p>
             <div class="calib-options">
                 <button class="calib-btn interactive-el" onclick="setProfile('superiore')">
-                    ARTO SUPERIORE
-                    <span>(Mano, Polso, Gomito)</span>
+                    ARTO SUPERIORE<span>(Mano, Polso, Gomito)</span>
                 </button>
                 <button class="calib-btn interactive-el" onclick="setProfile('inferiore')">
-                    ARTO INFERIORE
-                    <span>(Piede, Caviglia, Ginocchio)</span>
+                    ARTO INFERIORE<span>(Piede, Caviglia, Ginocchio)</span>
                 </button>
             </div>
         </div>
@@ -245,22 +232,18 @@
         <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
         <a href="#" class="logo interactive-el">BAIONICOL</a>
         <div class="header-actions">
-    <button id="eco-toggle-btn" class="eco-btn interactive-el">
-        ⚡ ECO: OFF 
-        <div class="eco-tooltip">Se il sito lagga, cliccami!</div>
-    </button>
-    
-    <div class="profile-badge" id="profile-badge" style="display: none;">[⚙️ Profilo: In Caricamento...]</div>
-    <a href="index.html?return=true" class="back-btn interactive-el">← Torna al Terminale</a>
-</div>
+            <button id="eco-toggle-btn" class="eco-btn interactive-el">
+                ⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>
+            </button>
+            <div class="profile-badge" id="profile-badge" style="display: none;">[⚙️ Profilo: In Caricamento...]</div>
+            <a href="index.html?return=true" class="back-btn interactive-el">← Torna al Terminale</a>
+        </div>
     </header>
     
     <section id="assistant" class="hero">
-        
         <div id="dialogue-box" class="hero-dialogue-box">
             <h1 id="mascot-text"></h1><span class="cursor" id="text-cursor"></span>
         </div>
-
         <div class="hero-mascot-placeholder" id="3d-container"></div>
 
         <button class="main-area-btn area-left interactive-el" onclick="animateAndNavigate('paziente.html')">
@@ -284,32 +267,48 @@
             <span class="area-title">Area Clinica</span>
             <span class="area-desc" id="desc-clinica">Diagnostica hardware e biomeccanica</span>
         </button>
-
     </section>
 
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
+    
     <script>
         // ==========================================
-        // 1. MOTORE AUDIO E RADAR CURSORE
+        // 1. MOTORE AUDIO SICURO (Bypass Blocchi Browser)
         // ==========================================
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
         const SoundEngine = {
-            playTone: function(freq, type, dur, vol) {
-                if(audioCtx.state === 'suspended') return;
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                osc.type = type; osc.frequency.value = freq;
-                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + dur);
+            init: function() {
+                if (!audioCtx) {
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if(AudioContext) audioCtx = new AudioContext();
+                    } catch(e) { console.warn("Audio Context bloccato"); }
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
             },
-            // Suono dinamico e crescente per il boot!
+            playTone: function(freq, type, dur, vol) {
+                if(!audioCtx || audioCtx.state === 'suspended') return;
+                try {
+                    const osc = audioCtx.createOscillator(); 
+                    const gain = audioCtx.createGain();
+                    osc.type = type; osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + dur);
+                } catch(e) {}
+            },
             bootBeepDynamic: (step) => SoundEngine.playTone(300 + (step * 200), 'square', 0.1, 0.03),
             bootSuccess: () => { SoundEngine.playTone(1000, 'sine', 0.2, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.4, 0.05), 150); },
             hover: () => SoundEngine.playTone(1500, 'sine', 0.05, 0.02),
             dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); }
         };
 
+        // ==========================================
+        // 2. CURSORE E UI
+        // ==========================================
         const cursorRing = document.getElementById('cursor-ring');
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, ringX = mouseX, ringY = mouseY;
         document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
@@ -325,12 +324,10 @@
             el.addEventListener('mouseleave', () => { if(cursorRing) cursorRing.classList.remove('hovering'); });
         });
 
-        // ==========================================
-        // 2. FUNZIONI UI (Orologio, Testo)
-        // ==========================================
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').textContent = 'Time: ' + now.toLocaleTimeString('it-IT', { hour12: false });
+            const clockEl = document.getElementById('clock');
+            if(clockEl) clockEl.textContent = 'Time: ' + now.toLocaleTimeString('it-IT', { hour12: false });
         }
         setInterval(updateClock, 1000); updateClock();
 
@@ -341,7 +338,6 @@
             return "Buonasera";
         }
 
-        // Effetto macchina da scrivere che attiva automaticamente i menu alla fine!
         function typeWriterEffect(text, elementId, speed, callback) {
             let i = 0; const element = document.getElementById(elementId); element.innerHTML = ""; 
             function type() {
@@ -353,9 +349,7 @@
                     } else {
                         element.innerHTML += text.charAt(i); i++; setTimeout(type, speed);
                     }
-                } else if (callback) { 
-                    setTimeout(callback, 500); // Ritardo automatico prima di mostrare i bottoni
-                }
+                } else if (callback) { setTimeout(callback, 500); }
             }
             type();
         }
@@ -374,66 +368,52 @@
         }
 
         // ==========================================
-        // 3. LOGICA DI MEMORIA E PROFILAZIONE
+        // 3. LOGICA PROFILO
         // ==========================================
         const container3D = document.getElementById('3d-container');
         const badge = document.getElementById('profile-badge');
 
         function setProfile(type) {
+            SoundEngine.init(); // Sicurezza extra
             SoundEngine.dataSave();
             localStorage.setItem('baionicol_profile', type); 
-            
             document.getElementById('calibration-overlay').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('calibration-overlay').style.display = 'none';
-                applyProfile();
-                avviaDialogo();
+                applyProfile(); avviaDialogo();
             }, 500);
         }
 
         function resetProfile() {
+            SoundEngine.init();
             SoundEngine.hover();
-            if(confirm("Vuoi ricalibrare l'architettura del sistema? (Questo modificherà i modelli 3D e i test medici).")) {
+            if(confirm("Vuoi ricalibrare l'architettura del sistema?")) {
                 localStorage.removeItem('baionicol_profile');
                 location.reload();
             }
         }
 
-        // Modifica dinamicamente Bottoni e 3D in base a chi sei
-        // Modifica dinamicamente Bottoni e 3D in base a chi sei, bloccando il 3D su mobile!
         function applyProfile() {
             const profile = localStorage.getItem('baionicol_profile');
             badge.style.display = 'block';
-            
             const descClinica = document.getElementById('desc-clinica');
 
             if(profile === 'superiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Superiore]";
                 descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
-                // Carica il robot SOLO se siamo su PC o Tablet grande
-                if (window.innerWidth > 968) {
-                    container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                } else {
-                    container3D.innerHTML = ''; // Lascia vuoto su cellulare!
-                }
-            } 
-            else if(profile === 'inferiore') {
+                if (window.innerWidth > 968) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                else container3D.innerHTML = ''; 
+            } else if(profile === 'inferiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
                 descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
-                // Carica il robot SOLO se siamo su PC o Tablet grande
-                if (window.innerWidth > 968) {
-                    container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                } else {
-                    container3D.innerHTML = ''; // Lascia vuoto su cellulare!
-                }
+                if (window.innerWidth > 968) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                else container3D.innerHTML = ''; 
             }
         }
 
-        // L'assistente ti saluta chiamando il tuo profilo!
         function avviaDialogo() {
             const profile = localStorage.getItem('baionicol_profile');
             const profileName = profile === 'superiore' ? 'Arto Superiore' : 'Arto Inferiore';
-            
             const dialogueBox = document.getElementById('dialogue-box');
             dialogueBox.style.display = 'block';
             
@@ -441,24 +421,17 @@
                 dialogueBox.classList.add('show-dialogue');
                 setTimeout(() => {
                     const fullText = `"${getGreeting()} <span class='highlight-name'>Operatore</span>,<br>protocolli per <span style='color: var(--cyan-neon);'>${profileName}</span> allineati.<br>Come procediamo?"`;
-                    
-                    // La magia: finisce di scrivere e apre da solo le opzioni
-                    typeWriterEffect(fullText, 'mascot-text', 35, () => {
-                        mostraOpzioni();
-                    });
+                    typeWriterEffect(fullText, 'mascot-text', 35, () => mostraOpzioni());
                 }, 800);
             }, 100);
         }
 
         // ==========================================
-        // 4. ANIMAZIONE BOOT (MATRIX) & TRANSIZIONE CRT
+        // 4. ANIMAZIONE BOOT
         // ==========================================
-        
-        // Funzione per animare la percentuale di caricamento
         function simulateLoading(lineId, spanId, targetText, successColor, nextStepCallback) {
             document.getElementById(lineId).style.opacity = '1';
             const span = document.getElementById(spanId);
-            
             let progress = 0;
             let interval = setInterval(() => {
                 progress += Math.floor(Math.random() * 25) + 5;
@@ -472,84 +445,93 @@
             }, 60);
         }
 
-        // Transizione Spegnimento Monitor
         function eseguiEffettoCRT() {
             const bootScreen = document.getElementById('boot-screen');
-            // Nasconde il testo istantaneamente per lasciare solo il flash bianco
-            const lines = bootScreen.querySelectorAll('.boot-line');
-            lines.forEach(line => line.style.display = 'none');
-            
-            // Attiva animazione collasso
+            bootScreen.querySelectorAll('.boot-line').forEach(line => line.style.display = 'none');
             bootScreen.classList.add('crt-collapse');
             
             setTimeout(() => {
                 bootScreen.style.display = 'none';
-                
-                // CONTROLLO MEMORIA DOPO IL BOOT
                 if(!localStorage.getItem('baionicol_profile')) {
                     const overlay = document.getElementById('calibration-overlay');
                     overlay.style.display = 'flex';
                     setTimeout(() => { overlay.style.opacity = '1'; }, 100);
                 } else {
-                    applyProfile();
-                    avviaDialogo();
+                    applyProfile(); avviaDialogo();
                 }
-            }, 600); // 600ms è la durata dell'animazione crtOff
+            }, 600); 
         }
 
+        // ==========================================
+        // 5. INIZIALIZZAZIONE CENTRALE E ECO MODE
+        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
+            
+            // --- A) GESTIONE ECO MODE ---
+            const ecoBtn = document.getElementById('eco-toggle-btn');
+            if (ecoBtn) {
+                const isEcoActive = localStorage.getItem('baionicol_eco_mode') === 'true';
+                if (isEcoActive) {
+                    document.body.classList.add('eco-active');
+                    ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
+                    ecoBtn.style.color = 'var(--green-neon)'; ecoBtn.style.borderColor = 'var(--green-neon)';
+                } else {
+                    ecoBtn.classList.add('show-tooltip');
+                    setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
+                }
+
+                ecoBtn.addEventListener('click', () => {
+                    SoundEngine.init(); // Attiva audio per sicurezza
+                    if (document.body.classList.contains('eco-active')) {
+                        document.body.classList.remove('eco-active');
+                        localStorage.setItem('baionicol_eco_mode', 'false');
+                        ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
+                        ecoBtn.style.color = 'var(--amber-neon)'; ecoBtn.style.borderColor = 'var(--amber-neon)';
+                        SoundEngine.hover(); 
+                    } else {
+                        document.body.classList.add('eco-active');
+                        localStorage.setItem('baionicol_eco_mode', 'true');
+                        ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
+                        ecoBtn.style.color = 'var(--green-neon)'; ecoBtn.style.borderColor = 'var(--green-neon)';
+                        ecoBtn.classList.remove('show-tooltip');
+                        SoundEngine.bootSuccess(); 
+                    }
+                });
+            }
+
+            // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
             const urlParams = new URLSearchParams(window.location.search);
             const standbyScreen = document.getElementById('standby-screen');
             const bootScreen = document.getElementById('boot-screen');
             const dialogueBox = document.getElementById('dialogue-box');
-            
-            // SE L'UTENTE TORNA INDIETRO DALLE ALTRE PAGINE (Nessun Boot necessario)
+            const btnStartBoot = document.getElementById('btn-start-boot');
+
             if (urlParams.get('return') === 'true') {
-                standbyScreen.style.display = 'none';
-                bootScreen.style.display = 'none'; 
-                dialogueBox.style.display = 'none'; 
+                standbyScreen.style.display = 'none'; bootScreen.style.display = 'none'; dialogueBox.style.display = 'none'; 
                 document.body.classList.add('zoom-normal');
                 applyProfile(); 
-                
                 document.querySelectorAll('.main-area-btn').forEach(area => {
                     area.style.transition = 'none'; area.classList.add('show-area');
                     setTimeout(() => { area.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; }, 50);
                 });
-
-            } else {
-                // L'UTENTE ARRIVA PER LA PRIMA VOLTA: Aspettiamo il click per l'audio!
-                document.getElementById('btn-start-boot').addEventListener('click', () => {
+            } else if (btnStartBoot) {
+                btnStartBoot.addEventListener('click', () => {
                     
-                    // 1. Sblocca l'audio
-                    if(audioCtx.state === 'suspended') audioCtx.resume();
+                    SoundEngine.init(); // <--- LA MAGIA È QUI: Accende l'audio in sicurezza al click!
                     
-                    // 2. Nasconde la schermata di standby
                     standbyScreen.style.display = 'none';
-                    
-                    // 3. Fa partire l'animazione di Boot a cascata
                     setTimeout(() => { 
-                        document.getElementById('line1').style.opacity = '1'; 
-                        SoundEngine.bootBeepDynamic(1); 
-                        
+                        document.getElementById('line1').style.opacity = '1'; SoundEngine.bootBeepDynamic(1); 
                         setTimeout(() => {
-                            simulateLoading('line2', 'prog2', 'OK', 'var(--green-neon)', () => {
-                                SoundEngine.bootBeepDynamic(2);
-                                
+                            simulateLoading('line2', 'prog2', 'OK', 'var(--green-neon)', () => { SoundEngine.bootBeepDynamic(2);
                                 setTimeout(() => {
-                                    simulateLoading('line3', 'prog3', '100%', 'var(--green-neon)', () => {
-                                        SoundEngine.bootBeepDynamic(3);
-                                        
+                                    simulateLoading('line3', 'prog3', '100%', 'var(--green-neon)', () => { SoundEngine.bootBeepDynamic(3);
                                         setTimeout(() => {
-                                            simulateLoading('line4', 'prog4', 'ATTIVO', 'var(--green-neon)', () => {
-                                                SoundEngine.bootBeepDynamic(4);
-                                                
+                                            simulateLoading('line4', 'prog4', 'ATTIVO', 'var(--green-neon)', () => { SoundEngine.bootBeepDynamic(4);
                                                 setTimeout(() => {
                                                     document.getElementById('line5').style.opacity = '1';
                                                     SoundEngine.bootSuccess();
-                                                    
-                                                    // FINE BOOT -> SCATENA EFFETTO CRT
                                                     setTimeout(eseguiEffettoCRT, 1200);
-
                                                 }, 400);
                                             });
                                         }, 400);
@@ -561,53 +543,6 @@
                 });
             }
         });
-        // ==========================================
-        // 5. GESTIONE ECO MODE (Schermata Iniziale)
-        // ==========================================
-        window.addEventListener('DOMContentLoaded', () => {
-            const ecoBtn = document.getElementById('eco-toggle-btn');
-            if (!ecoBtn) return;
-
-            // Legge se l'utente aveva già attivato l'Eco Mode in altre sessioni
-            const isEcoActive = localStorage.getItem('baionicol_eco_mode') === 'true';
-
-            if (isEcoActive) {
-                document.body.classList.add('eco-active');
-                ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
-                ecoBtn.style.color = 'var(--green-neon)';
-                ecoBtn.style.borderColor = 'var(--green-neon)';
-            } else {
-                ecoBtn.classList.add('show-tooltip');
-                setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
-            }
-
-            // Cosa succede al click
-            ecoBtn.addEventListener('click', () => {
-                if (document.body.classList.contains('eco-active')) {
-                    document.body.classList.remove('eco-active');
-                    localStorage.setItem('baionicol_eco_mode', 'false');
-                    ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
-                    ecoBtn.style.color = 'var(--amber-neon)';
-                    ecoBtn.style.borderColor = 'var(--amber-neon)';
-                    SoundEngine.hover(); 
-                } else {
-                    document.body.classList.add('eco-active');
-                    localStorage.setItem('baionicol_eco_mode', 'true');
-                    ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
-                    ecoBtn.style.color = 'var(--green-neon)';
-                    ecoBtn.style.borderColor = 'var(--green-neon)';
-                    ecoBtn.classList.remove('show-tooltip');
-                    SoundEngine.bootSuccess(); 
-                }
-            });
-        });
     </script>
-
 </body>
 </html>
-
-
-
-
-
-
