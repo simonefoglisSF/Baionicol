@@ -4,174 +4,249 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Area Paziente | BAIONICOL</title>
-<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="stylesheet" href="baionicol-core.css">    
-	<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=4">    
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-
-        /* --- HUD OVERLAY PERIFERICO --- */
         .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
         .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; }
         .arc-left { left: -7.5vw; border-right: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
         .arc-right { right: -7.5vw; border-left: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
 
-        /* --- LAYOUT TRITTICO --- */
-        .dashboard-container { display: flex; justify-content: space-between; align-items: stretch; height: 100vh; padding: 120px 5vw 40px 5vw; position: relative; pointer-events: none; gap: 40px; }
+        .bento-wrapper { padding: 120px 4vw 40px 4vw; min-height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; z-index: 20; }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%; max-width: 1400px; }
 
-        .left-column { flex: 1.2; max-width: 450px; pointer-events: auto; display: flex; flex-direction: column; justify-content: center; z-index: 20; gap: 20px;}
-        .right-column { flex: 1.2; max-width: 480px; pointer-events: auto; display: flex; flex-direction: column; justify-content: center; z-index: 20; gap: 15px; }
+        /* BASE CARD CON NUOVO STILE GRADIENTE */
+        .bento-card {
+            background: rgba(11, 19, 30, 0.85); 
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
+
+        /* COLORI SPECIFICI PER SPEZZARE LA MONOTONIA */
+        .bento-mod-1 { background: linear-gradient(145deg, rgba(11,19,30,0.85) 50%, rgba(57,255,20,0.06) 100%); }
+        .bento-mod-2 { background: linear-gradient(145deg, rgba(11,19,30,0.85) 50%, rgba(0,243,255,0.06) 100%); }
+        .bento-mod-wide { background: linear-gradient(145deg, rgba(11,19,30,0.85) 50%, rgba(255,170,0,0.06) 100%); }
         
-        .spline-section { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 45vw; height: 85vh; z-index: 5; pointer-events: auto; overflow: hidden; }
-        spline-viewer { width: 100%; height: calc(100% + 150px); margin-bottom: -150px; background-color: transparent !important; }
+        .bento-interactive:hover { transform: translateY(-5px); cursor: pointer; }
+        .bento-mod-1:hover { border-color: var(--green-neon); box-shadow: 0 10px 30px rgba(57,255,20,0.15); }
+        .bento-mod-2:hover { border-color: var(--cyan-neon); box-shadow: 0 10px 30px rgba(0,243,255,0.15); }
+        .bento-mod-wide:hover { border-color: var(--amber-neon); box-shadow: 0 10px 30px rgba(255,170,0,0.15); }
 
-        .column-header { margin-bottom: 5px; animation: slideInRight 0.8s ease-out forwards; opacity: 0; }
-        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,243,255,0.4); }
-        .column-header h1 { font-size: 38px; color: var(--text-main); line-height: 1; letter-spacing: 1px; }
-        .column-header p { font-size: 16px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MODULO: SINCRONIZZAZIONE NEURALE --- */
-        .sync-panel { background: rgba(5, 5, 5, 0.7); border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideInLeft 0.6s ease-out forwards; opacity: 0; display: flex; flex-direction: column; gap: 12px; }
-        .sync-top-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        /* GRIGLIA */
+        .bento-welcome { grid-column: span 2; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 20px; animation-delay: 0.1s; }
+        .bento-sync { grid-column: span 1; justify-content: center; animation-delay: 0.2s;}
+        .bento-calib { grid-column: span 1; grid-row: span 2; animation-delay: 0.3s;}
+        .bento-mod-1 { grid-column: span 1; animation-delay: 0.4s;}
+        .bento-mod-2 { grid-column: span 1; animation-delay: 0.5s;}
+        .bento-mod-wide { grid-column: span 2; flex-direction: row; align-items: center; gap: 30px; animation-delay: 0.6s;}
+
+        /* TESTO HEADER */
+        .welcome-text-zone { flex: 1; }
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .welcome-text-zone h1 { font-size: 42px; color: var(--text-main); line-height: 1; letter-spacing: 1px; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;}
+        .welcome-text-zone p { font-size: 18px; color: var(--text-muted); line-height: 1.4; max-width: 90%; font-family: 'Rajdhani', sans-serif;}
+        
+        /* ZONA MASCOTTE E FUMETTO */
+        .mascot-zone { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 320px; flex-shrink: 0; position: relative; }
+        .mascot-box { position: relative; width: 150px; height: 120px; display: flex; justify-content: center; align-items: center; z-index: 50; }
+        
+        /* EFFETTO OLOGRAMMA ROBOT */
+        .mascot-box video { 
+            width: 100%; height: 100%; object-fit: contain; 
+            animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
+        }
+
+        /* VIGNETTA MORBIDA E "BLOCCATA" PER EVITARE SALTI PAGINA */
+        .robot-speech {
+            background: rgba(11, 19, 30, 0.95);
+            border: 2px solid var(--cyan-neon);
+            border-radius: 24px;
+            border-bottom-right-radius: 4px; 
+            padding: 15px 20px;
+            width: 100%;
+            min-height: 110px; /* <--- Pre-alloca lo spazio per evitare che la pagina salti */
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--text-main);
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15);
+            margin-bottom: 20px; 
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: left;
+        }
+        /* Freccetta rivolta in basso verso il robot */
+        .robot-speech::after { content: ''; position: absolute; top: 100%; right: 120px; border-width: 12px; border-style: solid; border-color: rgba(11, 19, 30, 0.95) transparent transparent transparent; z-index: 2;}
+        .robot-speech::before { content: ''; position: absolute; top: 100%; right: 120px; border-width: 14px; border-style: solid; border-color: var(--cyan-neon) transparent transparent transparent; z-index: 1;}
+        
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--cyan-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 6px; height: 16px; background-color: var(--cyan-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        /* CONTENUTI INTERNI BENTO */
+        .sync-top-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
         .sync-title { font-family: 'Space Grotesk', sans-serif; color: var(--text-main); font-size: 18px; text-transform: uppercase; letter-spacing: 1px;}
-        .sync-count { font-family: 'VT323', monospace; font-size: 32px; color: var(--cyan-neon); line-height: 1; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); transition: color 0.3s;}
-        
-        .sync-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .sync-count { font-family: 'VT323', monospace; font-size: 38px; color: var(--cyan-neon); line-height: 1; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+        .sync-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; margin-bottom: 15px; }
         .sync-bar-fill { height: 100%; width: 0%; background: var(--cyan-neon); transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.3s; box-shadow: 0 0 10px var(--cyan-neon); }
-        
         .sync-controls { display: flex; justify-content: space-between; align-items: center; }
-        .sync-status-text { font-size: 15px; color: var(--text-muted); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s;}
-        
-        .manual-controls { display: flex; gap: 5px; }
-        .btn-sync-edit { background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.4); color: var(--cyan-neon); padding: 4px 10px; border-radius: 4px; font-family: 'Space Grotesk'; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .sync-status-text { font-size: 16px; color: var(--text-muted); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-sync-edit { background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.4); color: var(--cyan-neon); padding: 5px 12px; border-radius: 6px; font-family: 'Space Grotesk'; font-size: 14px; cursor: pointer; transition: 0.3s; margin-left: 5px;}
         .btn-sync-edit:hover { background: var(--cyan-neon); color: #000; box-shadow: 0 0 10px var(--cyan-neon); }
 
-        /* --- PANNELLO CALIBRAZIONE --- */
-        .calibration-panel { background: rgba(5, 5, 5, 0.7); border: 1px solid var(--cyan-neon); border-radius: 15px; padding: 25px; animation: slideInLeft 0.8s ease-out forwards; opacity: 0; box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 243, 255, 0.05); backdrop-filter: blur(10px); min-height: 330px; display: flex; flex-direction: column; }
-        .panel-title { font-family: 'VT323', monospace; color: var(--cyan-neon); font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 10px; letter-spacing: 1px;}
+        .panel-title { font-family: 'VT323', monospace; color: var(--cyan-neon); font-size: 26px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding-bottom: 15px; letter-spacing: 1px;}
+        .slider-group { position: relative; margin-bottom: 25px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        .slider-label { font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; pointer-events: none;}
+        .val-display { color: var(--cyan-neon); font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; line-height: 1; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5); }
         
-        .slider-group { position: relative; padding: 10px 0; margin-bottom: 15px; }
-        .slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px; }
-        .slider-label { font-size: 15px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; pointer-events: none;}
-        .val-display { color: var(--cyan-neon); font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; line-height: 1; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5); transition: color 0.3s;}
+        /* TESTI DINAMICI DEGLI SLIDER */
+        .slider-feedback { display: block; text-align: right; font-size: 13px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; transition: color 0.3s ease; font-weight: bold; }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; position: relative; z-index: 10; height: 40px; margin: -16px 0; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
-        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: var(--cyan-neon); -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 10px var(--cyan-neon); pointer-events: none; }
+        input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: var(--cyan-neon); -webkit-appearance: none; margin-top: -9px; box-shadow: 0 0 10px var(--cyan-neon); pointer-events: none; transition: 0.3s; }
         
         .action-area { margin-top: auto; }
-
-        .calc-btn { width: 100%; background: rgba(0, 243, 255, 0.05); border: 1px solid var(--cyan-neon); color: var(--cyan-neon); padding: 12px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; font-weight: bold; }
+        .calc-btn { width: 100%; background: rgba(0, 243, 255, 0.05); border: 1px solid var(--cyan-neon); color: var(--cyan-neon); padding: 15px; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; font-weight: bold; cursor: pointer;}
         .calc-btn:hover { background: var(--cyan-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--cyan-neon); }
 
-        .directive-box { padding: 15px; border-radius: 8px; border-left: 4px solid; display: none; background: rgba(0,0,0,0.8); box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: fadeIn 0.4s ease; }
+        .directive-box { padding: 15px; border-radius: 12px; border-left: 4px solid; display: none; background: rgba(5,5,5,0.8); box-shadow: inset 0 0 15px rgba(0,0,0,0.5); animation: fadeIn 0.4s ease; }
         .directive-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; margin-bottom: 5px; letter-spacing: 1px;}
-        .directive-text { font-size: 14px; color: var(--text-main); margin-bottom: 10px; line-height: 1.5; min-height: 42px; }
+        .directive-text { font-size: 14px; color: var(--text-main); margin-bottom: 15px; line-height: 1.5; min-height: 42px; }
+        .directive-btn { display: block; width: 100%; text-align: center; border: none; outline: none; padding: 12px 10px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer;}
         
-        .directive-btn { display: block; width: 100%; text-align: center; border: none; outline: none; padding: 12px 10px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; opacity: 0; }
         .btn-green { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); }
-        .btn-green:hover { box-shadow: 0 0 25px var(--green-neon); transform: translateY(-2px); filter: brightness(1.1);}
-        .btn-orange { background: var(--orange-neon); color: var(--bg-color); box-shadow: 0 0 15px rgba(255, 170, 0, 0.4); }
-        .btn-orange:hover { box-shadow: 0 0 25px var(--orange-neon); transform: translateY(-2px); filter: brightness(1.1);}
+        .btn-green:hover { box-shadow: 0 0 25px var(--green-neon); filter: brightness(1.1);}
+        .btn-orange { background: var(--amber-neon); color: var(--bg-color); box-shadow: 0 0 15px rgba(255, 170, 0, 0.4); }
+        .btn-orange:hover { box-shadow: 0 0 25px var(--amber-neon); filter: brightness(1.1);}
         .btn-red { background: var(--warning-neon); color: var(--text-main); box-shadow: 0 0 15px rgba(255, 51, 102, 0.4); }
-        .btn-red:hover { box-shadow: 0 0 25px var(--warning-neon); transform: translateY(-2px); filter: brightness(1.1);}
+        .btn-red:hover { box-shadow: 0 0 25px var(--warning-neon); filter: brightness(1.1);}
 
-        /* --- BOTTONI OPERATIVI (Destra) --- */
-        .dashboard-btn { background: rgba(5, 5, 5, 0.7); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px 25px; display: flex; align-items: center; gap: 20px; backdrop-filter: blur(10px); transition: all 0.3s ease; text-align: left; position: relative; overflow: hidden; opacity: 0; transform: translateX(50px); animation: slideInRight 0.6s ease-out forwards; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .btn-delay-1 { animation-delay: 0.2s; } .btn-delay-2 { animation-delay: 0.3s; } .btn-delay-3 { animation-delay: 0.4s; }
+        .module-icon { width: 50px; height: 50px; fill: none; stroke: var(--text-muted); stroke-width: 1.5; transition: all 0.3s ease; margin-bottom: 15px;}
+        
+        /* HOVER COLORATI PER I MODULI */
+        .bento-mod-1:hover .module-icon, .bento-mod-1:hover .btn-content h2 { stroke: var(--green-neon); color: var(--green-neon); filter: drop-shadow(0 0 10px var(--green-neon)); }
+        .bento-mod-2:hover .module-icon, .bento-mod-2:hover .btn-content h2 { stroke: var(--cyan-neon); color: var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+        .bento-mod-wide:hover .module-icon, .bento-mod-wide:hover .btn-content h2 { stroke: var(--amber-neon); color: var(--amber-neon); filter: drop-shadow(0 0 10px var(--amber-neon)); }
+        
+        .bento-mod-wide .module-icon { margin-bottom: 0; width: 60px; height: 60px; }
+        .btn-content h2 { font-size: 24px; color: var(--text-main); margin-bottom: 8px; transition: color 0.3s; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px;}
+        .btn-content p { font-size: 15px; color: var(--text-muted); line-height: 1.5;}
+        
+        .bento-interactive::after { content: '➔'; position: absolute; right: 30px; bottom: 30px; font-size: 24px; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+        .bento-mod-1::after { color: var(--green-neon); }
+        .bento-mod-2::after { color: var(--cyan-neon); }
+        .bento-mod-wide::after { color: var(--amber-neon); top: 50%; transform: translateY(-50%) translateX(-10px); bottom: auto; }
+        
+        .bento-interactive:hover::after { opacity: 1; transform: translateX(0); }
+        .bento-mod-wide:hover::after { transform: translateY(-50%) translateX(0); }
 
-        .dashboard-btn:hover { background: rgba(0, 243, 255, 0.08); border-color: var(--cyan-neon); transform: scale(1.02) translateX(-5px) !important; box-shadow: 0 0 25px rgba(0, 243, 255, 0.2); }
-        .dashboard-btn::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--cyan-neon); transform: scaleY(0); transition: transform 0.3s ease; }
-        .dashboard-btn:hover::before { transform: scaleY(1); }
-
-        .module-icon { width: 45px; height: 45px; fill: none; stroke: var(--text-muted); stroke-width: 1.5; transition: all 0.3s ease; flex-shrink: 0; }
-        .dashboard-btn:hover .module-icon { stroke: var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
-
-        .btn-content h2 { font-size: 22px; color: var(--text-main); margin-bottom: 5px; transition: color 0.3s; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px;}
-        .dashboard-btn:hover .btn-content h2 { color: var(--cyan-neon); }
-        .btn-content p { font-size: 14px; color: var(--text-muted); line-height: 1.4;}
-
-        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .bento-calib { grid-column: span 2; grid-row: span 1; }
+        }
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-welcome, .bento-sync, .bento-calib, .bento-mod-1, .bento-mod-2, .bento-mod-wide { grid-column: span 1; }
+            .bento-welcome { flex-direction: column; text-align: center; gap: 20px;}
+            .welcome-text-zone p { max-width: 100%; }
+            .mascot-zone { width: 100%; align-items: center; }
+            .robot-speech::after, .robot-speech::before { right: 50%; }
+            .bento-mod-wide { flex-direction: column; text-align: center; }
+            .bento-interactive::after { display: none; }
+        }
     </style>
 </head>
 <body>
 
     <div class="cursor-ring" id="cursor-ring"></div>
-
-    <div class="hud-overlay">
-        <div class="hud-arc arc-left"></div>
-        <div class="hud-arc arc-right"></div>
-    </div>
+    <div class="hud-overlay"><div class="hud-arc arc-left"></div><div class="hud-arc arc-right"></div></div>
 
     <header>
-        <div class="hud-status">
-            <div class="status-dot"></div>Sistema: Online
-        </div>
-        
+        <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
         <a href="index.html" class="logo interactive-el">BAIONICOL</a>
-        
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
             <a href="index.html?return=true" class="back-btn interactive-el">&larr; Torna al Terminale</a>
         </div>
     </header>
 
-    <div class="dashboard-container">
-
-        <div class="left-column">
+    <div class="bento-wrapper" id="main-wrapper">
+        <div class="bento-grid">
             
-            <div class="column-header" style="animation-name: slideInLeft;">
-                <span class="column-step">STEP 01 //</span>
-                <h1>Calibrazione</h1>
-                <p>Inserisci i parametri vitali per elaborare il protocollo odierno.</p>
+            <div class="bento-card bento-welcome">
+                <div class="welcome-text-zone">
+                    <span class="column-step">PANNELLO OPERATORE //</span>
+                    <h1>Dashboard Riabilitativa</h1>
+                    <p>Monitoraggio dei parametri vitali, analisi del dolore fantasma e accesso rapido ai moduli terapeutici.</p>
+                </div>
+                <div class="mascot-zone">
+                    <div class="robot-speech" id="robot-speech">
+                        <span id="robot-text"></span><span class="blink-cursor"></span>
+                    </div>
+                    <div class="mascot-box">
+                        <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
             </div>
 
-            <div class="sync-panel">
+            <div class="bento-card bento-sync" data-speech="Controllo la tua <span class='speech-hl'>Sincronizzazione</span>. Più ti alleni, più il sistema diventa parte di te!">
                 <div class="sync-top-row">
-                    <span class="sync-title">Sincronizzazione Neurale</span>
+                    <span class="sync-title">Sincronizzazione</span>
                     <span class="sync-count" id="sync-session-count">0 <span style="font-size: 16px; font-family: 'Space Grotesk';">Sess.</span></span>
                 </div>
-                
                 <div class="sync-bar-bg"><div class="sync-bar-fill" id="sync-fill"></div></div>
-                
                 <div class="sync-controls">
                     <span class="sync-status-text" id="sync-level-text">Lv.1: Principiante</span>
-                    <div class="manual-controls">
+                    <div>
                         <button class="btn-sync-edit interactive-el" onclick="editSessions(-1)">-1</button>
                         <button class="btn-sync-edit interactive-el" onclick="editSessions(1)">+1</button>
-                        <button class="btn-sync-edit interactive-el" onclick="manualSet()">✎ Modifica</button>
                     </div>
                 </div>
             </div>
 
-            <div class="calibration-panel">
+            <div class="bento-card bento-calib" data-speech="Come ti senti oggi? Regola <span class='speech-hl'>Dolore e Fatica</span> per generare la tua direttiva sicura.">
                 <div class="panel-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     Check-in Biometrico
                 </div>
-                
-                <div class="slider-group slider-area">
-                    <div class="slider-header">
-                        <span class="slider-label">Dolore Moncone/Fantasma</span> 
-                        <span class="val-display" id="val-dolore">5</span>
-                    </div>
+                <div class="slider-group">
+                    <div class="slider-header"><span class="slider-label">Dolore Moncone / Fantasma</span><span class="val-display" id="val-dolore">5</span></div>
                     <input type="range" class="slider-input interactive-el" id="slide-dolore" min="1" max="10" value="5" oninput="aggiornaValore('val-dolore', this.value, true); resetPanel();">
+                    <span id="label-dolore" class="slider-feedback" style="color: var(--amber-neon);">Dolore Moderato</span>
                 </div>
-
-                <div class="slider-group slider-area">
-                    <div class="slider-header">
-                        <span class="slider-label">Affaticamento Muscolare</span> 
-                        <span class="val-display" id="val-fatica">5</span>
-                    </div>
+                <div class="slider-group" style="margin-bottom: 30px;">
+                    <div class="slider-header"><span class="slider-label">Affaticamento Muscolare</span><span class="val-display" id="val-fatica">5</span></div>
                     <input type="range" class="slider-input interactive-el" id="slide-fatica" min="1" max="10" value="5" oninput="aggiornaValore('val-fatica', this.value, false); resetPanel();">
+                    <span id="label-fatica" class="slider-feedback" style="color: var(--amber-neon);">Faticabilità Media</span>
                 </div>
-
                 <div class="action-area">
-                    <button id="calc-btn" class="calc-btn interactive-el" onclick="calcolaDirettiva()">Analizza e Genera Direttiva</button>
-
+                    <button id="calc-btn" class="calc-btn interactive-el" onclick="calcolaDirettiva()">Analizza Parametri</button>
                     <div id="directive-box" class="directive-box">
                         <div id="dir-title" class="directive-title"></div>
                         <div id="dir-text" class="directive-text"></div>
@@ -179,76 +254,123 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-       <div class="spline-section" id="3d-container">
-            <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
-        </div>
-
-        <div class="right-column">
-            <div class="column-header">
-                <span class="column-step">STEP 02 //</span>
-                <h1>Moduli Operativi</h1>
-                <p>Seleziona l'area di sistema desiderata.</p>
-            </div>
-
-            <div class="dashboard-btn btn-delay-1 interactive-el" onclick="animateAndNavigate('allenamento.html')">
+            <div class="bento-card bento-mod-1 bento-interactive interactive-el" onclick="animateAndNavigate('allenamento.html')" data-speech="Sezione <span style='color:var(--green-neon)'>Sviluppo Muscolare</span>. Costruiamo resistenza e tolleranza al carico!">
                 <svg class="module-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke-dasharray="4 4"/>
-                    <path d="M12 8V16M8 12H16"/>
-                    <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+                    <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke-dasharray="4 4"/><path d="M12 8V16M8 12H16"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
                 </svg>
-                <div class="btn-content">
-                    <h2>Allenamento Motorio</h2>
-                    <p id="desc-allenamento">Sviluppo muscolare, resistenza e tolleranza mioelettrica.</p>
-                </div>
+                <div class="btn-content"><h2>Allenamento Motorio</h2><p id="desc-allenamento">Sviluppo muscolare.</p></div>
             </div>
 
-            <div class="dashboard-btn btn-delay-2 interactive-el" onclick="animateAndNavigate('terapie.html')">
+            <div class="bento-card bento-mod-2 bento-interactive interactive-el" onclick="animateAndNavigate('terapie.html')" data-speech="Hai dolore fantasma? Applichiamo la <span style='color:var(--cyan-neon)'>Mirror Therapy</span> per ingannare la corteccia cerebrale.">
                 <svg class="module-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 4L20 20M20 4L4 20" stroke-width="1"/>
-                    <circle cx="12" cy="12" r="3"/>
-                    <circle cx="6" cy="6" r="2"/>
-                    <circle cx="18" cy="18" r="2"/>
-                    <circle cx="18" cy="6" r="2"/>
-                    <circle cx="6" cy="18" r="2"/>
+                    <path d="M4 4L20 20M20 4L4 20" stroke-width="1"/><circle cx="12" cy="12" r="3"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/>
                 </svg>
-                <div class="btn-content">
-                    <h2>Protocolli Terapeutici</h2>
-                    <p id="desc-terapie">Gestione dolore fantasma, Mirror Therapy e desensibilizzazione.</p>
-                </div>
+                <div class="btn-content"><h2>Protocolli Terapeutici</h2><p id="desc-terapie">Gestione dolore fantasma.</p></div>
             </div>
 
-            <div class="dashboard-btn btn-delay-3 interactive-el" onclick="animateAndNavigate('invasatura.html')">
+            <div class="bento-card bento-mod-wide bento-interactive interactive-el" onclick="animateAndNavigate('invasatura.html')" data-speech="Ricorda di pulire il Socket! Entra qui per la <span style='color:var(--amber-neon)'>Gestione Invasatura</span> e del volume.">
                 <svg class="module-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="4" y="16" width="6" height="4" rx="1"/>
-                    <path d="M7 16v-4l4-4h4"/>
-                    <circle cx="11" cy="12" r="1.5"/>
-                    <circle cx="15" cy="8" r="1.5"/>
-                    <path d="M15 6.5V4a1 1 0 0 1 1-1h2"/>
-                    <path d="M16.5 8H19a1 1 0 0 1 1 1v2"/>
+                    <rect x="4" y="16" width="6" height="4" rx="1"/><path d="M7 16v-4l4-4h4"/><circle cx="11" cy="12" r="1.5"/><circle cx="15" cy="8" r="1.5"/><path d="M15 6.5V4a1 1 0 0 1 1-1h2"/><path d="M16.5 8H19a1 1 0 0 1 1v2"/>
                 </svg>
-                <div class="btn-content">
-                    <h2>Gestione Invasatura</h2>
-                    <p id="desc-invasatura">Igiene, liner in silicone e compensazione del volume.</p>
-                </div>
+                <div class="btn-content"><h2>Gestione Invasatura e Socket</h2><p id="desc-invasatura">Igiene della cute e volume.</p></div>
             </div>
-        </div>
 
+        </div>
     </div>
 
+    <script src="baionicol-core.js"></script>
     <script>
         // ==========================================
-        // 0. MEMORIA PROFILO E ADATTAMENTO UI
+        // LA VOCE DEL ROBOT OTTMIZZATA
+        // ==========================================
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        // ==========================================
+        // GESTIONE DEL FUMETTO DINAMICO
+        // ==========================================
+        let typingTimeout;
+        let isSpeaking = false;
+        const defaultText = "Benvenuto Operatore! Usa questo pannello per monitorare i <span class='speech-hl'>parametri vitali</span> e scegliere la routine.";
+
+        function robotSpeak(htmlText) {
+            clearTimeout(typingTimeout); 
+            isSpeaking = true;
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        
+                        i++;
+                        typingTimeout = setTimeout(type, 12); 
+                    }
+                } else {
+                    isSpeaking = false;
+                }
+            }
+            type();
+        }
+
+        // INIZIALIZZA HOVER INTELLIGENTE (Con anti-spam)
+        let hoverIntentTimer;
+        function initRobotInteractions() {
+            const cards = document.querySelectorAll('.bento-card[data-speech]');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    hoverIntentTimer = setTimeout(() => {
+                        const text = card.getAttribute('data-speech');
+                        robotSpeak(text);
+                    }, 200);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer); 
+                });
+            });
+
+            document.getElementById('main-wrapper').addEventListener('mouseleave', () => {
+                clearTimeout(hoverIntentTimer);
+                robotSpeak(defaultText);
+            });
+        }
+
+
+        // ==========================================
+        // INIZIALIZZAZIONE PAGINA E PROFILO
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // <--- LEGGE LA MEMORIA ECO
-            
             if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
-            const container3D = document.getElementById('3d-container');
             const descAllenamento = document.getElementById('desc-allenamento');
             const descTerapie = document.getElementById('desc-terapie');
             const descInvasatura = document.getElementById('desc-invasatura');
@@ -260,38 +382,27 @@
                 descAllenamento.innerText = "Sviluppo forza di presa, controllo mioelettrico fine e rotazione del polso.";
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto superiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per avambraccio e compensazione volume.";
-                
-                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
-                if(window.innerWidth > 968 && !isEco) {
-                    container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
-                }
             } 
             else if(profile === 'inferiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
                 descAllenamento.innerText = "Distribuzione del carico, Gait Training (passo) e controllo dell'equilibrio.";
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto inferiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per arto inferiore e gestione del volume sotto carico.";
-                
-                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
-                if(window.innerWidth > 968 && !isEco) {
-                    container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
-                }
             }
 
             initSync(); 
+            initRobotInteractions();
+
+            setTimeout(() => { robotSpeak(defaultText); }, 800);
         });
 
-        
         // ==========================================
-        // 2. LOGICA SINCRONIZZAZIONE (SESSIONI TOTALI)
+        // LOGICA SINCRONIZZAZIONE (SESSIONI TOTALI)
         // ==========================================
         let totalSessions = 0;
-
         function initSync() {
             const savedSessions = localStorage.getItem('baionicol_sessions');
-            if (savedSessions !== null) {
-                totalSessions = parseInt(savedSessions);
-            }
+            if (savedSessions !== null) { totalSessions = parseInt(savedSessions); }
             updateSyncUI();
         }
 
@@ -302,36 +413,18 @@
 
             sessionText.innerHTML = `${totalSessions} <span style="font-size: 16px; font-family: 'Space Grotesk';">Sess.</span>`;
 
-            // Calcolo Logica a Livelli in base al numero di sessioni
-            let level = 1;
-            let levelName = "Principiante";
-            let color = "var(--cyan-neon)";
-            let progressInLevel = 0;
+            let level = 1; let levelName = "Principiante"; let color = "var(--cyan-neon)"; let progressInLevel = 0;
 
-            if (totalSessions < 10) {
-                level = 1; levelName = "Principiante";
-                progressInLevel = (totalSessions / 10) * 100;
-            } else if (totalSessions >= 10 && totalSessions < 25) {
-                level = 2; levelName = "Adattamento"; color = "var(--green-neon)";
-                progressInLevel = ((totalSessions - 10) / 15) * 100;
-            } else if (totalSessions >= 25 && totalSessions < 50) {
-                level = 3; levelName = "Integrazione"; color = "var(--orange-neon)";
-                progressInLevel = ((totalSessions - 25) / 25) * 100;
-            } else if (totalSessions >= 50 && totalSessions < 100) {
-                level = 4; levelName = "Avanzato"; color = "var(--warning-neon)";
-                progressInLevel = ((totalSessions - 50) / 50) * 100;
-            } else {
-                level = 5; levelName = "Fusione Totale"; color = "var(--text-main)";
-                progressInLevel = 100; // Cap visivo della barra
-            }
+            if (totalSessions < 10) { level = 1; levelName = "Principiante"; progressInLevel = (totalSessions / 10) * 100;
+            } else if (totalSessions >= 10 && totalSessions < 25) { level = 2; levelName = "Adattamento"; color = "var(--green-neon)"; progressInLevel = ((totalSessions - 10) / 15) * 100;
+            } else if (totalSessions >= 25 && totalSessions < 50) { level = 3; levelName = "Integrazione"; color = "var(--amber-neon)"; progressInLevel = ((totalSessions - 25) / 25) * 100;
+            } else if (totalSessions >= 50 && totalSessions < 100) { level = 4; levelName = "Avanzato"; color = "var(--warning-neon)"; progressInLevel = ((totalSessions - 50) / 50) * 100;
+            } else { level = 5; levelName = "Fusione Totale"; color = "var(--text-main)"; progressInLevel = 100; }
 
             levelText.innerText = `Lv.${level}: ${levelName}`;
             fill.style.width = progressInLevel + '%';
-            
-            fill.style.background = color;
-            fill.style.boxShadow = `0 0 10px ${color}`;
-            sessionText.style.color = color;
-            document.querySelector('.sync-title').style.color = color;
+            fill.style.background = color; fill.style.boxShadow = `0 0 15px ${color}`;
+            sessionText.style.color = color; document.querySelector('.sync-title').style.color = color;
         }
 
         function editSessions(val) {
@@ -342,27 +435,38 @@
             updateSyncUI();
         }
 
-        function manualSet() {
-            SoundEngine.click();
-            let input = prompt("Inserisci il numero esatto di sessioni terapeutiche completate:", totalSessions);
-            if (input !== null && !isNaN(input) && input.trim() !== "") {
-                let parsed = parseInt(input);
-                if (parsed >= 0) {
-                    totalSessions = parsed;
-                    localStorage.setItem('baionicol_sessions', totalSessions);
-                    updateSyncUI();
-                    SoundEngine.success();
-                }
-            }
-        }
-
         // ==========================================
-        // 3. LOGICA CALIBRAZIONE E ALLARME DOLORE
+        // LOGICA CALIBRAZIONE E ALLARME DOLORE
         // ==========================================
         let lastSliderTime = 0;
+        
         function aggiornaValore(id, val, isPain) {
             document.getElementById(id).innerText = val;
-            document.getElementById(id).style.color = getColor(val, isPain);
+            const color = getColor(val, isPain);
+            document.getElementById(id).style.color = color;
+            
+            const slider = document.getElementById(id === 'val-dolore' ? 'slide-dolore' : 'slide-fatica');
+            slider.style.setProperty('--cyan-neon', color); 
+            
+            // LOGICA ETICHETTE MEDICHE
+            const labelId = id === 'val-dolore' ? 'label-dolore' : 'label-fatica';
+            const labelElement = document.getElementById(labelId);
+            labelElement.style.color = color;
+
+            if (isPain) {
+                if (val <= 2) labelElement.innerText = "Nessun Dolore";
+                else if (val <= 4) labelElement.innerText = "Dolore Lieve";
+                else if (val <= 6) labelElement.innerText = "Dolore Moderato";
+                else if (val <= 8) labelElement.innerText = "Dolore Acuto";
+                else labelElement.innerText = "Dolore Severo (Critico)";
+            } else {
+                if (val <= 2) labelElement.innerText = "Muscolatura Rilassata";
+                else if (val <= 4) labelElement.innerText = "Lieve Tensione";
+                else if (val <= 6) labelElement.innerText = "Faticabilità Media";
+                else if (val <= 8) labelElement.innerText = "Muscolo Affaticato";
+                else labelElement.innerText = "Esaurimento Muscolare";
+            }
+
             const now = Date.now();
             if (now - lastSliderTime > 40) { SoundEngine.sliderTick(); lastSliderTime = now; }
         }
@@ -376,84 +480,60 @@
                     if(letter === ' ') return ' ';
                     return chars[Math.floor(Math.random() * chars.length)];
                 }).join('');
-                
-                if(iterations >= finalString.length) {
-                    clearInterval(interval);
-                    document.getElementById('dir-btn').style.opacity = '1';
-                }
+                if(iterations >= finalString.length) { clearInterval(interval); }
                 iterations += 1; 
             }, speed);
         }
 
-        
-
         function getColor(value, isPain) {
             if(value <= 4) return "var(--green-neon)";
-            if(value > 4 && value <= 7) return "var(--orange-neon)";
+            if(value > 4 && value <= 7) return "var(--amber-neon)";
             return "var(--warning-neon)";
         }
 
         function resetPanel() {
             document.getElementById('directive-box').style.display = 'none';
             document.getElementById('calc-btn').style.display = 'block';
-            document.getElementById('dir-btn').style.opacity = '0';
-            document.body.classList.remove('pain-alert');
         }
 
         function calcolaDirettiva() {
             const dolore = parseInt(document.getElementById('slide-dolore').value);
             const fatica = parseInt(document.getElementById('slide-fatica').value);
-            
             const btnCalc = document.getElementById('calc-btn');
             const box = document.getElementById('directive-box');
             const title = document.getElementById('dir-title');
             const textElement = document.getElementById('dir-text');
             const btn = document.getElementById('dir-btn');
 
-            btnCalc.style.display = 'none';
-            box.style.display = 'block';
-            
+            btnCalc.style.display = 'none'; box.style.display = 'block';
             let testoDaDecodificare = "";
 
             if (dolore >= 7) {
-                document.body.classList.add('pain-alert');
-                SoundEngine.warning();
-                box.style.borderColor = 'var(--warning-neon)';
-                title.innerHTML = '⚠️ ALLARME CORTICALE RILEVATO';
-                title.style.color = 'var(--warning-neon)';
-                testoDaDecodificare = "Il livello di dolore indica una forte discrepanza neurale. Il carico fisico è controindicato. Sospendere allenamento.";
-                btn.innerHTML = "AVVIA TERAPIA A SPECCHIO ➔";
-                btn.className = "directive-btn btn-red interactive-el";
+                SoundEngine.warning(); box.style.borderColor = 'var(--warning-neon)';
+                title.innerHTML = '⚠️ ALLARME DOLORE'; title.style.color = 'var(--warning-neon)';
+                testoDaDecodificare = "Forte discrepanza neurale. Carico sconsigliato. Avviare protocollo di gestione dolore fantasma.";
+                btn.innerHTML = "Terapia a Specchio ➔"; btn.className = "directive-btn btn-red interactive-el";
                 btn.onclick = function() { animateAndNavigate('terapie.html'); };
+                robotSpeak("Attenzione operatore! Ho rilevato picchi di dolore eccessivi. Ti sconsiglio l'allenamento fisico oggi.");
             } 
             else if (fatica >= 7) {
-                SoundEngine.warning();
-                box.style.borderColor = 'var(--orange-neon)';
-                title.innerHTML = '🔋 SEGNALE DEBOLE';
-                title.style.color = 'var(--orange-neon)';
-                testoDaDecodificare = "Affaticamento muscolare elevato. L'accumulo di acido lattico interferisce con l'aderenza e i sensori. Evitare carichi zavorrati.";
-                btn.innerHTML = "AVVIA RECUPERO ATTIVO ➔";
-                btn.className = "directive-btn btn-orange interactive-el";
+                SoundEngine.warning(); box.style.borderColor = 'var(--amber-neon)';
+                title.innerHTML = '🔋 SEGNALE DEBOLE'; title.style.color = 'var(--amber-neon)';
+                testoDaDecodificare = "Affaticamento elevato. Interferenza con i sensori mioelettrici. Evitare carichi zavorrati.";
+                btn.innerHTML = "Recupero Attivo ➔"; btn.className = "directive-btn btn-orange interactive-el";
                 btn.onclick = function() { animateAndNavigate('allenamento.html'); };
+                robotSpeak("Sei affaticato. Rischiamo di inviare segnali elettrici sporchi alla protesi. Usa carichi leggeri!");
             } 
             else {
-                SoundEngine.success();
-                box.style.borderColor = 'var(--green-neon)';
-                title.innerHTML = '✔️ SISTEMA STABILE: OK PER CARICO';
-                title.style.color = 'var(--green-neon)';
-                testoDaDecodificare = "I parametri fisiologici sono ottimali. Il muscolo residuo è pronto per sopportare stress meccanico.";
-                btn.innerHTML = "AVVIA ALLENAMENTO MOTORIO ➔";
-                btn.className = "directive-btn btn-green interactive-el";
+                SoundEngine.success(); box.style.borderColor = 'var(--green-neon)';
+                title.innerHTML = '✔️ SISTEMA STABILE'; title.style.color = 'var(--green-neon)';
+                testoDaDecodificare = "Parametri ottimali. Muscolo residuo pronto per sopportare stress meccanico.";
+                btn.innerHTML = "Avvia Allenamento ➔"; btn.className = "directive-btn btn-green interactive-el";
                 btn.onclick = function() { animateAndNavigate('allenamento.html'); };
+                robotSpeak("Sistema stabile e pronto! I tuoi parametri sono eccellenti, possiamo spingere al massimo oggi.");
             }
-
             smoothScramble(textElement, testoDaDecodificare, 15);
         }
     </script>
- <script src="baionicol-core.js"></script>
 </body>
-
 </html>
-
-
-
