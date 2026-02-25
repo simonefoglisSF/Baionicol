@@ -156,6 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
     videos.forEach(video => {
         videoObserver.observe(video);
     });
+}); // <--- ERA QUESTA LA PARENTESI CHE MANCAVA E CHE SPACCAVA TUTTO!
+
 // ==========================================
 // 6. GESTIONE ECO MODE (Performance Saver)
 // ==========================================
@@ -189,7 +191,7 @@ window.addEventListener('DOMContentLoaded', () => {
             ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
             ecoBtn.style.color = 'var(--amber-neon)';
             ecoBtn.style.borderColor = 'var(--amber-neon)';
-            SoundEngine.btnClick(); // Suono di click
+            SoundEngine.click(); // Suono di click
         } else {
             // ACCENDE L'ECO MODE (Sito fulmineo)
             document.body.classList.add('eco-active');
@@ -198,7 +200,8 @@ window.addEventListener('DOMContentLoaded', () => {
             ecoBtn.style.color = 'var(--green-neon)';
             ecoBtn.style.borderColor = 'var(--green-neon)';
             ecoBtn.classList.remove('show-tooltip');
-            SoundEngine.bootSuccess(); // Suono di conferma
+            SoundEngine.success(); // Suono di conferma
         }
     });
 });
+
