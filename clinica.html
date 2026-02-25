@@ -4,133 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Area Clinica | BAIONICOL</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="baionicol-core.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=10">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-                /* --- HUD OVERLAY PERIFERICO --- */
+        /* --- HUD OVERLAY PERIFERICO --- */
         .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
         .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; transition: border-color 0.5s, filter 0.5s; }
         .arc-left { left: -7.5vw; border-right: 3px solid var(--blue-neon); filter: drop-shadow(0 0 10px var(--blue-neon)); }
         .arc-right { right: -7.5vw; border-left: 3px solid var(--blue-neon); filter: drop-shadow(0 0 10px var(--blue-neon)); }
+        
         .defcon-mode .arc-left { border-right-color: var(--danger-neon); filter: drop-shadow(0 0 10px var(--danger-neon)); }
         .defcon-mode .arc-right { border-left-color: var(--danger-neon); filter: drop-shadow(0 0 10px var(--danger-neon)); }
+        .defcon-mode .content-container { background: radial-gradient(circle, rgba(255,51,51,0.05) 0%, transparent 70%); }
 
-        /* --- CONTENITORE PRINCIPALE --- */
-        .content-container { 
-            height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; 
-            padding-top: 80px; position: relative; z-index: 10;
+        /* --- CONTENITORE PRINCIPALE (Aggiustato Padding) --- */
+        .content-container { padding: 100px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; min-height: 100vh;}
+        .view-section { transition: opacity 0.4s ease, transform 0.4s ease; display: none; opacity: 0; transform: scale(0.98); width: 100%; max-width: 1400px; }
+        .view-section.active { display: flex; opacity: 1; transform: scale(1); flex-direction: column; align-items: center; width: 100%;}
+
+        /* =========================================
+           TOP HEADER E MASCOTTE (Limati gli spazi)
+           ========================================= */
+        .bento-header-banner {
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 24px;
+            padding: 25px 40px; backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; width: 100%;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
+
+        .welcome-text-zone { flex: 1; }
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--blue-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .page-title { font-size: 38px; color: var(--text-main); margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+        .page-subtitle { font-size: 17px; color: var(--text-muted); line-height: 1.4; font-family: 'Rajdhani', sans-serif; max-width: 80%;}
+
+        .mascot-zone { display: flex; align-items: center; justify-content: flex-end; position: relative; z-index: 50; }
+        .mascot-box { position: relative; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; }
+        .mascot-box video { width: 100%; height: 100%; object-fit: contain; animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
+        }
+
+        .robot-speech {
+            position: absolute; right: 110%; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 15, 25, 0.95); border: 1px solid var(--blue-neon); border-radius: 12px; 
+            padding: 15px 25px; width: 300px; font-family: 'Rajdhani', sans-serif; font-size: 16px; line-height: 1.4;
+            color: var(--text-main); box-shadow: 0 10px 25px rgba(0, 136, 255, 0.15); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .robot-speech::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 10px; border-style: solid; border-color: transparent transparent transparent rgba(0, 15, 25, 0.95); }
+        .robot-speech::before { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 11px; border-style: solid; border-color: transparent transparent transparent var(--blue-neon); z-index: -1; }
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--blue-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 6px; height: 16px; background-color: var(--blue-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           GRIGLIA BENTO HUB CLINICO
+           ========================================= */
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
+        
+        .bento-card {
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;
+            padding: 35px 25px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); opacity: 0; animation: slideUpFade 0.6s ease-out forwards;
         }
         
-        .view-section { transition: opacity 0.4s ease, transform 0.4s ease; display: none; opacity: 0; transform: scale(0.98); width: 100%; max-width: 1500px; padding: 0 4vw;}
-        .view-section.active { display: flex; opacity: 1; transform: scale(1); flex-direction: column; align-items: center;}
+        .bento-card svg { width: 55px; height: 55px; margin-bottom: 20px; transition: all 0.3s; position: relative; z-index: 2; }
+        .bento-card h2 { font-size: 24px; margin-bottom: 10px; transition: color 0.3s; position: relative; z-index: 2; font-family: 'Space Grotesk'; letter-spacing: 1px;}
+        .bento-card p { font-size: 15px; color: var(--text-muted); line-height: 1.5; position: relative; z-index: 2; }
 
-        /* --- VISTA 1: HUB PRINCIPALE --- */
-        .hub-title { text-align: center; font-size: 42px; color: var(--text-main); margin-bottom: 40px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        .hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%; }
-        
-        .hub-card {
-            background: rgba(10, 10, 10, 0.8); border: 1px solid var(--glass-border); border-radius: 15px;
-            padding: 50px 30px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            min-height: 380px; position: relative; overflow: hidden;
-        }
-        
-        /* Effetto Laser Scanline Continuo */
-        .hub-card::after { content: ''; position: absolute; top: -50%; left: 0; width: 100%; height: 2px; filter: blur(2px); opacity: 0.3; animation: scan 3s linear infinite; pointer-events: none;}
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-
-        .hub-card svg { width: 75px; height: 75px; margin-bottom: 25px; transition: all 0.3s; position: relative; z-index: 2; }
-        .hub-card h2 { font-size: 28px; margin-bottom: 15px; transition: color 0.3s; position: relative; z-index: 2; font-family: 'Space Grotesk'; letter-spacing: 1px;}
-        .hub-card p { font-size: 17px; color: var(--text-muted); line-height: 1.5; position: relative; z-index: 2; }
-
-        .card-batt { border-color: rgba(255, 170, 0, 0.3); }
-        .card-batt svg { color: var(--amber-neon); filter: drop-shadow(0 0 10px rgba(255, 170, 0, 0.5)); }
-        .card-batt::after { background: var(--amber-neon); box-shadow: 0 0 15px var(--amber-neon); }
-        .card-batt:hover { border-color: var(--amber-neon); box-shadow: 0 10px 40px rgba(255, 170, 0, 0.15); transform: translateY(-10px); background: rgba(255, 170, 0, 0.05); }
+        .card-batt { animation-delay: 0.1s; background: linear-gradient(180deg, rgba(11,19,30,0.8) 0%, rgba(255,170,0,0.05) 100%); }
+        .card-batt svg { color: var(--amber-neon); filter: drop-shadow(0 0 10px rgba(255, 170, 0, 0.3)); }
+        .card-batt:hover { border-color: var(--amber-neon); box-shadow: 0 15px 40px rgba(255, 170, 0, 0.15); transform: translateY(-8px); }
         .card-batt:hover h2 { color: var(--amber-neon); }
 
-        .card-liner { border-color: rgba(0, 136, 255, 0.3); }
-        .card-liner svg { color: var(--blue-neon); filter: drop-shadow(0 0 10px rgba(0, 136, 255, 0.5)); }
-        .card-liner::after { background: var(--blue-neon); box-shadow: 0 0 15px var(--blue-neon); animation-delay: 1s;}
-        .card-liner:hover { border-color: var(--blue-neon); box-shadow: 0 10px 40px rgba(0, 136, 255, 0.15); transform: translateY(-10px); background: rgba(0, 136, 255, 0.05); }
+        .card-liner { animation-delay: 0.2s; background: linear-gradient(180deg, rgba(11,19,30,0.8) 0%, rgba(0,136,255,0.05) 100%); }
+        .card-liner svg { color: var(--blue-neon); filter: drop-shadow(0 0 10px rgba(0, 136, 255, 0.3)); }
+        .card-liner:hover { border-color: var(--blue-neon); box-shadow: 0 15px 40px rgba(0, 136, 255, 0.15); transform: translateY(-8px); }
         .card-liner:hover h2 { color: var(--blue-neon); }
 
-        /* L'emergenza pulsa leggermente per attirare l'attenzione */
-        .card-emerg { border-color: rgba(255, 51, 51, 0.4); background: rgba(26, 0, 0, 0.5); animation: emergPulse 2s infinite; }
-        @keyframes emergPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.1); } 50% { box-shadow: 0 0 25px rgba(255, 51, 51, 0.3); } }
+        .card-emerg { animation-delay: 0.3s; background: linear-gradient(180deg, rgba(20,0,0,0.8) 0%, rgba(255,51,51,0.1) 100%); border-color: rgba(255, 51, 51, 0.2); animation: emergPulse 2s infinite, slideUpFade 0.6s ease-out forwards; }
+        @keyframes emergPulse { 0%, 100% { box-shadow: 0 0 15px rgba(255, 51, 51, 0.1); } 50% { box-shadow: 0 0 30px rgba(255, 51, 51, 0.3); } }
         .card-emerg svg { color: var(--danger-neon); filter: drop-shadow(0 0 10px rgba(255, 51, 51, 0.5)); }
-        .card-emerg::after { background: var(--danger-neon); box-shadow: 0 0 15px var(--danger-neon); animation-delay: 2s;}
-        .card-emerg:hover { border-color: var(--danger-neon); box-shadow: 0 10px 40px rgba(255, 51, 51, 0.4); transform: translateY(-10px); background: rgba(255, 51, 51, 0.15); animation: none; }
+        .card-emerg:hover { border-color: var(--danger-neon); box-shadow: 0 15px 40px rgba(255, 51, 51, 0.4); transform: translateY(-8px); animation: slideUpFade 0.6s ease-out forwards; }
         .card-emerg:hover h2 { color: var(--danger-neon); }
 
-        .defcon-mode .clinica-grid, .defcon-mode .bottom-actions { opacity: 0.1; pointer-events: none; filter: blur(3px); }
-
-        /* --- STILI MODULI A SCHERMO INTERO --- */
-        .module-layout { display: flex; flex-direction: column; width: 100%; max-width: 800px;}
+        /* --- STILI MODULI DIAGNOSTICA --- */
+        .module-layout { display: flex; flex-direction: column; width: 100%; max-width: 900px;}
         
         .diag-panel {
-            background: rgba(5, 5, 5, 0.85); border: 1px solid; border-radius: 12px; 
-            padding: 30px 40px; backdrop-filter: blur(15px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); 
-            display: flex; flex-direction: column; width: 100%;
+            background: rgba(11, 19, 30, 0.9); border: 1px solid; border-radius: 24px; 
+            padding: 35px 40px; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+            display: flex; flex-direction: column; width: 100%; animation: slideUpFade 0.4s ease-out forwards;
         }
 
-        .panel-hardware { border-color: var(--amber-neon); box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(255, 170, 0, 0.05); }
-        .panel-interface { border-color: var(--blue-neon); box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 136, 255, 0.05); }
+        .panel-hardware { border-color: rgba(255, 170, 0, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(255, 170, 0, 0.05); }
+        .panel-interface { border-color: rgba(0, 136, 255, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(0, 136, 255, 0.05); }
         
-        .panel-title { font-family: 'VT323', monospace; font-size: 32px; margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
-        .panel-hardware .panel-title { color: var(--amber-neon); border-bottom: 1px solid rgba(255, 170, 0, 0.3); }
-        .panel-interface .panel-title { color: var(--blue-neon); border-bottom: 1px solid rgba(0, 136, 255, 0.3); }
+        .panel-title { font-family: 'Space Grotesk', sans-serif; font-size: 30px; margin-bottom: 20px; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px;}
+        .panel-hardware .panel-title { color: var(--amber-neon); border-bottom: 1px solid rgba(255, 170, 0, 0.2); }
+        .panel-interface .panel-title { color: var(--blue-neon); border-bottom: 1px solid rgba(0, 136, 255, 0.2); }
 
-        .form-group { margin-bottom: 18px; }
-        .form-label { display: block; font-size: 15px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 700;}
-        select, input[type="number"] { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 15px; border-radius: 6px; font-family: 'Space Grotesk'; font-size: 16px; outline: none; transition: 0.3s; appearance: none; cursor: pointer; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700;}
+        select, input[type="number"] { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 15px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 16px; outline: none; transition: 0.3s; appearance: none; cursor: pointer; }
         select optgroup { background: #111111; color: var(--blue-neon); font-family: 'Rajdhani'; font-weight: bold; }
         select option { background: #050505; color: var(--text-main); font-weight: normal; }
-        select:focus, input[type="number"]:focus { border-color: var(--amber-neon); box-shadow: 0 0 10px rgba(255, 170, 0, 0.2); }
+        select:focus, input[type="number"]:focus { border-color: var(--amber-neon); box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); }
         
-        .radio-group { display: flex; gap: 10px; }
-        .radio-btn { flex: 1; text-align: center; padding: 12px 5px; border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: 0.3s; font-size: 14px; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center;}
-        .radio-btn.selected { background: rgba(255, 170, 0, 0.1); border-color: var(--amber-neon); color: var(--amber-neon); font-weight: bold; box-shadow: 0 0 10px rgba(255, 170, 0, 0.2); }
-        .radio-btn span:nth-child(2) { font-size: 12px; }
+        .radio-group { display: flex; gap: 15px; }
+        .radio-btn { flex: 1; text-align: center; padding: 12px 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; cursor: pointer; color: var(--text-muted); transition: 0.3s; font-size: 14px; display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center;}
+        .radio-btn.selected { background: rgba(255, 170, 0, 0.1); border-color: var(--amber-neon); color: var(--amber-neon); font-weight: bold; box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); }
+        .radio-btn span:nth-child(2) { font-size: 12px; font-weight: normal;}
 
-        .symptom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;}
-        .symptom-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: var(--text-main); padding: 15px 10px; border-radius: 6px; font-family: 'Space Grotesk'; font-size: 15px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .symptom-btn:hover { background: rgba(0, 136, 255, 0.1); border-color: var(--blue-neon); color: var(--blue-neon); box-shadow: 0 0 10px rgba(0, 136, 255, 0.2); transform: translateY(-2px);}
-        .symptom-btn.selected { background: rgba(0, 136, 255, 0.2); border-color: var(--blue-neon); color: var(--blue-neon); box-shadow: 0 0 15px rgba(0, 136, 255, 0.4); transform: translateY(-2px);}
+        .symptom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;}
+        .symptom-btn { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: var(--text-main); padding: 15px 10px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 15px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .symptom-btn:hover { background: rgba(0, 136, 255, 0.1); border-color: var(--blue-neon); color: var(--blue-neon); box-shadow: 0 5px 15px rgba(0, 136, 255, 0.2); transform: translateY(-3px);}
+        .symptom-btn.selected { background: rgba(0, 136, 255, 0.2); border-color: var(--blue-neon); color: var(--blue-neon); box-shadow: 0 5px 20px rgba(0, 136, 255, 0.3); transform: translateY(-3px);}
 
-        .action-btn { width: 100%; padding: 15px; border-radius: 6px; font-family: 'Space Grotesk'; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: 0.3s; margin-top: 10px; cursor: pointer; }
-        .btn-hardware { background: rgba(255, 170, 0, 0.1); border: 2px solid var(--amber-neon); color: var(--amber-neon); }
-        .btn-hardware:hover { background: var(--amber-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--amber-neon); }
+        .action-btn { width: 100%; padding: 15px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: 0.3s; margin-top: 10px; cursor: pointer; border: 2px solid transparent;}
+        .btn-hardware { background: rgba(255, 170, 0, 0.1); border-color: var(--amber-neon); color: var(--amber-neon); }
+        .btn-hardware:hover { background: var(--amber-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--amber-neon); }
         
-        .diag-result { margin-top: 20px; padding-top: 25px; border-top: 1px dashed rgba(255,255,255,0.15); font-family: 'Rajdhani', sans-serif; display: none; }
-        .result-text { font-size: 20px; letter-spacing: 0.5px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px; }
-        .result-title { font-family: 'VT323', monospace; font-size: 28px; margin-bottom: 5px; }
+        .diag-result { margin-top: 25px; padding-top: 25px; border-top: 1px dashed rgba(255,255,255,0.15); font-family: 'Rajdhani', sans-serif; display: none; }
+        .result-text { font-size: 18px; letter-spacing: 0.5px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px; }
+        .result-title { font-family: 'VT323', monospace; font-size: 30px; margin-bottom: 10px; text-transform: uppercase;}
 
         .gauge-container { position: relative; width: 130px; height: 130px; margin: 15px auto; display: none; justify-content: center; align-items: center; }
         .battery-gauge { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
-        .gauge-bg { fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 6; }
-        .gauge-fill { fill: none; stroke: var(--amber-neon); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 339.292; stroke-dashoffset: 339.292; transition: stroke-dashoffset 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), stroke 0.5s, filter 0.5s; }
-        .gauge-percentage { position: absolute; font-family: 'VT323', monospace; font-size: 38px; color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .gauge-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 8; }
+        .gauge-fill { fill: none; stroke: var(--amber-neon); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 339.292; stroke-dashoffset: 339.292; transition: stroke-dashoffset 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), stroke 0.5s, filter 0.5s; }
+        .gauge-percentage { position: absolute; font-family: 'VT323', monospace; font-size: 38px; color: var(--text-main); text-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
-        .btn-ticket-inline { background: rgba(0,0,0,0.3); border: 2px solid currentColor; color: currentColor; padding: 15px; border-radius: 8px; font-family: 'Space Grotesk'; font-size: 18px; letter-spacing: 1px; text-transform: uppercase; margin-top: 25px; width: 100%; cursor: pointer; transition: 0.3s; display: none; text-align: center; font-weight: bold;}
-.btn-ticket-inline:hover { box-shadow: 0 0 20px currentColor; filter: brightness(1.2); }
+        .btn-ticket-inline { background: rgba(0,0,0,0.3); border: 2px solid currentColor; color: currentColor; padding: 15px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; margin-top: 20px; width: 100%; cursor: pointer; transition: 0.3s; display: none; text-align: center; font-weight: bold;}
+        .btn-ticket-inline:hover { box-shadow: 0 0 25px currentColor; filter: brightness(1.2); }
 
         /* --- VISTA EMERGENZA (PROTOCOLLO) --- */
         .emergency-fullscreen { 
             max-width: 900px; width: 100%; background: rgba(20, 0, 0, 0.9); 
-            border: 2px solid var(--danger-neon); padding: 40px; border-radius: 12px; 
-            box-shadow: 0 0 60px rgba(255, 51, 51, 0.4); backdrop-filter: blur(15px); 
-            position: relative; overflow: hidden;
+            border: 2px solid var(--danger-neon); padding: 40px; border-radius: 24px; 
+            box-shadow: 0 20px 60px rgba(255, 51, 51, 0.3); backdrop-filter: blur(20px); 
+            position: relative; overflow: hidden; animation: slideUpFade 0.4s ease-out forwards;
         }
-        /* Nastro di pericolo superiore */
         .emergency-fullscreen::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 8px;
-            background: repeating-linear-gradient(45deg, var(--danger-neon), var(--danger-neon) 15px, #000 15px, #000 30px);
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 10px;
+            background: repeating-linear-gradient(45deg, var(--danger-neon), var(--danger-neon) 20px, #000 20px, #000 40px);
         }
 
-        .emergency-header { color: var(--danger-neon); font-family: 'Space Grotesk'; font-size: 38px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; margin-top: 10px;}
+        .emergency-header { color: var(--danger-neon); font-family: 'Space Grotesk'; font-size: 38px; margin-bottom: 10px; display: flex; align-items: center; gap: 20px; margin-top: 10px;}
         
         .glitch-text { display: inline-block; position: relative; }
         .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; opacity: 0.8; }
@@ -138,27 +168,42 @@
         .glitch-text::after { color: var(--amber-neon); z-index: -2; transform: translate(2px, -1px); animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) reverse both infinite; }
         @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-2px, 2px) } 40% { transform: translate(-2px, -2px) } 60% { transform: translate(2px, 2px) } 80% { transform: translate(2px, -2px) } 100% { transform: translate(0) } }
 
-        .emergency-desc { color: var(--text-muted); font-size: 18px; margin-bottom: 30px; line-height: 1.5; border-bottom: 1px solid rgba(255, 51, 51, 0.3); padding-bottom: 20px;}
+        .emergency-desc { color: var(--text-muted); font-size: 18px; margin-bottom: 25px; line-height: 1.6; border-bottom: 1px solid rgba(255, 51, 51, 0.2); padding-bottom: 15px;}
 
-        /* Stile Protocollo a Step */
-        .emergency-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 35px; }
-        .emerg-step { background: rgba(255, 51, 51, 0.05); border: 1px solid rgba(255, 51, 51, 0.3); border-left: 4px solid var(--danger-neon); padding: 20px; border-radius: 0 8px 8px 0; display: flex; gap: 25px; align-items: flex-start; }
-        .step-num { font-family: 'VT323', monospace; font-size: 40px; color: var(--danger-neon); background: rgba(255, 51, 51, 0.15); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 8px; flex-shrink: 0; line-height: 1; box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.5);}
-        .step-text h3 { color: var(--text-main); font-size: 22px; margin-bottom: 8px; letter-spacing: 1px; }
-        .step-text p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+        .emergency-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .emerg-step { background: rgba(255, 51, 51, 0.05); border: 1px solid rgba(255, 51, 51, 0.2); border-left: 4px solid var(--danger-neon); padding: 20px; border-radius: 0 12px 12px 0; display: flex; gap: 20px; align-items: flex-start; }
+        .step-num { font-family: 'VT323', monospace; font-size: 36px; color: var(--danger-neon); background: rgba(255, 51, 51, 0.15); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border-radius: 12px; flex-shrink: 0; line-height: 1; box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.3);}
+        .step-text h3 { color: var(--text-main); font-size: 22px; margin-bottom: 5px; letter-spacing: 1px; font-family: 'Space Grotesk';}
+        .step-text p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
         .step-text strong { color: var(--danger-neon); font-family: 'Space Grotesk'; font-weight: normal; }
 
-        .emerg-close-btn { background: rgba(255, 51, 51, 0.1); border: 2px solid var(--danger-neon); color: var(--danger-neon); padding: 18px 20px; font-family: 'Space Grotesk'; font-size: 20px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 8px; font-weight: bold; letter-spacing: 2px;}
-        .emerg-close-btn:hover { background: var(--danger-neon); color: #000; box-shadow: 0 0 30px var(--danger-neon); }
+        .emerg-close-btn { background: rgba(255, 51, 51, 0.1); border: 2px solid var(--danger-neon); color: var(--danger-neon); padding: 18px; font-family: 'Space Grotesk'; font-size: 18px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 12px; font-weight: bold; letter-spacing: 2px;}
+        .emerg-close-btn:hover { background: var(--danger-neon); color: #000; box-shadow: 0 0 35px var(--danger-neon); }
 
         /* --- MODAL TICKET --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.4s ease; }
-        .ticket-box { background: #050a0f; border: 1px solid var(--blue-neon); padding: 40px; border-radius: 8px; max-width: 550px; width: 90%; font-family: 'VT323', monospace; color: var(--blue-neon); box-shadow: 0 0 40px rgba(0, 136, 255, 0.2); }
-        .ticket-header { font-size: 32px; border-bottom: 2px dashed var(--blue-neon); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
-        .ticket-content { font-size: 20px; line-height: 1.5; color: var(--text-main); margin-bottom: 30px; }
+        .ticket-box { background: #050a0f; border: 1px solid var(--blue-neon); padding: 40px; border-radius: 16px; max-width: 550px; width: 90%; font-family: 'VT323', monospace; color: var(--blue-neon); box-shadow: 0 0 40px rgba(0, 136, 255, 0.2); }
+        .ticket-header { font-size: 32px; border-bottom: 2px dashed var(--blue-neon); padding-bottom: 15px; margin-bottom: 25px; text-align: center; }
+        .ticket-content { font-size: 20px; line-height: 1.6; color: var(--text-main); margin-bottom: 30px; }
         .ticket-barcode { font-family: 'Libre Barcode 39 Text', cursive, monospace; font-size: 50px; text-align: center; margin-top: 20px; opacity: 0.7; letter-spacing: -2px; }
-        .close-modal-btn { background: transparent; border: 1px solid currentColor; color: currentColor; padding: 12px 20px; font-family: 'Space Grotesk'; font-size: 18px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 5px; font-weight: bold;}
-        .close-modal-btn:hover { background: currentColor; color: var(--bg-color); }
+        .close-modal-btn { background: transparent; border: 2px solid currentColor; color: currentColor; padding: 15px 20px; font-family: 'Space Grotesk'; font-size: 18px; cursor: pointer; transition: 0.3s; display: block; width: 100%; text-align: center; border-radius: 8px; font-weight: bold;}
+        .close-modal-btn:hover { background: currentColor; color: var(--bg-color); box-shadow: 0 0 20px currentColor;}
+
+        @media (max-width: 1024px) {
+            .bento-header-banner { flex-direction: column; text-align: center; gap: 20px; padding: 30px; }
+            .page-subtitle { max-width: 100%; }
+            .robot-speech { right: 0; top: 120%; transform: none; width: 100%; z-index: 100; text-align: center;}
+            .robot-speech::after, .robot-speech::before { top: 0; left: 50%; transform: translateX(-50%); border-color: transparent transparent rgba(0, 15, 25, 0.95) transparent; }
+            .robot-speech::before { border-color: transparent transparent var(--blue-neon) transparent; top: -2px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .radio-group { flex-direction: column; }
+            .symptom-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .symptom-grid { grid-template-columns: 1fr; }
+            .diag-panel { padding: 25px 20px; }
+            .emergency-fullscreen { padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -175,7 +220,6 @@
         <a href="index.html" class="logo interactive-el">BAIONICOL</a>
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
-            
             <a href="index.html?return=true" class="back-btn interactive-el" id="btn-back-main">&larr; Torna al Terminale</a>
             <button class="back-btn interactive-el" id="btn-back-hub" style="display: none;" onclick="showHub()">&#8634; Torna all'Hub</button>
         </div>
@@ -184,26 +228,41 @@
     <div class="content-container">
 
         <div id="view-hub" class="view-section active">
-		
-            <h1 class="hub-title">Strumenti di Diagnostica</h1>
-            <div class="hub-grid">
+		    
+            <div class="bento-header-banner">
+                <div class="welcome-text-zone">
+                    <span class="column-step">DIAGNOSTICA DI SISTEMA //</span>
+                    <h1 class="page-title">Strumenti Clinici</h1>
+                    <p class="page-subtitle">Pannello di controllo avanzato per la manutenzione hardware e l'analisi biomeccanica dell'interfaccia protesica.</p>
+                </div>
+                <div class="mascot-zone">
+                    <div class="robot-speech" id="robot-speech">
+                        <span id="robot-text"></span><span class="blink-cursor"></span>
+                    </div>
+                    <div class="mascot-box">
+                        <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-grid">
                 
-                <div class="hub-card card-batt interactive-el" onclick="switchView('view-battery', 'Diagnostica Hardware')">
+                <div class="bento-card card-batt interactive-el" onclick="switchView('view-battery', 'Diagnostica Hardware')" data-speech="Analisi <span style='color:var(--amber-neon)'>Hardware e Batterie</span>. Calcoliamo l'usura dei componenti meccanici e l'autonomia residua.">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect><line x1="22" y1="11" x2="22" y2="13"></line><line x1="6" y1="11" x2="6" y2="13"></line><line x1="10" y1="11" x2="10" y2="13"></line><line x1="14" y1="11" x2="14" y2="13"></line></svg>
                     <h2>Analisi Hardware</h2>
                     <p id="desc-hub-batt">Calcola l'usura delle celle al litio e la vita stimata della protesi.</p>
                 </div>
 
-                <div class="hub-card card-liner interactive-el" onclick="switchView('view-liner', 'Analisi Interfaccia')">
+                <div class="bento-card card-liner interactive-el" onclick="switchView('view-liner', 'Analisi Interfaccia')" data-speech="Analisi <span style='color:var(--blue-neon)'>Interfaccia e Tessuti</span>. Seleziona un sintomo per diagnosticare lo stato dell'invasatura.">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="3"></circle></svg>
                     <h2>Analisi Interfaccia</h2>
                     <p id="desc-hub-liner">Analizzatore sintomatologico per prevenire danni tissutali al moncone.</p>
                 </div>
 
-                <div class="hub-card card-emerg interactive-el" onclick="switchView('view-emergency', 'SAFE MODE')">
+                <div class="bento-card card-emerg interactive-el" onclick="switchView('view-emergency', 'SAFE MODE')" data-speech="⚠️ ATTENZIONE. <span style='color:var(--danger-neon)'>Modalità Emergenza</span>. Entra qui solo per procedure di sblocco forzato dei giunti meccanici.">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     <h2>Emergenza</h2>
-                    <p id="desc-hub-emerg">Procedure di sblocco manuale dei giunti in caso di guasto.</p>
+                    <p id="desc-hub-emerg">Procedure di sblocco manuale dei giunti in caso di guasto critico.</p>
                 </div>
 
             </div>
@@ -284,7 +343,7 @@
                         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="3"></circle></svg>
                     </div>
 
-                    <p style="color: var(--text-main); font-size: 18px; margin-bottom: 25px; line-height: 1.5;">
+                    <p style="color: var(--text-main); font-size: 17px; margin-bottom: 20px; line-height: 1.5;">
                         Seleziona l'anomalia fisica che stai riscontrando per isolare il problema biomeccanico ed evitare danni ai tessuti.
                     </p>
 
@@ -305,7 +364,7 @@
                     <div class="diag-result" id="liner-result" style="border-top-color: var(--blue-neon); margin-top: auto;">
                         <div class="result-title" id="liner-status-text" style="color: var(--blue-neon);">ELABORAZIONE...</div>
                         <div class="result-text" id="liner-desc" style="margin-bottom: 5px;"></div>
-                        <div class="result-text" id="liner-action" style="font-size: 18px; color: var(--text-main); line-height: 1.5; margin-top: 10px; border-left: 3px solid; padding-left: 15px;"></div>
+                        <div class="result-text" id="liner-action" style="font-size: 17px; color: var(--text-main); line-height: 1.5; margin-top: 10px; border-left: 3px solid; padding-left: 15px;"></div>
                         
                         <button class="btn-ticket-inline interactive-el" id="btn-ticket-liner" style="color: var(--blue-neon);" onclick="generateTicket('biomech')">
                             Genera Report Clinico ➔
@@ -355,6 +414,8 @@
             </div>
         </div>
 
+    </div>
+
     <div class="modal-overlay" id="modal-ticket">
         <div class="ticket-box">
             <div class="ticket-header">
@@ -366,9 +427,89 @@
         </div>
     </div>
 
+    <script src="baionicol-core.js"></script>
     <script>
         // ==========================================
-        // 1. MEMORIA E CONTROLLO ACCESSI (NOVITÀ)
+        // LA VOCE DEL ROBOT
+        // ==========================================
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        let typingTimeout;
+        let isSpeaking = false;
+        const defaultText = "Benvenuto nell'<span class='speech-hl'>Area Clinica</span>. Seleziona uno strumento diagnostico per verificare l'integrità del sistema.";
+
+        function robotSpeak(htmlText) {
+            clearTimeout(typingTimeout); 
+            isSpeaking = true;
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            if(!bubble) return;
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        i++;
+                        typingTimeout = setTimeout(type, 12); 
+                    }
+                } else {
+                    isSpeaking = false;
+                }
+            }
+            type();
+        }
+
+        let hoverIntentTimer;
+        function initRobotInteractions() {
+            const cards = document.querySelectorAll('.bento-card[data-speech]');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    hoverIntentTimer = setTimeout(() => {
+                        const text = card.getAttribute('data-speech');
+                        robotSpeak(text);
+                    }, 200);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer); 
+                });
+            });
+
+            const mainWrapper = document.getElementById('view-hub');
+            if(mainWrapper) {
+                mainWrapper.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer);
+                    robotSpeak(defaultText);
+                });
+            }
+        }
+
+
+        // ==========================================
+        // 1. MEMORIA E CONTROLLO ACCESSI 
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
@@ -395,6 +536,9 @@
                 document.getElementById('emerg-superiore-1').style.display = 'none';
                 document.getElementById('emerg-superiore-2').style.display = 'none';
             }
+
+            initRobotInteractions();
+            setTimeout(() => { robotSpeak(defaultText); }, 800);
         });
 
         function resetProfile() {
@@ -404,20 +548,19 @@
             }
         }
 
-        
-
         // ==========================================
         // 3. GESTIONE VISTE (SMISTAMENTO HUB)
         // ==========================================
         function switchView(viewId, headerTitle) {
             SoundEngine.click();
+            clearTimeout(typingTimeout); 
             document.querySelectorAll('.view-section').forEach(view => { view.classList.remove('active'); });
             
             setTimeout(() => {
                 document.getElementById(viewId).classList.add('active');
                 document.getElementById('header-status').innerHTML = `<div class="status-dot"></div>${headerTitle}`;
                 document.getElementById('btn-back-main').style.display = 'none';
-                document.getElementById('profile-badge').style.display = 'none'; // Nascondo badge per pulizia
+                document.getElementById('profile-badge').style.display = 'none'; 
                 document.getElementById('btn-back-hub').style.display = 'inline-flex';
 
                 if(viewId === 'view-emergency') {
@@ -438,8 +581,9 @@
                 document.getElementById('view-hub').classList.add('active');
                 document.getElementById('header-status').innerHTML = `<div class="status-dot"></div>Hub Clinico`;
                 document.getElementById('btn-back-main').style.display = 'inline-flex';
-                document.getElementById('profile-badge').style.display = 'inline-flex'; // Riappare
+                document.getElementById('profile-badge').style.display = 'inline-flex'; 
                 document.getElementById('btn-back-hub').style.display = 'none';
+                robotSpeak(defaultText);
             }, 100);
         }
 
@@ -636,9 +780,5 @@
             });
         }
     </script>
-<script src="baionicol-core.js"></script>
 </body>
-
 </html>
-
-
