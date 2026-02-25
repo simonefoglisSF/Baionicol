@@ -167,13 +167,14 @@ body.eco-active .right-column {
 }
 
 /* Fix per TERAPIE.HTML: Centratura Assoluta "A Cruscotto" */
-body.eco-active #view-menu {
+/* NOTA: Abbiamo aggiunto :not(.hidden) così quando clicchi una terapia, questo blocco si disattiva e permette al menu di sparire davvero! */
+body.eco-active #view-menu:not(.hidden) {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    min-height: 75vh !important; /* Sfrutta tutta l'altezza utile */
-    margin-top: -30px !important; /* Bilancia otticamente lo spazio dell'header */
+    min-height: calc(100vh - 250px) !important; /* Calcolo perfetto al netto dell'header */
+    margin-top: -20px !important; 
 }
 body.eco-active .hub-title {
     margin-bottom: 40px !important;
@@ -193,7 +194,7 @@ body.eco-active .options-container {
     margin: 0 auto !important;
 }
 body.eco-active .therapy-btn {
-    padding: 25px 40px !important; /* Leggermente compattati per farli entrare tutti in una volta */
+    padding: 25px 40px !important; 
 }
 /* Adatta i bottoni per mobile */
 @media (max-width: 768px) {
@@ -300,6 +301,7 @@ body.eco-active .therapy-btn {
         gap: 15px !important;
     }
 }
+
 
 
 
