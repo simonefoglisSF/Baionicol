@@ -395,18 +395,21 @@
 
         function applyProfile() {
             const profile = localStorage.getItem('baionicol_profile');
+            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // <--- LEGGE LA MEMORIA ECO
             badge.style.display = 'block';
             const descClinica = document.getElementById('desc-clinica');
 
             if(profile === 'superiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Superiore]";
                 descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
-                if (window.innerWidth > 968) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
+                if (window.innerWidth > 968 && !isEco) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
                 else container3D.innerHTML = ''; 
             } else if(profile === 'inferiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
                 descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
-                if (window.innerWidth > 968) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
+                if (window.innerWidth > 968 && !isEco) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
                 else container3D.innerHTML = ''; 
             }
         }
@@ -546,3 +549,4 @@
     </script>
 </body>
 </html>
+
