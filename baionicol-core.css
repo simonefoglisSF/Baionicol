@@ -129,10 +129,18 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 
 
 /* 3. COSA SUCCEDE QUANDO L'ECO MODE È ATTIVO */
+/* 3. COSA SUCCEDE QUANDO L'ECO MODE È ATTIVO */
 body.eco-active spline-viewer, 
 body.eco-active .spline-section, 
-body.eco-active #3d-container { 
+body.eco-active #3d-container,
+body.eco-active .hero-mascot-placeholder,
+body.eco-active .mascot-container { 
     display: none !important; 
+}
+
+/* Centra perfettamente i layout quando il robot scompare */
+body.eco-active .hub-layout {
+    justify-content: center !important;
 }
 
 /* Riduce drasticamente i calcoli della scheda video (Blur e Ombre) */
@@ -253,6 +261,7 @@ body.eco-active .hero-dialogue-box {
         gap: 15px !important;
     }
 }
+
 
 
 
