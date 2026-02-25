@@ -381,6 +381,7 @@
         }
 
         // Modifica dinamicamente Bottoni e 3D in base a chi sei
+        // Modifica dinamicamente Bottoni e 3D in base a chi sei, bloccando il 3D su mobile!
         function applyProfile() {
             const profile = localStorage.getItem('baionicol_profile');
             badge.style.display = 'block';
@@ -390,12 +391,22 @@
             if(profile === 'superiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Superiore]";
                 descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
-                container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                // Carica il robot SOLO se siamo su PC o Tablet grande
+                if (window.innerWidth > 968) {
+                    container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                } else {
+                    container3D.innerHTML = ''; // Lascia vuoto su cellulare!
+                }
             } 
             else if(profile === 'inferiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
                 descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
-                container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                // Carica il robot SOLO se siamo su PC o Tablet grande
+                if (window.innerWidth > 968) {
+                    container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
+                } else {
+                    container3D.innerHTML = ''; // Lascia vuoto su cellulare!
+                }
             }
         }
 
@@ -535,5 +546,6 @@
 
 </body>
 </html>
+
 
 
