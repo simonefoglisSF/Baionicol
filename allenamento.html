@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Allenamento | BAIONICOL</title>
-<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="stylesheet" href="baionicol-core.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=8">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
@@ -15,84 +15,141 @@
             --pink-neon: #ff0055;
         }
 
-        body {
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }         
-        /* --- STILI ICONE VETTORIALI --- */
-        .card-icon-svg { width: 85px; height: 85px; margin-bottom: 20px; filter: drop-shadow(0 0 15px currentColor); }
+        body { overflow-y: auto !important; overflow-x: hidden !important; }         
+        
+        .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
+        .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; }
+        .arc-left { left: -7.5vw; border-right: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+        .arc-right { right: -7.5vw; border-left: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+
+        .card-icon-svg { width: 85px; height: 85px; margin-bottom: 15px; filter: drop-shadow(0 0 15px currentColor); transition: all 0.3s ease;}
         .metric-icon { width: 24px; height: 24px; flex-shrink: 0; }
         .btn-icon { width: 22px; height: 22px; flex-shrink: 0; }
 
         /* --- CONTENITORE PRINCIPALE --- */
-        .content-container { padding: 100px 4vw 20px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; }
-        .view-section { transition: opacity 0.5s ease, transform 0.5s ease; }
+        .content-container { padding: 120px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center;}
+        .view-section { transition: opacity 0.5s ease, transform 0.5s ease; width: 100%; max-width: 1400px;}
         .hidden { display: none !important; opacity: 0; transform: scale(0.95); }
 
-        /* --- VISTA 1: CAROUSEL HUB --- */
-        .page-title { font-size: 52px; color: var(--cyan-neon); margin-bottom: 10px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); text-align: center; letter-spacing: 2px; }
-        .page-subtitle { font-size: 22px; color: var(--text-muted); margin-bottom: 15px; text-align: center; }
+        /* =========================================
+           TOP HEADER (STILE BENTO)
+           ========================================= */
+        .bento-header-banner {
+            background: rgba(11, 19, 30, 0.85); 
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 24px;
+            padding: 30px 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
 
-       .carousel-wrapper { position: relative; width: 100%; height: 55vh; min-height: 550px; display: flex; justify-content: center; align-items: center; perspective: 1200px; overflow: visible; }
+        .welcome-text-zone { flex: 1; }
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .page-title { font-size: 42px; color: var(--text-main); margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+        .page-subtitle { font-size: 18px; color: var(--text-muted); line-height: 1.4; font-family: 'Rajdhani', sans-serif; max-width: 80%;}
 
-        .super-card { position: absolute; width: 480px; height: 550px; background: rgba(5, 5, 5, 0.8); border: 1px solid var(--glass-border); border-radius: 25px; backdrop-filter: blur(15px); transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease, z-index 0.6s ease; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 30px 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        /* MASCOTTE E FUMETTO LATERALE */
+        .mascot-zone { display: flex; align-items: center; justify-content: flex-end; position: relative; z-index: 50; }
+        .mascot-box { position: relative; width: 140px; height: 140px; display: flex; justify-content: center; align-items: center; }
+        .mascot-box video { width: 100%; height: 100%; object-fit: contain; animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
+        }
+
+        .robot-speech {
+            position: absolute; right: 110%; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 15, 25, 0.95); border: 1px solid var(--cyan-neon); border-radius: 12px; 
+            padding: 15px 25px; width: 300px; font-family: 'Rajdhani', sans-serif; font-size: 16px; line-height: 1.4;
+            color: var(--text-main); box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .robot-speech::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 10px; border-style: solid; border-color: transparent transparent transparent rgba(0, 15, 25, 0.95); }
+        .robot-speech::before { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 11px; border-style: solid; border-color: transparent transparent transparent var(--cyan-neon); z-index: -1; }
+        
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--cyan-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 6px; height: 16px; background-color: var(--cyan-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+
+        /* =========================================
+           VISTA 1: CAROUSEL HUB (VETRO OLOGRAFICO)
+           ========================================= */
+        .carousel-wrapper { position: relative; width: 100%; height: 500px; display: flex; justify-content: center; align-items: center; perspective: 1200px; overflow: visible; margin-bottom: 20px;}
+
+        /* Stile base delle carte (Vetro Scuro) */
+        .super-card { position: absolute; width: 420px; height: 480px; background: rgba(11, 19, 30, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 25px; backdrop-filter: blur(10px); transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease, filter 0.6s ease, box-shadow 0.6s ease; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 30px; text-align: center; }
+        
         .super-card.active { transform: translateX(0) scale(1) translateZ(0); z-index: 10; opacity: 1; border-width: 2px; }
-        .super-card.prev { transform: translateX(-65%) scale(0.8) translateZ(-150px); z-index: 5; opacity: 0.4; }
-        .super-card.next { transform: translateX(65%) scale(0.8) translateZ(-150px); z-index: 5; opacity: 0.4; }
-        .super-card.hidden-card { transform: translateX(0) scale(0.5) translateZ(-300px); z-index: 1; opacity: 0; pointer-events: none; }
+        /* Le inattive sono più spinte indietro e sbiadite per dare risalto a quella centrale */
+        .super-card.prev { transform: translateX(-60%) scale(0.75) translateZ(-200px); z-index: 5; opacity: 0.3; filter: grayscale(1); cursor: pointer; }
+        .super-card.next { transform: translateX(60%) scale(0.75) translateZ(-200px); z-index: 5; opacity: 0.3; filter: grayscale(1); cursor: pointer; }
+        .super-card.hidden-card { transform: translateX(0) scale(0.5) translateZ(-400px); z-index: 1; opacity: 0; pointer-events: none; }
 
         .card-content-top { display: flex; flex-direction: column; align-items: center; pointer-events: none; }
-        .card-title { font-size: 42px; color: var(--text-main); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px;}
-        .card-subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; text-transform: uppercase;}
-        .card-desc { font-size: 18px; color: var(--text-main); line-height: 1.6; margin-bottom: 20px; }
+        .card-title { font-size: 38px; color: var(--text-main); margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px; transition: color 0.3s;}
+        .card-subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 25px; letter-spacing: 1.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; text-transform: uppercase; width: 80%;}
+        .card-desc { font-size: 16px; color: var(--text-main); line-height: 1.5; font-family: 'Rajdhani', sans-serif;}
         
-        .start-btn { background: transparent; border: 2px solid; padding: 15px 40px; border-radius: 10px; font-size: 22px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: 0.3s; width: 90%; }
+        .start-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 15px 40px; border-radius: 12px; font-size: 18px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: all 0.3s; width: 100%; cursor: pointer;}
 
-        .super-card.active[data-diff="fase1"] { border-color: var(--green-neon); box-shadow: 0 0 40px rgba(57, 255, 20, 0.15); color: var(--green-neon); }
-        .super-card.active[data-diff="fase1"] .card-title { color: var(--green-neon); }
-        .super-card.active[data-diff="fase1"] .start-btn { border-color: var(--green-neon); color: var(--green-neon); }
-        .super-card.active[data-diff="fase1"]:hover .start-btn { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--green-neon); }
+        /* Colori e gradienti dinamici in base all'attributo data-diff SOLO SE ATTIVE */
+        .super-card.active[data-diff="fase1"] { background: linear-gradient(180deg, rgba(11,19,30,0.8) 0%, rgba(57,255,20,0.08) 100%); border-color: var(--green-neon); box-shadow: 0 15px 40px rgba(57, 255, 20, 0.2); }
+        .super-card.active[data-diff="fase1"] .card-title, .super-card.active[data-diff="fase1"] .card-icon-svg { color: var(--green-neon); }
+        .super-card.active[data-diff="fase1"] .start-btn { border-color: var(--green-neon); color: var(--green-neon); background: rgba(57, 255, 20, 0.05); }
+        .super-card.active[data-diff="fase1"]:hover .start-btn { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--green-neon); transform: translateY(-3px);}
 
-        .super-card.active[data-diff="fase2"] { border-color: var(--yellow-neon); box-shadow: 0 0 40px rgba(255, 170, 0, 0.15); color: var(--yellow-neon); }
-        .super-card.active[data-diff="fase2"] .card-title { color: var(--yellow-neon); }
-        .super-card.active[data-diff="fase2"] .start-btn { border-color: var(--yellow-neon); color: var(--yellow-neon); }
-        .super-card.active[data-diff="fase2"]:hover .start-btn { background: var(--yellow-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--yellow-neon); }
+        .super-card.active[data-diff="fase2"] { background: linear-gradient(180deg, rgba(11,19,30,0.8) 0%, rgba(255,170,0,0.08) 100%); border-color: var(--yellow-neon); box-shadow: 0 15px 40px rgba(255, 170, 0, 0.2); }
+        .super-card.active[data-diff="fase2"] .card-title, .super-card.active[data-diff="fase2"] .card-icon-svg { color: var(--yellow-neon); }
+        .super-card.active[data-diff="fase2"] .start-btn { border-color: var(--yellow-neon); color: var(--yellow-neon); background: rgba(255, 170, 0, 0.05);}
+        .super-card.active[data-diff="fase2"]:hover .start-btn { background: var(--yellow-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--yellow-neon); transform: translateY(-3px);}
 
-        .super-card.active[data-diff="fase3"] { border-color: var(--pink-neon); box-shadow: 0 0 40px rgba(255, 0, 85, 0.15); color: var(--pink-neon); }
-        .super-card.active[data-diff="fase3"] .card-title { color: var(--pink-neon); }
-        .super-card.active[data-diff="fase3"] .start-btn { border-color: var(--pink-neon); color: var(--pink-neon); }
-        .super-card.active[data-diff="fase3"]:hover .start-btn { background: var(--pink-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--pink-neon); }
+        .super-card.active[data-diff="fase3"] { background: linear-gradient(180deg, rgba(11,19,30,0.8) 0%, rgba(255,0,85,0.08) 100%); border-color: var(--pink-neon); box-shadow: 0 15px 40px rgba(255, 0, 85, 0.2); }
+        .super-card.active[data-diff="fase3"] .card-title, .super-card.active[data-diff="fase3"] .card-icon-svg { color: var(--pink-neon); }
+        .super-card.active[data-diff="fase3"] .start-btn { border-color: var(--pink-neon); color: var(--pink-neon); background: rgba(255, 0, 85, 0.05);}
+        .super-card.active[data-diff="fase3"]:hover .start-btn { background: var(--pink-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--pink-neon); transform: translateY(-3px);}
 
-        .carousel-controls { display: flex; justify-content: center; gap: 40px; margin-top: 15px; }
-        .nav-btn { background: rgba(5,5,5,0.8); border: 2px solid var(--cyan-neon); color: var(--cyan-neon); width: 65px; height: 65px; border-radius: 50%; font-size: 26px; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: all 0.3s ease; }
-        .nav-btn:hover { background: var(--cyan-neon); color: var(--bg-color); box-shadow: 0 0 25px var(--cyan-neon); transform: scale(1.1); }
+        .carousel-controls { display: flex; justify-content: center; gap: 30px; margin-top: 10px; }
+        .nav-btn { background: rgba(11, 19, 30, 0.85); border: 1px solid var(--cyan-neon); color: var(--cyan-neon); width: 60px; height: 60px; border-radius: 50%; font-size: 24px; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: all 0.3s ease; cursor: pointer;}
+        .nav-btn:hover { background: var(--cyan-neon); color: var(--bg-color); box-shadow: 0 0 20px var(--cyan-neon); transform: scale(1.1); }
 
-        /* --- DETTAGLIO ROUTINE --- */
+        /* --- DETTAGLIO ROUTINE (STILE MEDICO) --- */
         .routine-header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
-        .routine-header h1 { font-size: 55px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 2px; }
-        .routine-header p { font-size: 22px; color: var(--text-muted); }
+        .routine-header h1 { font-size: 55px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 2px; margin-bottom: 5px;}
+        .routine-header p { font-size: 20px; color: var(--text-muted); font-family: 'Rajdhani';}
 
-        .progress-wrapper { position: sticky; top: 110px; z-index: 100; background: rgba(5,5,5,0.9); padding: 20px; border-radius: 15px; border: 1px solid var(--glass-border); backdrop-filter: blur(15px); margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; }
-        .progress-info { display: flex; justify-content: space-between; font-family: 'VT323', monospace; font-size: 28px; color: var(--text-main); letter-spacing: 2px; }
-        .progress-track { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+        .progress-wrapper { position: sticky; top: 110px; z-index: 100; background: rgba(11, 19, 30, 0.95); padding: 20px 30px; border-radius: 15px; border: 1px solid var(--glass-border); backdrop-filter: blur(15px); margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; }
+        .progress-info { display: flex; justify-content: space-between; font-family: 'VT323', monospace; font-size: 26px; color: var(--text-main); letter-spacing: 2px; }
+        .progress-track { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 0 15px currentColor; }
 
-        .exercise-block { display: flex; align-items: stretch; background: rgba(5, 5, 5, 0.7); border: 1px solid var(--glass-border); border-radius: 20px; margin-bottom: 40px; overflow: hidden; backdrop-filter: blur(10px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); transition: all 0.5s ease; }
+        .exercise-block { display: flex; align-items: stretch; background: rgba(11, 19, 30, 0.85); border: 1px solid var(--glass-border); border-radius: 20px; margin-bottom: 40px; overflow: hidden; backdrop-filter: blur(10px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); transition: all 0.5s ease; }
         .exercise-block.completed { opacity: 0.6; filter: grayscale(0.3); border-color: var(--glass-border) !important; box-shadow: none; transform: scale(0.98); }
         .exercise-block.completed .ex-video-col video { opacity: 0; } 
         .exercise-block:not(.completed):hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-        .ex-video-col { flex: 0 0 40%; width: 40%; background: rgba(0,0,0,0.8); border-right: 2px solid var(--glass-border); position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 400px; }
+        .ex-video-col { flex: 0 0 40%; width: 40%; background: rgba(0,0,0,0.6); border-right: 2px solid var(--glass-border); position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 400px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5);}
         .ex-video-col video { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; filter: contrast(1.2) brightness(1.1); transition: opacity 0.5s ease; }
 
         .ex-info-col { flex: 0 0 60%; width: 60%; padding: 50px; display: flex; flex-direction: column; justify-content: center; }
-        .ex-number { font-family: 'Space Grotesk', sans-serif; font-size: 22px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; font-weight: bold;}
-        .ex-title { font-size: 42px; color: var(--text-main); margin-bottom: 25px; font-family: 'Space Grotesk', sans-serif; line-height: 1.1;}
-        .ex-metrics { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .metric-badge { background: rgba(0, 243, 255, 0.08); border: 1px solid rgba(0, 243, 255, 0.4); padding: 12px 20px; border-radius: 8px; font-family: 'VT323', monospace; font-size: 26px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-        .ex-desc { font-size: 20px; color: var(--text-muted); line-height: 1.6; }
+        .ex-number { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 3px; font-weight: bold;}
+        .ex-title { font-size: 42px; color: var(--text-main); margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; line-height: 1.1;}
+        .ex-metrics { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .metric-badge { background: rgba(0, 243, 255, 0.08); border: 1px solid rgba(0, 243, 255, 0.4); padding: 10px 18px; border-radius: 8px; font-family: 'VT323', monospace; font-size: 24px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .ex-desc { font-size: 18px; color: var(--text-muted); line-height: 1.6; }
 
-        .confirm-btn { margin-top: 30px; align-self: flex-start; background: transparent; border: 2px solid; padding: 15px 30px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        .confirm-btn { margin-top: 30px; align-self: flex-start; background: transparent; border: 2px solid; padding: 15px 30px; border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         
         .routine-fase1 .routine-header h1, .routine-fase1 .ex-number, .routine-fase1 .progress-info span { color: var(--green-neon); text-shadow: 0 0 20px rgba(57, 255, 20, 0.3); }
         .routine-fase1 .exercise-block:not(.completed):hover { border-color: var(--green-neon); box-shadow: 0 0 30px rgba(57, 255, 20, 0.15); }
@@ -121,8 +178,18 @@
         #success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
         #success-modal h1 { color: var(--green-neon); font-size: 70px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
         #success-modal p { color: var(--text-main); font-size: 26px; margin-bottom: 40px; font-family: 'Rajdhani'; }
-        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 22px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
+        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 22px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; cursor: pointer;}
         .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }
+
+        @media (max-width: 1024px) {
+            .bento-header-banner { flex-direction: column; text-align: center; gap: 20px; padding: 30px; }
+            .page-subtitle { max-width: 100%; }
+            .robot-speech { right: 0; top: 120%; transform: none; width: 100%; z-index: 100; text-align: center;}
+            .robot-speech::after, .robot-speech::before { top: 0; left: 50%; transform: translateX(-50%); border-color: transparent transparent rgba(0, 15, 25, 0.95) transparent; }
+            .robot-speech::before { border-color: transparent transparent var(--cyan-neon) transparent; top: -2px; }
+            .carousel-wrapper { height: auto; min-height: 400px; }
+            .super-card { width: 90%; max-width: 400px; height: auto; }
+        }
     </style>
 </head>
 <body>
@@ -143,7 +210,7 @@
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo]</div>
 
-            <a href="paziente.html?return=true" class="back-btn interactive-el" id="btn-back-paziente">&larr; Torna all'Area Paziente</a>
+            <a href="paziente.html?return=true" class="back-btn interactive-el" id="btn-back-paziente">&larr; Area Paziente</a>
             <button class="back-btn hidden interactive-el" id="btn-back-hub" onclick="showHub()">&#8634; Cambia Fase</button>
         </div>
     </header>
@@ -157,24 +224,38 @@
     <div class="content-container">
         
         <div id="view-hub" class="view-section">
-            <h1 class="page-title">Programmi di Calibrazione</h1>
-            <p class="page-subtitle">Seleziona la fase di addestramento neuromuscolare.</p>
+            
+            <div class="bento-header-banner">
+                <div class="welcome-text-zone">
+                    <span class="column-step">MODULO ALLENAMENTO //</span>
+                    <h1 class="page-title">Programmi di Calibrazione</h1>
+                    <p class="page-subtitle">Scorri il carosello per visualizzare i dettagli della fase di addestramento neuromuscolare prescritta.</p>
+                </div>
+                <div class="mascot-zone">
+                    <div class="robot-speech" id="robot-speech">
+                        <span id="robot-text"></span><span class="blink-cursor"></span>
+                    </div>
+                    <div class="mascot-box">
+                        <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                    </div>
+                </div>
+            </div>
 
             <div class="carousel-wrapper" id="carousel">
                 
-                <div class="super-card active interactive-el" data-diff="fase1" onclick="if(this.classList.contains('active')) openRoutine('fase1'); else selectCard(0);">
+                <div class="super-card active interactive-el" data-diff="fase1" data-speech="Questa è la <span style='color:var(--green-neon)'>Fase 1: Riattivazione</span>. Risvegliamo i muscoli atrofizzati per creare i primi segnali elettrici senza utilizzare pesi." onclick="if(this.classList.contains('active')) openRoutine('fase1'); else selectCard(0);">
                     <div class="card-content-top">
                         <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                         </svg>
                         <h3 class="card-title">Riattivazione</h3>
                         <p class="card-subtitle">Settimane 1-4</p>
-                        <p class="card-desc" id="card-desc-1">Risveglia i muscoli atrofizzati e comunica con i nervi silenti. Creiamo le basi elettriche vitali per i sensori della tua futura protesi. Nessun carico, pura neuro-modulazione.</p>
+                        <p class="card-desc" id="card-desc-1">Risveglia i muscoli e comunica con i nervi silenti. Creiamo le basi elettriche per i sensori della tua futura protesi.</p>
                     </div>
                     <button class="start-btn interactive-el" onclick="event.stopPropagation(); openRoutine('fase1');">Avvia Modulo</button>
                 </div>
 
-                <div class="super-card next interactive-el" data-diff="fase2" onclick="if(this.classList.contains('active')) openRoutine('fase2'); else selectCard(1);">
+                <div class="super-card next interactive-el" data-diff="fase2" data-speech="Nella <span style='color:var(--yellow-neon)'>Fase 2: Ipertrofia</span> iniziamo a fare sul serio. Applicheremo dei carichi e bande elastiche per costruire una muscolatura densa." onclick="if(this.classList.contains('active')) openRoutine('fase2'); else selectCard(1);">
                     <div class="card-content-top">
                         <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -186,7 +267,7 @@
                     <button class="start-btn interactive-el" onclick="event.stopPropagation(); openRoutine('fase2');">Avvia Modulo</button>
                 </div>
 
-                <div class="super-card prev interactive-el" data-diff="fase3" onclick="if(this.classList.contains('active')) openRoutine('fase3'); else selectCard(2);">
+                <div class="super-card prev interactive-el" data-diff="fase3" data-speech="Attenzione alla <span style='color:var(--pink-neon)'>Fase 3: Resistenza</span>. È l'addestramento definitivo per dominare i movimenti del corpo senza affaticare i sensori." onclick="if(this.classList.contains('active')) openRoutine('fase3'); else selectCard(2);">
                     <div class="card-content-top">
                         <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="7" width="16" height="10" rx="2" ry="2"/>
@@ -458,7 +539,61 @@
 
     </div>
 
+    <script src="baionicol-core.js"></script>
     <script>
+        // ==========================================
+        // LA VOCE DEL ROBOT
+        // ==========================================
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        let typingTimeout;
+        let isSpeaking = false;
+        
+        function robotSpeak(htmlText) {
+            clearTimeout(typingTimeout); 
+            isSpeaking = true;
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            if(!bubble) return;
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        i++;
+                        typingTimeout = setTimeout(type, 12); 
+                    }
+                } else {
+                    isSpeaking = false;
+                }
+            }
+            type();
+        }
+
         // ==========================================
         // 0. MEMORIA PROFILO E TESTI CAMALEONTICI
         // ==========================================
@@ -519,10 +654,8 @@
         });
 
        
-
-       
         // ==========================================
-        // 2. GESTIONE CAROUSEL E NAVIGAZIONE VISTE
+        // 2. GESTIONE CAROUSEL CON MASCOTTE INTEGRATA
         // ==========================================
         const cards = document.querySelectorAll('.super-card');
         let currentIndex = 0;
@@ -530,7 +663,14 @@
         function updateCarousel() {
             cards.forEach((card, index) => {
                 card.classList.remove('active', 'prev', 'next', 'hidden-card');
-                if (index === currentIndex) card.classList.add('active');
+                if (index === currentIndex) {
+                    card.classList.add('active');
+                    // FAI PARLARE IL ROBOT IN BASE ALLA CARTA ATTIVA
+                    const speechText = card.getAttribute('data-speech');
+                    if (speechText) {
+                        robotSpeak(speechText);
+                    }
+                }
                 else if (index === currentIndex - 1 || (currentIndex === 0 && index === cards.length - 1)) card.classList.add('prev');
                 else if (index === currentIndex + 1 || (currentIndex === cards.length - 1 && index === 0)) card.classList.add('next');
                 else card.classList.add('hidden-card');
@@ -541,9 +681,12 @@
         function prevCard() { currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCarousel(); }
         function selectCard(index) { if (index !== currentIndex) { currentIndex = index; updateCarousel(); } }
 
-        updateCarousel();
+        // Inizializza il carosello dopo un piccolo ritardo per far "respirare" l'animazione di entrata
+        setTimeout(() => { updateCarousel(); }, 800);
 
         function openRoutine(routineId) {
+            clearTimeout(typingTimeout); 
+            
             document.getElementById('view-hub').classList.add('hidden');
             document.getElementById('btn-back-paziente').classList.add('hidden');
             document.getElementById('profile-badge').style.display = 'none';
@@ -568,6 +711,7 @@
             setTimeout(() => {
                 document.getElementById('view-hub').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+                robotSpeak("Allenamento registrato con successo. Pronto per la prossima direttiva!");
             }, 400);
         }
 
@@ -599,7 +743,6 @@
             }
         }
 
-        // QUESTA E' LA MAGIA: Salva +1 sessione in memoria quando chiudi la modale di successo!
         function chiudiModalEShowHub() {
             let currentSessions = parseInt(localStorage.getItem('baionicol_sessions')) || 0;
             localStorage.setItem('baionicol_sessions', currentSessions + 1);
@@ -620,9 +763,5 @@
             document.getElementById('prog-text-' + routineId).innerText = '0%';
         }
     </script>
-<script src="baionicol-core.js"></script>
 </body>
-
 </html>
-
-
