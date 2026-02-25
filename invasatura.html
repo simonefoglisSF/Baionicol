@@ -4,61 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Invasatura | BAIONICOL</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="baionicol-core.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=11">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-        .content-container { padding: 100px 4vw 20px 4vw; max-width: 1700px; margin: 0 auto; position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; }
+        /* --- HUD OVERLAY PERIFERICO --- */
+        .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
+        .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; transition: border-color 0.5s, filter 0.5s; }
+        .arc-left { left: -7.5vw; border-right: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+        .arc-right { right: -7.5vw; border-left: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+
+        .content-container { padding: 100px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+        /* =========================================
+           TOP HEADER (STILE BENTO) E MASCOTTE
+           ========================================= */
+        .bento-header-banner {
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 24px;
+            padding: 25px 40px; backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; width: 100%;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
+
+        .welcome-text-zone { flex: 1; }
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .page-title { font-size: 38px; color: var(--text-main); margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+        .page-subtitle { font-size: 17px; color: var(--text-muted); line-height: 1.4; font-family: 'Rajdhani', sans-serif; max-width: 80%;}
+
+        .mascot-zone { display: flex; align-items: center; justify-content: flex-end; position: relative; z-index: 50; }
+        .mascot-box { position: relative; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; }
+        .mascot-box video { width: 100%; height: 100%; object-fit: contain; animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
+        }
+
+        .robot-speech {
+            position: absolute; right: 110%; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 15, 25, 0.95); border: 2px solid var(--cyan-neon); border-radius: 12px; 
+            padding: 15px 25px; width: 300px; font-family: 'Rajdhani', sans-serif; font-size: 16px; line-height: 1.4;
+            color: var(--text-main); box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .robot-speech::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 10px; border-style: solid; border-color: transparent transparent transparent rgba(0, 15, 25, 0.95); }
+        .robot-speech::before { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 12px; border-style: solid; border-color: transparent transparent transparent var(--cyan-neon); z-index: -1; }
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--cyan-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 6px; height: 16px; background-color: var(--cyan-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LAYOUT A GRIGLIA (BENTO) --- */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%; align-items: stretch; margin-bottom: 40px; }
+
+        .bento-card { 
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; 
+            padding: 35px 30px; backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+            display: flex; flex-direction: column; position: relative; overflow: hidden; transition: all 0.3s ease;
+            opacity: 0; animation: slideUpFade 0.6s ease-out forwards;
+        } 
         
-        .page-header { text-align: center; margin-bottom: 40px; }
-        .page-title { font-size: 50px; color: var(--cyan-neon); margin-bottom: 5px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
-        .page-subtitle { font-size: 20px; color: var(--text-muted); }
-
-        /* --- LAYOUT A GRIGLIA (3 COLONNE) --- */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; flex: 1; align-items: stretch; margin-bottom: 60px; }
-
-        .panel { background: rgba(5, 5, 5, 0.75); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px 30px; backdrop-filter: blur(15px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: all 0.3s ease;} 
-        .panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--cyan-neon); opacity: 0.5; }
+        .bento-card:hover { border-color: var(--cyan-neon); box-shadow: 0 10px 30px rgba(0, 243, 255, 0.15); transform: translateY(-5px);}
         
         .panel-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .panel-icon { width: 35px; height: 35px; color: var(--cyan-neon); filter: drop-shadow(0 0 5px var(--cyan-neon)); }
-        .panel-title { font-size: 26px; color: var(--text-main); margin: 0; }
+        .panel-title { font-size: 24px; color: var(--text-main); margin: 0; font-family: 'Space Grotesk'; letter-spacing: 1px;}
 
         /* --- MODULO 1: VOLUME --- */
-        .volume-display { font-family: 'VT323', monospace; font-size: 60px; color: var(--cyan-neon); text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); line-height: 1;}
+        .volume-display { font-family: 'VT323', monospace; font-size: 60px; color: var(--cyan-neon); text-align: center; margin: 20px 0; text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); line-height: 1; transition: color 0.3s;}
         .volume-sub { text-align: center; font-size: 18px; color: var(--text-muted); margin-bottom: 30px; font-family: 'Space Grotesk'; }
         
-        .slider-container { margin-top: auto; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .slider-container { margin-top: auto; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .slider-labels { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 15px; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 30px; position: relative; z-index: 10; cursor: pointer; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
-        input[type=range]::-webkit-slider-thumb { height: 26px; width: 26px; border-radius: 50%; background: var(--cyan-neon); -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 15px var(--cyan-neon); }
+        input[type=range]::-webkit-slider-thumb { height: 26px; width: 26px; border-radius: 50%; background: var(--cyan-neon); -webkit-appearance: none; margin-top: -10px; box-shadow: 0 0 15px var(--cyan-neon); transition: background 0.3s, box-shadow 0.3s;}
 
-        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 16px; line-height: 1.5; border-left: 4px solid var(--cyan-neon); background: rgba(0, 243, 255, 0.05); transition: all 0.3s; }
+        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 16px; line-height: 1.5; border-left: 4px solid var(--cyan-neon); background: rgba(0, 243, 255, 0.05); transition: all 0.3s; font-family: 'Rajdhani';}
 
         /* --- MODULO 2: CUTE --- */
         .skin-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
-        .skin-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); color: var(--text-main); padding: 18px 20px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 16px; cursor: pointer; transition: 0.3s; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .skin-btn { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: var(--text-main); padding: 18px 20px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 16px; cursor: pointer; transition: 0.3s; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .skin-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
         
         .skin-btn.selected-green { background: rgba(57, 255, 20, 0.1); border-color: var(--green-neon); color: var(--green-neon); box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); }
-        .skin-btn.selected-orange { background: rgba(255, 170, 0, 0.1); border-color: var(--orange-neon); color: var(--orange-neon); box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); }
+        .skin-btn.selected-orange { background: rgba(255, 170, 0, 0.1); border-color: var(--amber-neon); color: var(--amber-neon); box-shadow: 0 0 15px rgba(255, 170, 0, 0.2); }
         .skin-btn.selected-red { background: rgba(255, 51, 102, 0.1); border-color: var(--warning-neon); color: var(--warning-neon); box-shadow: 0 0 15px rgba(255, 51, 102, 0.2); }
 
-        .diag-output { margin-top: auto; padding: 20px; border-radius: 10px; font-family: 'Rajdhani'; font-size: 17px; line-height: 1.4; border: 1px solid transparent; background: rgba(0,0,0,0.5); text-align: left; color: var(--text-muted); transition: 0.4s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; gap: 5px;}
+        .diag-output { margin-top: auto; padding: 20px; border-radius: 12px; font-family: 'Rajdhani'; font-size: 17px; line-height: 1.4; border: 1px solid transparent; background: rgba(0,0,0,0.5); text-align: left; color: var(--text-muted); transition: 0.4s; min-height: 100px; display: flex; flex-direction: column; justify-content: center; gap: 5px;}
 
         /* --- MODULO 3: MANUTENZIONE --- */
         .task-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
-        .task-item { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
-        .task-item:hover { background: rgba(0, 243, 255, 0.05); border-color: var(--cyan-neon); }
-        .task-text { font-size: 18px; color: var(--text-main); transition: 0.3s; }
+        .task-item { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 18px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .task-item:hover { background: rgba(0, 243, 255, 0.05); border-color: var(--cyan-neon); transform: translateX(5px);}
+        .task-text { font-size: 16px; color: var(--text-main); transition: 0.3s; font-family: 'Space Grotesk';}
         
-        .check-circle { width: 28px; height: 28px; border: 2px solid var(--text-muted); border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
-        .check-circle svg { width: 16px; height: 16px; opacity: 0; stroke: var(--bg-color); stroke-width: 3; transition: 0.3s; }
+        .check-circle { width: 26px; height: 26px; border: 2px solid var(--text-muted); border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; flex-shrink: 0;}
+        .check-circle svg { width: 14px; height: 14px; opacity: 0; stroke: var(--bg-color); stroke-width: 3; transition: 0.3s; }
 
-        .task-item.completed { background: rgba(57, 255, 20, 0.1); border-color: var(--green-neon); }
+        .task-item.completed { background: rgba(57, 255, 20, 0.1); border-color: var(--green-neon); transform: scale(0.98);}
         .task-item.completed .task-text { color: var(--green-neon); text-decoration: line-through; opacity: 0.8; }
         .task-item.completed .check-circle { background: var(--green-neon); border-color: var(--green-neon); box-shadow: 0 0 10px var(--green-neon); }
         .task-item.completed .check-circle svg { opacity: 1; }
@@ -72,8 +122,17 @@
         #success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
         #success-modal h1 { color: var(--green-neon); font-size: 60px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
         #success-modal p { color: var(--text-main); font-size: 24px; margin-bottom: 40px; font-family: 'Rajdhani'; }
-        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
+        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; cursor: pointer;}
         .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }
+
+        @media (max-width: 1024px) {
+            .bento-header-banner { flex-direction: column; text-align: center; gap: 20px; padding: 30px; }
+            .page-subtitle { max-width: 100%; }
+            .robot-speech { right: 0; top: 120%; transform: none; width: 100%; z-index: 100; text-align: center;}
+            .robot-speech::after, .robot-speech::before { top: 0; left: 50%; transform: translateX(-50%); border-color: transparent transparent rgba(0, 15, 25, 0.95) transparent; }
+            .robot-speech::before { border-color: transparent transparent var(--cyan-neon) transparent; top: -2px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -89,7 +148,7 @@
         <a href="index.html" class="logo interactive-el">BAIONICOL</a>
         <div class="header-actions">
             <div id="profile-badge" class="profile-badge"></div>
-            <a href="paziente.html?return=true" class="back-btn interactive-el">&larr; Torna all'Area Paziente</a>
+            <a href="paziente.html?return=true" class="back-btn interactive-el">&larr; Area Paziente</a>
         </div>
     </header>
 
@@ -100,14 +159,26 @@
     </div>
 
     <div class="content-container">
-        <div class="page-header">
-            <h1 class="page-title">Gestione Invasatura</h1>
-            <p class="page-subtitle">Check-up hardware quotidiano e compensazione dei volumi.</p>
+        
+        <div class="bento-header-banner">
+            <div class="welcome-text-zone">
+                <span class="column-step">MODULO IGIENE //</span>
+                <h1 class="page-title">Gestione Invasatura</h1>
+                <p class="page-subtitle">Check-up hardware quotidiano, analisi cutanea e compensazione dei volumi per garantire l'aderenza della protesi.</p>
+            </div>
+            <div class="mascot-zone">
+                <div class="robot-speech" id="robot-speech">
+                    <span id="robot-text"></span><span class="blink-cursor"></span>
+                </div>
+                <div class="mascot-box">
+                    <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                </div>
+            </div>
         </div>
 
         <div class="dashboard-grid">
             
-            <div class="panel" id="panel-volume">
+            <div class="bento-card panel" id="panel-volume" data-speech="Regola lo spessore delle calze per compensare le variazioni di <span class='speech-hl'>volume</span> del moncone. L'aderenza è sicurezza.">
                 <div class="panel-header">
                     <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                     <h2 class="panel-title">Compensazione Volume</h2>
@@ -116,7 +187,7 @@
                 <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 20px;">Regola lo slider in base alla sensazione attuale dell'invasatura per calcolare lo spessore necessario.</p>
 
                 <div class="volume-display" id="ply-output">0 PLY</div>
-                <div class="volume-sub">Calzata Attuale: <span style="color: var(--green-neon);" id="fit-status">Perfetta</span></div>
+                <div class="volume-sub">Calzata Attuale: <span style="color: var(--cyan-neon);" id="fit-status">Perfetta</span></div>
 
                 <div class="slider-container">
                     <div class="slider-labels">
@@ -131,7 +202,7 @@
                 </div>
             </div>
 
-            <div class="panel" id="panel-cute">
+            <div class="bento-card panel" id="panel-cute" data-speech="Seleziona lo stato della tua <span class='speech-hl'>pelle</span>. Prevenire le piaghe da decubito è essenziale per non interrompere la terapia.">
                 <div class="panel-header">
                     <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="3"></circle></svg>
                     <h2 class="panel-title">Scanner Cutaneo</h2>
@@ -144,10 +215,10 @@
                         Pelle Intatta / Normale <span style="color: var(--green-neon);">●</span>
                     </button>
                     <button class="skin-btn interactive-el" onclick="setSkinDiag('rosso', this)">
-                        Arrossamento Persistente (>15 min) <span style="color: var(--orange-neon);">●</span>
+                        Arrossamento (>15 min) <span style="color: var(--amber-neon);">●</span>
                     </button>
                     <button class="skin-btn interactive-el" onclick="setSkinDiag('piaga', this)">
-                        Vescica, Abrasioni o Piaghe <span style="color: var(--warning-neon);">●</span>
+                        Vescica o Abrasioni <span style="color: var(--warning-neon);">●</span>
                     </button>
                 </div>
 
@@ -156,7 +227,7 @@
                 </div>
             </div>
 
-            <div class="panel" id="panel-manu">
+            <div class="bento-card panel" id="panel-manu" data-speech="Completa i <span class='speech-hl'>task quotidiani</span>. Un'invasatura pulita allunga la vita del silicone e migliora i segnali mioelettrici.">
                 <div class="panel-header">
                     <svg class="panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                     <h2 class="panel-title">Task Manutenzione</h2>
@@ -188,9 +259,86 @@
         </div>
     </div>
 
+    <script src="baionicol-core.js"></script>
     <script>
         // ==========================================
-        // 0. MEMORIA PROFILO (CAMALEONTE)
+        // LA VOCE DEL ROBOT
+        // ==========================================
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        let typingTimeout;
+        let isSpeaking = false;
+        const defaultText = "Benvenuto nel modulo <span class='speech-hl'>Gestione Invasatura</span>. Assicurati che l'interfaccia protesica sia sempre ottimale.";
+
+        function robotSpeak(htmlText) {
+            clearTimeout(typingTimeout); 
+            isSpeaking = true;
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            if(!bubble) return;
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        i++;
+                        typingTimeout = setTimeout(type, 12); 
+                    }
+                } else {
+                    isSpeaking = false;
+                }
+            }
+            type();
+        }
+
+        let hoverIntentTimer;
+        function initRobotInteractions() {
+            const cards = document.querySelectorAll('.bento-card[data-speech]');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    hoverIntentTimer = setTimeout(() => {
+                        const text = card.getAttribute('data-speech');
+                        robotSpeak(text);
+                    }, 200);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer); 
+                });
+            });
+
+            document.querySelector('.dashboard-grid').addEventListener('mouseleave', () => {
+                clearTimeout(hoverIntentTimer);
+                robotSpeak(defaultText);
+            });
+        }
+
+
+        // ==========================================
+        // 0. MEMORIA PROFILO E INIT
         // ==========================================
         let isSuperiore = true;
 
@@ -210,6 +358,9 @@
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
                 document.getElementById('task-3-text').innerText = "3. Pulizia valvola di sfiato e perno (Pin).";
             }
+
+            initRobotInteractions();
+            setTimeout(() => { robotSpeak(defaultText); }, 800);
         });
 
         function resetProfile() {
@@ -218,8 +369,9 @@
                 window.location.href = 'index.html';
             }
         }
+
         // ==========================================
-        // 2. LOGICA CALCOLATORE VOLUME
+        // 2. LOGICA CALCOLATORE VOLUME CON REAZIONE ROBOT
         // ==========================================
         let lastSliderVal = 0;
         function calcolaVolume(val) {
@@ -230,41 +382,45 @@
             const status = document.getElementById('fit-status');
             const advice = document.getElementById('volume-advice');
             const panel = document.getElementById('panel-volume');
+            const sliderThumb = document.getElementById('slide-volume');
 
-            let ply = Math.abs(val) * 2; // Ogni tick equivale a 2 Ply
+            let ply = Math.abs(val) * 2; 
             
             if (val === 0) {
                 display.innerText = "0 PLY"; display.style.color = "var(--cyan-neon)";
-                status.innerText = "Perfetta"; status.style.color = "var(--green-neon)";
+                status.innerText = "Perfetta"; status.style.color = "var(--cyan-neon)";
                 advice.innerText = "Il volume del moncone è stabile. Non è necessario aggiungere o rimuovere calze di spessore.";
                 advice.style.borderColor = "var(--cyan-neon)"; advice.style.color = "var(--text-main)";
-                panel.style.borderColor = "var(--glass-border)";
+                panel.style.borderColor = "rgba(255,255,255,0.05)";
+                sliderThumb.style.setProperty('--cyan-neon', 'var(--cyan-neon)');
+                robotSpeak("Volume stabile. Questa è la condizione ideale per l'aderenza dell'invasatura.");
             } 
             else if (val < 0) {
-                // E' larga (Serve aggiungere)
-                display.innerText = `+${ply} PLY`; display.style.color = "var(--orange-neon)";
-                status.innerText = "Allentata"; status.style.color = "var(--orange-neon)";
-                advice.style.borderColor = "var(--orange-neon)"; advice.style.color = "var(--orange-neon)";
+                display.innerText = `+${ply} PLY`; display.style.color = "var(--amber-neon)";
+                status.innerText = "Allentata"; status.style.color = "var(--amber-neon)";
+                advice.style.borderColor = "var(--amber-neon)"; advice.style.color = "var(--amber-neon)";
                 panel.style.borderColor = "rgba(255, 170, 0, 0.4)";
+                sliderThumb.style.setProperty('--cyan-neon', 'var(--amber-neon)');
                 
                 if (isSuperiore) advice.innerText = `Moncone rimpicciolito. Rischio perdita di contatto con i sensori mioelettrici. Aggiungi calze per un totale di ${ply} Ply sopra il liner in silicone.`;
                 else advice.innerText = `Moncone rimpicciolito. Rischio di affondamento nell'invasatura e pistonnage. Aggiungi ${ply} Ply di calze sopra il liner in silicone.`;
+                
+                robotSpeak("Attenzione: volume ridotto. Aggiungi spessore per evitare instabilità e danni da frizione.");
             } 
             else if (val > 0) {
-                // E' stretta (Serve togliere o fermarsi)
                 display.innerText = `RIMUOVI`; display.style.color = "var(--warning-neon)";
                 status.innerText = "Compressione"; status.style.color = "var(--warning-neon)";
                 advice.style.borderColor = "var(--warning-neon)"; advice.style.color = "var(--warning-neon)";
                 panel.style.borderColor = "rgba(255, 51, 102, 0.4)";
+                sliderThumb.style.setProperty('--cyan-neon', 'var(--warning-neon)');
 
                 advice.innerText = `Moncone gonfio (edema o ritenzione). Togli eventuali calze aggiuntive. Se il dolore persiste senza calze, rimuovi la protesi per 30 min.`;
+                robotSpeak("Allarme compressione. Rimuovi le calze aggiuntive per far defluire i liquidi.");
             }
         }
 
-        
-
         // ==========================================
-        // 3. LOGICA SCANNER CUTANEO
+        // 3. LOGICA SCANNER CUTANEO CON REAZIONE ROBOT
         // ==========================================
         function setSkinDiag(state, btn) {
             document.querySelectorAll('.skin-btn').forEach(b => {
@@ -276,27 +432,30 @@
 
             if (state === 'ok') {
                 btn.classList.add('selected-green');
-                SoundEngine.good();
+                SoundEngine.resultGood();
                 output.style.borderColor = 'var(--green-neon)'; output.style.color = 'var(--green-neon)';
                 output.style.background = 'rgba(57, 255, 20, 0.05)';
                 panel.style.borderColor = "rgba(57, 255, 20, 0.4)";
                 output.innerText = "Parametri cutanei ottimali. L'aderenza del silicone non ha creato danni da frizione.";
+                robotSpeak("Ottimo! La tua pelle è intatta. Continua a mantenere un'igiene rigorosa.");
             } 
             else if (state === 'rosso') {
                 btn.classList.add('selected-orange');
-                SoundEngine.bad();
-                output.style.borderColor = 'var(--orange-neon)'; output.style.color = 'var(--orange-neon)';
+                SoundEngine.playTone(300, 'triangle', 0.2, 0.05);
+                output.style.borderColor = 'var(--amber-neon)'; output.style.color = 'var(--amber-neon)';
                 output.style.background = 'rgba(255, 170, 0, 0.05)';
                 panel.style.borderColor = "rgba(255, 170, 0, 0.4)";
                 output.innerText = "ATTENZIONE: Pressione asimmetrica. Monitorare la zona. Se l'arrossamento è su una sporgenza ossea, potrebbe servire una modifica all'invasatura.";
+                robotSpeak("Rilevato arrossamento. Monitoralo e se non sparisce contatta il tecnico ortopedico.");
             } 
             else if (state === 'piaga') {
                 btn.classList.add('selected-red');
-                SoundEngine.bad();
+                SoundEngine.resultBad();
                 output.style.borderColor = 'var(--warning-neon)'; output.style.color = 'var(--warning-neon)';
                 output.style.background = 'rgba(255, 51, 102, 0.05)';
                 panel.style.borderColor = "var(--warning-neon)";
-                output.innerHTML = "<strong style='font-family: Space Grotesk; font-size: 18px; letter-spacing: 1px;'>⚠️ CRITICITÀ RILEVATA</strong>Sospendere l'uso della protesi per evitare necrosi o infezioni. Applicare medicazione idrocolloidale e contattare il tecnico ortopedico.";
+                output.innerHTML = "<strong style='font-family: Space Grotesk; font-size: 18px; letter-spacing: 1px;'>⚠️ CRITICITÀ RILEVATA</strong><br>Sospendere l'uso della protesi per evitare infezioni. Applicare medicazione e contattare il medico.";
+                robotSpeak("Criticità severa! Sospendi l'utilizzo dell'invasatura immediatamente per evitare necrosi.");
             }
         }
 
@@ -318,25 +477,18 @@
             if (perc === 100) {
                 panel.style.borderColor = "var(--cyan-neon)";
                 SoundEngine.success();
+                robotSpeak("Task di manutenzione completati! Il tuo hardware ti ringrazia.");
                 setTimeout(() => { document.getElementById('success-modal').style.display = 'flex'; }, 800);
             } else {
-                panel.style.borderColor = "var(--glass-border)";
+                panel.style.borderColor = "rgba(255,255,255,0.05)";
             }
         }
 
         function chiudiModalEShowPaziente() {
-            // Aggiunge +1 alla Sincronizzazione Neurale di paziente.html
             let currentSessions = parseInt(localStorage.getItem('baionicol_sessions')) || 0;
             localStorage.setItem('baionicol_sessions', currentSessions + 1);
-            
             window.location.href = 'paziente.html?return=true';
         }
-
     </script>
-<script src="baionicol-core.js"></script>
 </body>
-
 </html>
-
-
-
