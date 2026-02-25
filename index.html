@@ -603,7 +603,8 @@
         // ==========================================
         // 5. INIZIALIZZAZIONE CENTRALE E ECO MODE
         // ==========================================
-        window.addEventListener('DOMContentLoaded', () => {
+        // L'attivazione è ora ISTANTANEA. Non aspetta più il caricamento di Spline.
+        (() => {
             
             // --- A) GESTIONE ECO MODE ---
             const ecoBtn = document.getElementById('eco-toggle-btn');
@@ -614,7 +615,7 @@
                     ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
                     ecoBtn.style.color = 'var(--green-neon)'; 
                     ecoBtn.style.borderColor = 'var(--green-neon)';
-                    ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; // FIX SFONDO VERDE
+                    ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; 
                 } else {
                     ecoBtn.classList.add('show-tooltip');
                     setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
@@ -628,7 +629,7 @@
                         ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
                         ecoBtn.style.color = 'var(--amber-neon)'; 
                         ecoBtn.style.borderColor = 'var(--amber-neon)';
-                        ecoBtn.style.background = 'rgba(255, 170, 0, 0.1)'; // FIX SFONDO ARANCIONE
+                        ecoBtn.style.background = 'rgba(255, 170, 0, 0.1)'; 
                         SoundEngine.hover(); 
                     } else {
                         document.body.classList.add('eco-active');
@@ -636,14 +637,14 @@
                         ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
                         ecoBtn.style.color = 'var(--green-neon)'; 
                         ecoBtn.style.borderColor = 'var(--green-neon)';
-                        ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; // FIX SFONDO VERDE
+                        ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; 
                         ecoBtn.classList.remove('show-tooltip');
                         SoundEngine.bootSuccess(); 
                     }
                 });
             }
 
-          // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
+            // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
             const urlParams = new URLSearchParams(window.location.search);
             const standbyScreen = document.getElementById('standby-screen');
             const bootScreen = document.getElementById('boot-screen');
@@ -654,8 +655,8 @@
                 standbyScreen.style.display = 'none'; 
                 bootScreen.style.display = 'none'; 
                 dialogueBox.style.display = 'none'; 
-                dialogueBox.style.opacity = '0'; // Assicura trasparenza
-                dialogueBox.style.pointerEvents = 'none'; // Distrugge il "muro di vetro"
+                dialogueBox.style.opacity = '0'; 
+                dialogueBox.style.pointerEvents = 'none'; 
                 
                 document.body.classList.add('zoom-normal');
                 applyProfile(); 
@@ -666,7 +667,7 @@
             } else if (btnStartBoot) {
                 btnStartBoot.addEventListener('click', () => {
                     
-                    SoundEngine.init(); // <--- LA MAGIA È QUI: Accende l'audio in sicurezza al click!
+                    SoundEngine.init(); // Accende l'audio in sicurezza al click!
                     
                     standbyScreen.style.display = 'none';
                     setTimeout(() => { 
@@ -691,10 +692,11 @@
                     }, 500); 
                 });
             }
-        });
+        })();
     </script>
 </body>
 </html>
+
 
 
 
