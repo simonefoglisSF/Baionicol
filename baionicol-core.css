@@ -166,21 +166,34 @@ body.eco-active .right-column {
     max-width: 600px !important;
 }
 
-/* Fix per TERAPIE.HTML: Centra i bottoni, li alza e non li fa tagliare */
+/* Fix per TERAPIE.HTML: Centratura Assoluta "A Cruscotto" */
+body.eco-active #view-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 75vh !important; /* Sfrutta tutta l'altezza utile */
+    margin-top: -30px !important; /* Bilancia otticamente lo spazio dell'header */
+}
+body.eco-active .hub-title {
+    margin-bottom: 40px !important;
+    width: 100% !important;
+    text-align: center !important;
+}
 body.eco-active .hub-layout {
     justify-content: center !important;
-    align-items: flex-start !important; /* Spinge verso l'alto */
-    min-height: auto !important; /* Toglie il blocco invisibile in altezza */
-    margin-top: 20px !important;
+    align-items: center !important; 
+    min-height: auto !important; 
+    margin-top: 0 !important;
+    width: 100% !important;
 }
 body.eco-active .options-container {
     flex: 1 !important;
-    max-width: 900px !important; /* Allarga i bottoni in modo elegante */
+    max-width: 900px !important; 
     margin: 0 auto !important;
-    padding-bottom: 50px !important; /* Evita che l'ultimo bottone venga tagliato fuori */
 }
 body.eco-active .therapy-btn {
-    padding: 30px 40px !important;
+    padding: 25px 40px !important; /* Leggermente compattati per farli entrare tutti in una volta */
 }
 /* Adatta i bottoni per mobile */
 @media (max-width: 768px) {
