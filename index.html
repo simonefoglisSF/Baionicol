@@ -231,9 +231,14 @@
         <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
         <a href="#" class="logo interactive-el">BAIONICOL</a>
         <div class="header-actions">
-            <div id="profile-badge" class="profile-badge interactive-el" onclick="resetProfile()">[⚙️ Profilo: Da Def.]</div>
-            <div class="hud-clock" id="clock">Time: 00:00:00</div>
-        </div>
+    <button id="eco-toggle-btn" class="eco-btn interactive-el">
+        ⚡ ECO: OFF 
+        <div class="eco-tooltip">Se il sito lagga, cliccami!</div>
+    </button>
+    
+    <div class="profile-badge" id="profile-badge" style="display: none;">[⚙️ Profilo: In Caricamento...]</div>
+    <a href="index.html?return=true" class="back-btn interactive-el">← Torna al Terminale</a>
+</div>
     </header>
     
     <section id="assistant" class="hero">
@@ -546,6 +551,7 @@
 
 </body>
 </html>
+
 
 
 
