@@ -5,90 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BAIONICOL | Terminale Principale</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=13">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --bg-color: #050505;
-            --surface-color: #111111;
-            --cyan-neon: #00f3ff;
-            --green-neon: #39ff14;
-            --amber-neon: #ffaa00; 
-            --text-main: #e0e0e0;
-            --text-muted: #888888;
-            --glass-bg: rgba(0, 243, 255, 0.04);
-            --glass-border: rgba(0, 243, 255, 0.25);
-        }
-
-        /* --- RESPONSIVE MOBILE SCHERMATA INIZIALE --- */
-        @media (max-width: 968px) {
-            * { cursor: auto !important; }
-            .cursor-ring, .hud-arc, .hud-reticle-top, .hud-dial { display: none !important; }
-            
-            /* 1. SPEGNIMENTO FORZATO DEL 3D SU MOBILE */
-            spline-viewer, #3d-container, .hero-mascot-placeholder { display: none !important; }
-            
-            /* 2. HEADER COMPATTO */
-            header { display: flex; flex-direction: column; align-items: center; position: relative; height: auto; padding: 15px 10px; background: rgba(5,5,5,0.95); z-index: 1000; gap: 10px;}
-            .hud-status, .logo, .header-actions { position: relative; left: auto; right: auto; top: auto; transform: none; margin: 0; justify-content: center; text-align: center; width: 100%; flex-wrap: wrap;}
-            .hud-clock { display: none; } 
-            .profile-badge { font-size: 13px; padding: 8px 12px; margin: 0;}
-            
-            /* 3. IMPAGINAZIONE FUMETTO E BOTTONI IN COLONNA */
-            .hero { flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 20px; height: auto; min-height: 100vh;}
-            
-            .hero-dialogue-box { position: relative !important; top: auto !important; left: auto !important; transform: none !important; width: 95% !important; max-width: 95% !important; padding: 25px 20px !important; margin-bottom: 20px !important; margin-top: 20px !important;}
-            .hero h1 { font-size: 24px !important; min-height: auto !important; line-height: 1.4 !important; }
-            
-            /* 4. I DUE BOTTONI GRANDI (Impilati uno sull'altro) */
-            .main-area-btn { position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; width: 95% !important; padding: 25px 15px !important; margin: 10px 0 !important; transform: scale(1) !important; gap: 10px;}
-            .main-area-btn.show-area { transform: scale(1) !important; opacity: 1; pointer-events: auto; }
-            .area-title { font-size: 24px !important; }
-            .area-desc { font-size: 16px !important; }
-            
-            /* 5. MODALE DI CALIBRAZIONE */
-            .calib-box { width: 95%; padding: 25px 15px; }
-            .calib-options { flex-direction: column; gap: 15px;}
-            .calib-btn { padding: 15px; font-size: 18px; width: 100%; }
-        }
-
-        /* --- CURSORE "CYBER-RADAR" --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2300f3ff'/%3E%3C/svg%3E") 4 4, auto !important; }
-        .interactive-el, button, a, .main-area-btn { cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2339ff14'/%3E%3C/svg%3E") 4 4, pointer !important; }
-
-        .cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1px solid var(--cyan-neon); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 100000; box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease, transform 0.1s; }
-        .cursor-ring.hovering { width: 50px; height: 50px; border-color: var(--green-neon); border-radius: 8px; border-width: 2px; border-style: dashed; box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); }
-
-        body {
-            font-family: 'Rajdhani', sans-serif; background-color: var(--bg-color); color: var(--text-main); overflow: hidden; 
-            background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
-        }
-
-        body.zoom-in { transform: scale(1.5); opacity: 0; }
-        body.zoom-normal { transform: scale(1); opacity: 1; }
-
-        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; }
-
-        /* --- HEADER --- */
-        header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(8px); z-index: 1000; border-bottom: 1px solid rgba(0, 243, 255, 0.1); pointer-events: none; }
-        .hud-status { position: absolute; left: 50px; top: 50%; transform: translateY(-50%); font-family: 'VT323', monospace; color: var(--green-neon); font-size: 22px; letter-spacing: 2px; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 5px rgba(57, 255, 20, 0.5); pointer-events: auto; }
-        .status-dot { width: 10px; height: 10px; background-color: var(--green-neon); border-radius: 50%; box-shadow: 0 0 10px var(--green-neon); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        
-        .logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: 'Space Grotesk', sans-serif; font-size: 38px; color: var(--text-main); font-weight: 700; letter-spacing: 6px; text-decoration: none; pointer-events: auto; }
-        .logo span { color: var(--cyan-neon); text-shadow: 0 0 15px var(--cyan-neon); }
-        
-        .header-actions { position: absolute; right: 50px; top: 50%; transform: translateY(-50%); display: flex; gap: 20px; align-items: center; pointer-events: auto; }
-        .hud-clock { font-family: 'VT323', monospace; color: var(--cyan-neon); font-size: 22px; letter-spacing: 2px; text-shadow: 0 0 8px var(--cyan-neon); }
-        
-        .profile-badge {
-            background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan-neon); color: var(--cyan-neon);
-            padding: 5px 15px; border-radius: 5px; font-family: 'Space Grotesk'; font-size: 14px; letter-spacing: 1px;
-            cursor: pointer; transition: 0.3s; display: none; 
-        }
-        .profile-badge:hover { background: var(--amber-neon); border-color: var(--amber-neon); color: #000; box-shadow: 0 0 15px var(--amber-neon); }
-
         /* --- HUD OVERLAY --- */
         .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
         .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; transition: opacity 0.5s ease; }
@@ -103,163 +23,123 @@
         @keyframes spinSlow { 100% { transform: rotate(360deg); } }
         @keyframes spinFast { 100% { transform: rotate(360deg); } }
 
-        /* --- BOOT SEQUENCE --- */
-        #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 10000;
-            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-            padding: 50px; font-family: 'VT323', monospace; color: var(--green-neon); font-size: 22px; 
-        }
-        #boot-screen::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
-        }
+        /* --- SCHERMATA BOOT E ACCENSIONE --- */
+        #standby-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 20000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #standby-screen h1 { color: var(--cyan-neon); font-size: 50px; margin-bottom: 30px; letter-spacing: 5px; text-shadow: 0 0 20px var(--cyan-neon); font-family: 'Space Grotesk';}
+        .btn-boot { background: rgba(57, 255, 20, 0.1); border: 2px solid var(--green-neon); color: var(--green-neon); padding: 20px 40px; font-family: 'VT323', monospace; font-size: 28px; cursor: pointer; border-radius: 8px; animation: pulseBoot 2s infinite; box-shadow: 0 0 15px rgba(57, 255, 20, 0.3); transition: 0.3s; }
+        .btn-boot:hover { background: var(--green-neon); color: var(--bg-color); box-shadow: 0 0 30px var(--green-neon); animation: none; }
+        @keyframes pulseBoot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        #boot-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 50px; font-family: 'VT323', monospace; color: var(--green-neon); font-size: 22px; }
+        #boot-screen::before { content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none; }
         .boot-line { margin-bottom: 10px; opacity: 0; z-index: 5; position: relative; text-shadow: 0 0 5px var(--green-neon); }
         .boot-progress { color: var(--amber-neon); }
 
-        /* EFFETTO CRT DI SPEGNIMENTO */
         .crt-collapse { animation: crtOff 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        @keyframes crtOff {
-            0% { transform: scale(1, 1); background-color: var(--bg-color); }
-            30% { transform: scale(1, 0.02); background-color: #ffffff; box-shadow: 0 0 100px #ffffff; }
-            70% { transform: scale(0, 0.02); background-color: #ffffff; box-shadow: 0 0 100px #ffffff; opacity: 1;}
-            100% { transform: scale(0, 0); opacity: 0; }
-        }
+        @keyframes crtOff { 0% { transform: scale(1, 1); background-color: var(--bg-color); } 30% { transform: scale(1, 0.02); background-color: #ffffff; box-shadow: 0 0 100px #ffffff; } 70% { transform: scale(0, 0.02); background-color: #ffffff; box-shadow: 0 0 100px #ffffff; opacity: 1;} 100% { transform: scale(0, 0); opacity: 0; } }
 
         /* --- CALIBRAZIONE OVERLAY --- */
-        #calibration-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 9000; display: none; flex-direction: column;
-            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease; backdrop-filter: blur(10px);
-        }
-        .calib-box { background: rgba(5, 5, 5, 0.8); border: 1px solid var(--cyan-neon); padding: 50px; border-radius: 15px; text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2); max-width: 800px; }
-        .calib-box h2 { color: var(--cyan-neon); font-size: 36px; letter-spacing: 2px; margin-bottom: 15px; }
+        #calibration-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 9000; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s ease; backdrop-filter: blur(10px); }
+        .calib-box { background: rgba(11, 19, 30, 0.95); border: 1px solid var(--cyan-neon); padding: 50px; border-radius: 24px; text-align: center; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2); max-width: 800px; width: 90%; }
+        .calib-box h2 { color: var(--cyan-neon); font-size: 36px; letter-spacing: 2px; margin-bottom: 15px; font-family: 'Space Grotesk'; }
         .calib-box p { color: var(--text-main); font-size: 20px; line-height: 1.5; margin-bottom: 40px; font-family: 'Rajdhani';}
         .calib-options { display: flex; gap: 30px; justify-content: center; }
-        .calib-btn { background: rgba(0, 243, 255, 0.05); border: 2px solid var(--cyan-neon); color: var(--cyan-neon); padding: 30px 40px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 22px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; text-transform: uppercase; letter-spacing: 1px; }
-        .calib-btn span { display: block; font-family: 'Rajdhani'; font-size: 16px; font-weight: normal; margin-top: 10px; color: var(--text-main); }
+        .calib-btn { background: rgba(0, 243, 255, 0.05); border: 2px solid var(--cyan-neon); color: var(--cyan-neon); padding: 30px 40px; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 22px; font-weight: bold; cursor: pointer; transition: 0.3s; flex: 1; text-transform: uppercase; letter-spacing: 1px; }
+        .calib-btn span { display: block; font-family: 'Rajdhani'; font-size: 16px; font-weight: normal; margin-top: 10px; color: var(--text-muted); }
         .calib-btn:hover { background: var(--cyan-neon); color: var(--bg-color); box-shadow: 0 0 30px var(--cyan-neon); transform: translateY(-5px); }
         .calib-btn:hover span { color: var(--bg-color); }
 
-        /* --- HERO & 3D --- */
-        .hero { height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; position: relative; }
-        .hero-mascot-placeholder { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 10; }
-        spline-viewer { background-color: transparent !important; pointer-events: auto; transform: scale(1.15) translateX(3%); transform-origin: center center; clip-path: polygon(0% 0%, 85% 0%, 85% 92%, 85% 92%, 85% 85%, 0% 85%); }
+        /* --- LAYOUT HOME (BENTO) --- */
+        .content-container { padding: 120px 4vw 40px 4vw; max-width: 1400px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; justify-content: center; min-height: 100vh;}
 
-        /* --- FUMETTO DIALOGO --- */
-        .hero-dialogue-box {
-            position: absolute; left: 5%; top: 50%; transform: translateY(-50%) translateX(-50px); max-width: 32%; padding: 40px 40px 60px 40px;
-            border: 2px solid var(--green-neon); background: rgba(57, 255, 20, 0.05); box-shadow: 0 0 20px rgba(57, 255, 20, 0.1); backdrop-filter: blur(5px);
-            z-index: 30; opacity: 0; display: none; transition: opacity 0.8s ease, transform 0.8s ease;
+        .bento-header-banner {
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(0, 243, 255, 0.15); border-radius: 24px;
+            padding: 30px 40px; backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; width: 100%;
+            opacity: 0; transition: opacity 0.6s ease;
         }
-        .hero-dialogue-box.show-dialogue { opacity: 1; transform: translateY(-50%) translateX(0); display: block; }
-        .hero h1 { font-size: 45px; line-height: 1.3; color: var(--text-main); min-height: 140px; }
-        .hero h1 .highlight-name { color: var(--green-neon); text-shadow: 0 0 10px var(--green-neon); }
-        .cursor { display: inline-block; width: 3px; height: 40px; background-color: var(--green-neon); vertical-align: middle; animation: blink 1s step-end infinite; margin-left: 5px; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* --- GRANDI OPZIONI --- */
-        .main-area-btn {
-            position: absolute; width: 380px; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 20px; padding: 40px 30px; 
-            color: var(--text-main); text-align: center; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.8);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        .welcome-text-zone { flex: 1; }
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .page-title { font-size: 48px; color: var(--text-main); margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px;}
+
+        .mascot-zone { display: flex; align-items: center; justify-content: flex-end; position: relative; z-index: 50; }
+        .mascot-box { position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; }
+        .mascot-box video { width: 100%; height: 100%; object-fit: contain; animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
         }
-        .main-area-btn:hover { background: rgba(0, 243, 255, 0.08); border-color: var(--cyan-neon); box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); transform: translateY(-50%) scale(1.05); }
-        .custom-icon { width: 65px; height: 65px; margin-bottom: 5px; fill: none; stroke: currentColor; stroke-width: 1.5; transition: stroke 0.3s, filter 0.3s; }
-        .main-area-btn:hover .custom-icon { stroke: var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
-        .main-area-btn .area-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; color: var(--cyan-neon); text-transform: uppercase; letter-spacing: 2px; }
-        .main-area-btn .area-desc { font-size: 18px; color: var(--text-muted); line-height: 1.5; }
 
-        .area-left { left: 15%; top: 45%; }
-        .area-right { right: 15%; top: 45%; }
-        .main-area-btn.show-area { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
+        .robot-speech {
+            position: absolute; right: 110%; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 15, 25, 0.95); border: 2px solid var(--cyan-neon); border-radius: 16px; 
+            padding: 20px 25px; width: 340px; font-family: 'Rajdhani', sans-serif; font-size: 20px; line-height: 1.4;
+            color: var(--text-main); box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .robot-speech::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 12px; border-style: solid; border-color: transparent transparent transparent rgba(0, 15, 25, 0.95); }
+        .robot-speech::before { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 14px; border-style: solid; border-color: transparent transparent transparent var(--cyan-neon); z-index: -1; }
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--cyan-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 8px; height: 20px; background-color: var(--cyan-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        /* OPZIONI PRINCIPALI */
+        .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 100%; max-width: 1100px; margin: 0 auto; opacity: 0; pointer-events: none; transition: opacity 0.5s;}
         
-/* ========================================= */
-        /* MODALITÀ ECO (FIX LAYOUT & RADAR)         */
-        /* ========================================= */
-        .eco-btn { background: rgba(255, 170, 0, 0.1); border: 1px solid var(--amber-neon); color: var(--amber-neon); padding: 8px 15px; border-radius: 5px; font-family: 'Space Grotesk'; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: 0.3s; position: relative; display: flex; align-items: center; gap: 8px; }
-        .eco-btn:hover { background: var(--amber-neon); color: #000; box-shadow: 0 0 15px var(--amber-neon); }
-        .eco-tooltip { position: absolute; top: 130%; left: 50%; transform: translateX(-50%); background: var(--amber-neon); color: #000; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: 'Space Grotesk'; font-weight: bold; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.4s ease; z-index: 1000; }
-        .eco-tooltip::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border-width: 6px; border-style: solid; border-color: transparent transparent var(--amber-neon) transparent; }
-        .show-tooltip .eco-tooltip { opacity: 1; animation: bounce 2s infinite; }
-        .eco-btn:hover .eco-tooltip { opacity: 1; animation: none; }
-        @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 5px); } }
-
-        /* 1. DISATTIVAZIONE ELEMENTI PESANTI */
-        body.eco-active spline-viewer, body.eco-active .hero-mascot-placeholder { display: none !important; }
-        body.eco-active header, body.eco-active .hero-dialogue-box, body.eco-active .main-area-btn { backdrop-filter: blur(2px) !important; box-shadow: none !important; }
-
-        /* 2. FIX LAYOUT HERO (Bottoni sempre affiancati) */
-        body.eco-active .hero {
-            display: flex !important;
-            flex-direction: row !important; /* Li affianca orizzontalmente */
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 40px !important;
-            padding-top: 0 !important;
+        .bento-card {
+            background: rgba(11, 19, 30, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px;
+            padding: 50px 40px; text-align: left; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); opacity: 0;
         }
 
-       /* 3. FIX DIALOGUE BOX (Centro assoluto, fluttuante) */
-        body.eco-active .hero-dialogue-box {
-            position: absolute !important; 
-            left: 50% !important;
-            top: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            margin: 0 !important;
-            width: 80% !important;
-            max-width: 700px !important;
-            text-align: center;
-            border-color: var(--cyan-neon);
-            background: rgba(0, 243, 255, 0.05);
-            z-index: 50; 
-            pointer-events: none !important; /* <--- IL FIX: I click passano attraverso! */
-        }
-        body.eco-active #mascot-text { display: inline; }
+        .show-card { animation: slideUpFade 0.6s ease-out forwards; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 4. FIX BOTTONI (Proporzionati e affiancati) */
-        body.eco-active .main-area-btn {
-            position: relative !important;
-            display: flex !important;
-            left: auto !important;
-            right: auto !important;
-            top: auto !important;
-            bottom: auto !important;
-            transform: scale(0.9) !important;
-            margin: 0 !important;
-            width: 380px !important;
-            opacity: 0;
-            background: rgba(10, 10, 10, 0.95) !important;
-            border-color: var(--cyan-neon) !important;
-            z-index: 40;
-        }
+        .bento-card svg { width: 70px; height: 70px; margin-bottom: 25px; transition: all 0.3s; position: relative; z-index: 2; }
+        .bento-card h2 { font-size: 32px; margin-bottom: 10px; transition: color 0.3s; position: relative; z-index: 2; font-family: 'Space Grotesk'; letter-spacing: 1px;}
+        .bento-card p { font-size: 18px; color: var(--text-muted); line-height: 1.5; position: relative; z-index: 2; }
+        
+        .bento-card::after { content: '➔'; position: absolute; right: 40px; bottom: 40px; font-size: 30px; opacity: 0; transform: translateX(-15px); transition: all 0.3s ease; }
 
-        body.eco-active .main-area-btn.show-area {
-            opacity: 1 !important;
-            transform: scale(1) !important;
-        }
+        .card-paziente { background: linear-gradient(145deg, rgba(11,19,30,0.85) 50%, rgba(57,255,20,0.06) 100%); border-color: rgba(57, 255, 20, 0.2);}
+        .card-paziente svg { color: var(--green-neon); filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.3)); }
+        .card-paziente::after { color: var(--green-neon); }
+        .card-paziente:hover { border-color: var(--green-neon); box-shadow: 0 15px 40px rgba(57, 255, 20, 0.2); transform: translateY(-8px); }
+        .card-paziente:hover h2 { color: var(--green-neon); }
+        .card-paziente:hover::after { opacity: 1; transform: translateX(0); }
 
-        /* 5. RADAR BIOMETRICO */
-        body.eco-active .hero::before {
-            content: ''; position: absolute; top: 50%; left: 50%; width: 600px; height: 600px;
-            background: repeating-radial-gradient(circle, rgba(0, 243, 255, 0.08) 0%, transparent 10%, transparent 20%);
-            transform: translate(-50%, -50%); border-radius: 50%; z-index: 0;
-            animation: pulseRadar 12s linear infinite;
-        }
-        @keyframes pulseRadar {
-            0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.9); opacity: 0.3; }
-            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.1); opacity: 0.7; }
-            100% { transform: translate(-50%, -50%) rotate(360deg) scale(0.9); opacity: 0.3; }
+        .card-clinica { background: linear-gradient(145deg, rgba(11,19,30,0.85) 50%, rgba(0,136,255,0.06) 100%); border-color: rgba(0, 136, 255, 0.2);}
+        .card-clinica svg { color: var(--blue-neon); filter: drop-shadow(0 0 10px rgba(0, 136, 255, 0.3)); }
+        .card-clinica::after { color: var(--blue-neon); }
+        .card-clinica:hover { border-color: var(--blue-neon); box-shadow: 0 15px 40px rgba(0, 136, 255, 0.2); transform: translateY(-8px); }
+        .card-clinica:hover h2 { color: var(--blue-neon); }
+        .card-clinica:hover::after { opacity: 1; transform: translateX(0); }
+
+        @media (max-width: 968px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .calib-options { flex-direction: column; }
+            .bento-header-banner { flex-direction: column; text-align: center; gap: 20px;}
+            .robot-speech { right: 0; top: 110%; transform: none; width: 100%; z-index: 100;}
+            .robot-speech::after, .robot-speech::before { top: 0; left: 50%; transform: translateX(-50%); border-color: transparent transparent rgba(0, 15, 25, 0.95) transparent; }
+            .robot-speech::before { border-color: transparent transparent var(--cyan-neon) transparent; top: -2px; }
         }
     </style>
 </head>
 <body>
-    <div id="standby-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-color); z-index: 20000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <h1 style="color: var(--cyan-neon); font-size: 50px; margin-bottom: 30px; letter-spacing: 5px; text-shadow: 0 0 20px var(--cyan-neon);">BAIONICOL OS</h1>
-        <button id="btn-start-boot" class="interactive-el" style="background: rgba(57, 255, 20, 0.1); border: 2px solid var(--green-neon); color: var(--green-neon); padding: 20px 40px; font-family: 'VT323', monospace; font-size: 28px; cursor: pointer; border-radius: 8px; animation: pulse 2s infinite; box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);"> > INIZIALIZZA TERMINALE _ </button>
+
+    <div id="standby-screen">
+        <h1>BAIONICOL OS</h1>
+        <button id="btn-start-boot" class="btn-boot interactive-el"> > INIZIALIZZA TERMINALE _ </button>
     </div>
 
     <div id="boot-screen">
-        <div class="boot-line" id="line1">> Inizializzazione BAIONICOL OS v2.4...</div>
+        <div class="boot-line" id="line1">> Inizializzazione BAIONICOL OS v2.5...</div>
         <div class="boot-line" id="line2">> Connessione server biomedici... <span id="prog2"></span></div>
         <div class="boot-line" id="line3">> Calibrazione miografi periferici... <span id="prog3"></span></div>
         <div class="boot-line" id="line4">> Bypass inibizione corticale... <span id="prog4"></span></div>
@@ -269,7 +149,7 @@
     <div id="calibration-overlay">
         <div class="calib-box">
             <h2>CALIBRAZIONE INIZIALE</h2>
-            <p>Rilevato nuovo operatore. Selezionare l'architettura biomeccanica di riferimento per adattare i protocolli terapeutici e hardware di tutto il sistema.</p>
+            <p>Rilevato nuovo operatore o reset richiesto. Selezionare l'architettura biomeccanica di riferimento per adattare i protocolli terapeutici e l'interfaccia hardware di tutto il sistema.</p>
             <div class="calib-options">
                 <button class="calib-btn interactive-el" onclick="setProfile('superiore')">
                     ARTO SUPERIORE<span>(Mano, Polso, Gomito)</span>
@@ -292,108 +172,113 @@
 
     <header>
         <div class="hud-status"><div class="status-dot"></div>Sistema: Online</div>
-        <a href="#" class="logo interactive-el">BAIONICOL</a>
+        <div class="logo">BAIONICOL</div>
         <div class="header-actions">
-            <button id="eco-toggle-btn" class="eco-btn interactive-el">
-                ⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>
-            </button>
-            <div class="profile-badge" id="profile-badge" style="display: none;">[⚙️ Profilo: In Caricamento...]</div>
+            <div class="profile-badge interactive-el" id="profile-badge" onclick="resetProfile()">[⚙️ Profilo: In Caricamento...]</div>
         </div>
     </header>
-    
-    <section id="assistant" class="hero">
-        <div id="dialogue-box" class="hero-dialogue-box">
-            <h1 id="mascot-text"></h1><span class="cursor" id="text-cursor"></span>
+
+    <div class="content-container">
+        
+        <div class="bento-header-banner" id="main-banner">
+            <div class="welcome-text-zone">
+                <span class="column-step">SISTEMA CENTRALE //</span>
+                <h1 class="page-title">Terminale Operativo</h1>
+                <p class="page-subtitle">Piattaforma di gestione integrata. Seleziona il modulo per procedere.</p>
+            </div>
+            <div class="mascot-zone">
+                <div class="robot-speech" id="robot-speech">
+                    <span id="robot-text"></span><span class="blink-cursor"></span>
+                </div>
+                <div class="mascot-box">
+                    <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                </div>
+            </div>
         </div>
-        <div class="hero-mascot-placeholder" id="3d-container"></div>
 
-        <button class="main-area-btn area-left interactive-el" onclick="animateAndNavigate('paziente.html')">
-            <svg class="custom-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/>
-                <path d="M8 14L12 10L16 14"/>
-                <path d="M12 10V22"/>
-                <circle cx="12" cy="10" r="2" fill="currentColor"/>
-            </svg>
-            <span class="area-title">Area Paziente</span>
-            <span class="area-desc" id="desc-paziente">Allenamento muscolare e Mirror Therapy</span>
-        </button>
+        <div class="bento-grid" id="main-options">
+            
+            <div class="bento-card card-paziente interactive-el" onclick="animateAndNavigate('paziente.html')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/>
+                    <path d="M8 14L12 10L16 14"/>
+                    <path d="M12 10V22"/>
+                    <circle cx="12" cy="10" r="2" fill="currentColor"/>
+                </svg>
+                <h2>Area Paziente</h2>
+                <p>Dashboard riabilitativa: allenamento muscolare, Mirror Therapy e gestione socket.</p>
+            </div>
 
-        <button class="main-area-btn area-right interactive-el" onclick="animateAndNavigate('clinica.html')">
-            <svg class="custom-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 16V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V16C3 17.1046 3.89543 18 5 18H19C20.1046 18 21 17.1046 21 16Z"/>
-                <path d="M7 22H17"/>
-                <path d="M12 18V22"/>
-                <path d="M8 10L12 14L16 10"/>
-            </svg>
-            <span class="area-title">Area Clinica</span>
-            <span class="area-desc" id="desc-clinica">Diagnostica hardware e biomeccanica</span>
-        </button>
-    </section>
+            <div class="bento-card card-clinica interactive-el" onclick="animateAndNavigate('clinica.html')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V16C3 17.1046 3.89543 18 5 18H19C20.1046 18 21 17.1046 21 16Z"/>
+                    <path d="M7 22H17"/>
+                    <path d="M12 18V22"/>
+                    <path d="M8 10L12 14L16 10"/>
+                </svg>
+                <h2>Area Clinica</h2>
+                <p>Diagnostica hardware: stato batterie, analisi cutanea e protocolli d'emergenza.</p>
+            </div>
 
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
-    
+        </div>
+
+    </div>
+
+    <script src="baionicol-core.js"></script>
     <script>
         // ==========================================
-        // 1. MOTORE AUDIO SICURO E SUONI
+        // LA VOCE DEL ROBOT E SUONI DI BOOT
         // ==========================================
-        let audioCtx = null;
-        const SoundEngine = {
-            init: function() {
-                if (!audioCtx) {
-                    try {
-                        const AudioContext = window.AudioContext || window.webkitAudioContext;
-                        if(AudioContext) audioCtx = new AudioContext();
-                    } catch(e) { console.warn("Audio bloccato"); }
-                }
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-            },
-            playTone: function(freq, type, dur, vol) {
-                if(!audioCtx || audioCtx.state === 'suspended') return;
-                try {
-                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                    osc.type = type; osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(); osc.stop(audioCtx.currentTime + dur);
-                } catch(e) {}
-            },
-            bootBeepDynamic: (step) => SoundEngine.playTone(300 + (step * 200), 'square', 0.1, 0.03),
-            bootSuccess: () => { SoundEngine.playTone(1000, 'sine', 0.2, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.4, 0.05), 150); },
-            hover: () => SoundEngine.playTone(1500, 'sine', 0.05, 0.02),
-            dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); },
-            click: () => SoundEngine.playTone(200, 'square', 0.1, 0.06),
-            typeTick: () => SoundEngine.playTone(1200 + Math.random() * 400, 'square', 0.015, 0.01) 
-        };
-
-        // RISVEGLIO AGGRESSIVO AUDIO
-        document.addEventListener('mousedown', () => { SoundEngine.init(); }, { once: true });
-        document.addEventListener('keydown', () => { SoundEngine.init(); }, { once: true });
-        document.addEventListener('click', () => { SoundEngine.init(); }, { once: true });
-
-        // ==========================================
-        // 2. CURSORE E UI (Corretto: Solo una volta!)
-        // ==========================================
-        const cursorRing = document.getElementById('cursor-ring');
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, ringX = mouseX, ringY = mouseY;
-        document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-        function animateCursor() {
-            ringX += (mouseX - ringX) * 0.2; ringY += (mouseY - ringY) * 0.2;
-            if(cursorRing) cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
-            requestAnimationFrame(animateCursor);
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
         }
-        animateCursor();
+        
+        // Aggiungiamo i suoni specifici del terminale che mancavano
+        SoundEngine.bootBeepDynamic = (step) => SoundEngine.playTone(300 + (step * 200), 'square', 0.1, 0.03);
+        SoundEngine.bootSuccess = () => { SoundEngine.playTone(1000, 'sine', 0.2, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.4, 0.05), 150); };
 
-        document.querySelectorAll('.interactive-el').forEach(el => {
-            el.addEventListener('mouseenter', () => { 
-                SoundEngine.init(); 
-                if(cursorRing) cursorRing.classList.add('hovering'); 
-                SoundEngine.hover(); 
-            });
-            el.addEventListener('mouseleave', () => { if(cursorRing) cursorRing.classList.remove('hovering'); });
-        });
+        let typingTimeout;
+        
+        function robotSpeak(htmlText, callback) {
+            clearTimeout(typingTimeout); 
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        i++;
+                        typingTimeout = setTimeout(type, 18); 
+                    }
+                } else {
+                    if(callback) callback();
+                }
+            }
+            type();
+        }
 
         function getGreeting() {
             const hour = new Date().getHours();
@@ -402,80 +287,51 @@
             return "Buonasera";
         }
 
-        function typeWriterEffect(text, elementId, speed, callback) {
-            let i = 0; const element = document.getElementById(elementId); element.innerHTML = ""; 
-            function type() {
-                if (i < text.length) {
-                    if(text.charAt(i) === '<') {
-                        let tag = "";
-                        while(text.charAt(i) !== '>' && i < text.length) { tag += text.charAt(i); i++; }
-                        tag += '>'; element.innerHTML += tag; i++; setTimeout(type, speed);
-                    } else {
-                        element.innerHTML += text.charAt(i); 
-                        if (text.charAt(i) !== ' ') SoundEngine.typeTick(); 
-                        i++; setTimeout(type, speed);
-                    }
-                } else if (callback) { setTimeout(callback, 500); }
-            }
-            type();
-        }
-
         // ==========================================
-        // 3. LOGICA PROFILO E TRANSIZIONI
+        // ANIMAZIONI UI E TRANSIZIONI
         // ==========================================
         function applyProfile() {
             const profile = localStorage.getItem('baionicol_profile');
-            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; 
             const badge = document.getElementById('profile-badge');
-            const container3D = document.getElementById('3d-container');
-            const descClinica = document.getElementById('desc-clinica');
-
-            if(badge) badge.style.display = 'block';
-
-            if(profile === 'superiore') {
-                if(badge) badge.innerText = "[⚙️ Profilo: Arto Superiore]";
-                if(descClinica) descClinica.innerText = "Diagnostica batterie, motori e sensori di presa";
-                if (window.innerWidth > 968 && !isEco && container3D) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/40cMYacT3WwWqNhQ/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                else if(container3D) container3D.innerHTML = ''; 
-            } else if(profile === 'inferiore') {
-                if(badge) badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
-                if(descClinica) descClinica.innerText = "Diagnostica MPK, idraulica e allineamento";
-                if (window.innerWidth > 968 && !isEco && container3D) container3D.innerHTML = `<spline-viewer url="https://prod.spline.design/AAGgGhTTOSPKzG14/scene.splinecode" style="width: 100%; height: 100%;"></spline-viewer>`;
-                else if(container3D) container3D.innerHTML = ''; 
+            
+            if(badge) {
+                badge.style.display = 'block';
+                if(profile === 'superiore') badge.innerText = "[⚙️ Profilo: Arto Superiore]";
+                else if(profile === 'inferiore') badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
             }
         }
 
         function avviaDialogo() {
             const profile = localStorage.getItem('baionicol_profile');
             const profileName = profile === 'superiore' ? 'Arto Superiore' : 'Arto Inferiore';
-            const dialogueBox = document.getElementById('dialogue-box');
-            if(dialogueBox) dialogueBox.style.display = 'block';
+            
+            document.getElementById('main-banner').style.opacity = '1';
             
             setTimeout(() => {
-                if(dialogueBox) dialogueBox.classList.add('show-dialogue');
-                setTimeout(() => {
-                    const fullText = `"${getGreeting()} <span class='highlight-name'>Operatore</span>,<br>protocolli per <span style='color: var(--cyan-neon);'>${profileName}</span> allineati.<br>Come procediamo?"`;
-                    typeWriterEffect(fullText, 'mascot-text', 35, () => mostraOpzioni());
-                }, 800);
-            }, 100);
+                const fullText = `${getGreeting()} <span class='speech-hl'>Operatore</span>! Moduli configurati per l'architettura <span style='color: var(--cyan-neon);'>${profileName}</span>. Seleziona l'area operativa in cui desideri procedere.`;
+                robotSpeak(fullText, () => mostraOpzioni());
+            }, 800);
         }
 
         function mostraOpzioni() {
-            const dialogueBox = document.getElementById('dialogue-box');
-            if(dialogueBox) { dialogueBox.style.opacity = '0'; dialogueBox.style.pointerEvents = 'none'; }
-            document.querySelectorAll('.main-area-btn').forEach((area, index) => {
-                setTimeout(() => { area.classList.add('show-area'); }, 200 + (index * 200)); 
+            const grid = document.getElementById('main-options');
+            grid.style.opacity = '1';
+            grid.style.pointerEvents = 'auto';
+            
+            document.querySelectorAll('.bento-card').forEach((card, index) => {
+                setTimeout(() => { card.classList.add('show-card'); }, index * 200); 
             });
         }
 
         function animateAndNavigate(targetUrl) {
-            SoundEngine.init(); 
             SoundEngine.click(); 
-            document.querySelectorAll('spline-viewer').forEach(el => el.style.display = 'none');
             document.body.classList.add('zoom-in');
             setTimeout(() => { window.location.href = targetUrl; }, 550);
         }
 
+        // ==========================================
+        // SISTEMA DI BOOT
+        // ==========================================
         function simulateLoading(lineId, spanId, targetText, successColor, nextStepCallback) {
             const line = document.getElementById(lineId);
             if(line) line.style.opacity = '1';
@@ -511,8 +367,7 @@
         }
 
         function setProfile(type) {
-            SoundEngine.init(); 
-            SoundEngine.dataSave();
+            SoundEngine.success(); 
             localStorage.setItem('baionicol_profile', type); 
             document.getElementById('calibration-overlay').style.opacity = '0';
             setTimeout(() => {
@@ -522,75 +377,39 @@
         }
 
         // ==========================================
-        // 4. INIZIALIZZAZIONE CENTRALE E ECO MODE
+        // INIT E BYPASS RITORNO
         // ==========================================
         (() => {
-            // --- A) GESTIONE ECO MODE ---
-            const ecoBtn = document.getElementById('eco-toggle-btn');
-            if (ecoBtn) {
-                const isEcoActive = localStorage.getItem('baionicol_eco_mode') === 'true';
-                if (isEcoActive) {
-                    document.body.classList.add('eco-active');
-                    ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
-                    ecoBtn.style.color = 'var(--green-neon)'; 
-                    ecoBtn.style.borderColor = 'var(--green-neon)';
-                    ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; 
-                } else {
-                    ecoBtn.classList.add('show-tooltip');
-                    setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
-                }
-
-                ecoBtn.addEventListener('click', () => {
-                    SoundEngine.init(); 
-                    if (document.body.classList.contains('eco-active')) {
-                        document.body.classList.remove('eco-active');
-                        localStorage.setItem('baionicol_eco_mode', 'false');
-                        ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
-                        ecoBtn.style.color = 'var(--amber-neon)'; 
-                        ecoBtn.style.borderColor = 'var(--amber-neon)';
-                        ecoBtn.style.background = 'rgba(255, 170, 0, 0.1)'; 
-                        SoundEngine.hover(); 
-                    } else {
-                        document.body.classList.add('eco-active');
-                        localStorage.setItem('baionicol_eco_mode', 'true');
-                        ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
-                        ecoBtn.style.color = 'var(--green-neon)'; 
-                        ecoBtn.style.borderColor = 'var(--green-neon)';
-                        ecoBtn.style.background = 'rgba(57, 255, 20, 0.1)'; 
-                        ecoBtn.classList.remove('show-tooltip');
-                        SoundEngine.bootSuccess(); 
-                    }
-                });
-            }
-
-            // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
             const urlParams = new URLSearchParams(window.location.search);
             const standbyScreen = document.getElementById('standby-screen');
             const bootScreen = document.getElementById('boot-screen');
-            const dialogueBox = document.getElementById('dialogue-box');
             const btnStartBoot = document.getElementById('btn-start-boot');
 
+            // Se l'utente sta tornando indietro da un'altra pagina
             if (urlParams.get('return') === 'true') {
                 if(standbyScreen) standbyScreen.style.display = 'none'; 
                 if(bootScreen) bootScreen.style.display = 'none'; 
-                if(dialogueBox) {
-                    dialogueBox.style.display = 'none'; 
-                    dialogueBox.style.opacity = '0'; 
-                    dialogueBox.style.pointerEvents = 'none'; 
-                }
                 
                 document.body.classList.add('zoom-normal');
                 applyProfile(); 
-                document.querySelectorAll('.main-area-btn').forEach(area => {
-                    area.style.transition = 'none'; area.classList.add('show-area');
-                    setTimeout(() => { area.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; }, 50);
+                
+                // Mostra subito tutto senza il typewriting lungo
+                document.getElementById('main-banner').style.opacity = '1';
+                robotSpeak("Ritorno al Terminale completato. In attesa di istruzioni.");
+                
+                const grid = document.getElementById('main-options');
+                grid.style.opacity = '1';
+                grid.style.pointerEvents = 'auto';
+                document.querySelectorAll('.bento-card').forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
                 });
-            } else if (btnStartBoot) {
+            } 
+            // Avvio normale al primo caricamento
+            else if (btnStartBoot) {
                 btnStartBoot.addEventListener('click', () => {
-                    
-                    SoundEngine.init(); // Accende l'audio
-                    
                     if(standbyScreen) standbyScreen.style.display = 'none';
+                    
                     setTimeout(() => { 
                         const line1 = document.getElementById('line1');
                         if(line1) line1.style.opacity = '1'; 
