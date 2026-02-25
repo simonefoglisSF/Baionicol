@@ -124,3 +124,36 @@ function animateAndNavigate(targetUrl) {
     setTimeout(() => { window.location.href = targetUrl; }, 550);
 
 }
+// ==========================================
+// 5. SMART VIDEO OBSERVER (Ottimizzazione CPU)
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    // Cerca tutti i video presenti nella pagina
+    const videos = document.querySelectorAll('video');
+    if (videos.length === 0) return; // Se non ci sono video, si ferma
+
+    // Impostazioni: il video deve essere visibile almeno al 10% per partire
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1 
+    };
+
+    // Crea l'osservatore
+    const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Il video è nello schermo -> PLAY
+                entry.target.play().catch(e => console.log("Play bloccato dal browser:", e));
+            } else {
+                // Il video è fuori dallo schermo -> PAUSA
+                entry.target.pause();
+            }
+        });
+    }, observerOptions);
+
+    // Assegna l'osservatore a ogni video trovato
+    videos.forEach(video => {
+        videoObserver.observe(video);
+    });
+});
