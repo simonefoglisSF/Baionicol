@@ -19,7 +19,37 @@
             --glass-bg: rgba(0, 243, 255, 0.04);
             --glass-border: rgba(0, 243, 255, 0.25);
         }
-
+/* --- RESPONSIVE MOBILE SCHERMATA INIZIALE --- */
+        @media (max-width: 968px) {
+            * { cursor: auto !important; }
+            .cursor-ring, .hud-arc, .hud-reticle-top, .hud-dial { display: none !important; }
+            
+            /* 1. SPEGNIMENTO FORZATO DEL 3D SU MOBILE */
+            spline-viewer, #3d-container, .hero-mascot-placeholder { display: none !important; }
+            
+            /* 2. HEADER COMPATTO */
+            header { display: flex; flex-direction: column; align-items: center; position: relative; height: auto; padding: 15px 10px; background: rgba(5,5,5,0.95); z-index: 1000; gap: 10px;}
+            .hud-status, .logo, .header-actions { position: relative; left: auto; right: auto; top: auto; transform: none; margin: 0; justify-content: center; text-align: center; width: 100%; flex-wrap: wrap;}
+            .hud-clock { display: none; } /* Nasconde l'orologio per fare spazio */
+            .profile-badge { font-size: 13px; padding: 8px 12px; margin: 0;}
+            
+            /* 3. IMPAGINAZIONE FUMETTO E BOTTONI IN COLONNA */
+            .hero { flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 20px; height: auto; min-height: 100vh;}
+            
+            .hero-dialogue-box { position: relative !important; top: auto !important; left: auto !important; transform: none !important; width: 95% !important; max-width: 95% !important; padding: 25px 20px !important; margin-bottom: 20px !important; margin-top: 20px !important;}
+            .hero h1 { font-size: 24px !important; min-height: auto !important; line-height: 1.4 !important; }
+            
+            /* 4. I DUE BOTTONI GRANDI (Impilati uno sull'altro) */
+            .main-area-btn { position: relative !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; width: 95% !important; padding: 25px 15px !important; margin: 10px 0 !important; transform: scale(1) !important; gap: 10px;}
+            .main-area-btn.show-area { transform: scale(1) !important; opacity: 1; pointer-events: auto; }
+            .area-title { font-size: 24px !important; }
+            .area-desc { font-size: 16px !important; }
+            
+            /* 5. MODALE DI CALIBRAZIONE (Se non hai un profilo) */
+            .calib-box { width: 95%; padding: 25px 15px; }
+            .calib-options { flex-direction: column; gap: 15px;}
+            .calib-btn { padding: 15px; font-size: 18px; width: 100%; }
+        }
         /* --- CURSORE "CYBER-RADAR" --- */
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2300f3ff'/%3E%3C/svg%3E") 4 4, auto !important; }
         .interactive-el, button, a, .main-area-btn { cursor: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='4' cy='4' r='4' fill='%2339ff14'/%3E%3C/svg%3E") 4 4, pointer !important; }
@@ -505,4 +535,5 @@
 
 </body>
 </html>
+
 
