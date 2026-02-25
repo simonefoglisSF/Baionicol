@@ -4,63 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terapie | BAIONICOL</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="baionicol-core.css?v=2">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="baionicol-core.css?v=6">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
     
     <style>
-      
         /* --- HUD OVERLAY --- */
         .hud-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999; box-shadow: inset 0 0 150px rgba(0,0,0,0.95); overflow: hidden; }
         .hud-arc { position: absolute; top: -10vh; width: 15vw; height: 120vh; border-radius: 50%; opacity: 0.15; }
         .arc-left { left: -7.5vw; border-right: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
         .arc-right { right: -7.5vw; border-left: 3px solid var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
 
-        /* --- CONTENITORE PRINCIPALE --- */
         .content-container { padding: 120px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; }
         .view-section { transition: opacity 0.5s ease, transform 0.5s ease; height: 100%;}
         .hidden { display: none !important; opacity: 0; transform: scale(0.95); }
 
-        /* --- VISTA 1: MENU HUB --- */
-        .hub-title { font-size: 48px; color: var(--cyan-neon); margin-bottom: 30px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.3); text-align: center; letter-spacing: 2px; }
-        .hub-layout { display: flex; align-items: center; justify-content: space-between; gap: 50px; min-height: 60vh; }
+        /* =========================================
+           NUOVO LAYOUT "ARCHIVIO CLINICO"
+           ========================================= */
+        .bento-hub-layout {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 70vh;
+        }
 
-        .mascot-container { 
-    flex: 1; 
-    min-height: 500px; 
-    position: relative; 
-    background: radial-gradient(circle, rgba(0,243,255,0.06) 0%, transparent 60%); 
-}
+        /* COLONNA SINISTRA: LA GUIDA E IL ROBOT */
+        .bento-sidebar {
+            flex: 0 0 420px;
+            background: rgba(11, 19, 30, 0.85); 
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: slideUpFade 0.6s ease-out forwards;
+            opacity: 0;
+        }
 
-spline-viewer { 
-    background-color: transparent !important; 
-    pointer-events: auto; 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 130%; 
-    height: 130%;
-    transform: translate(-50%, -50%); 
-    /* Taglia ESATTAMENTE solo il quadratino del logo in basso a destra, lasciando intatto il resto */
-    clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 70px), calc(100% - 170px) calc(100% - 70px), calc(100% - 170px) 100%, 0% 100%);
-}
+        /* COLONNA DESTRA: LA LISTA TERAPIE */
+        .bento-options {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        .options-container { flex: 1.2; display: flex; flex-direction: column; gap: 20px; }
+        /* TESSERE ORIZZONTALI */
+        .bento-row-card {
+            background: rgba(11, 19, 30, 0.85); 
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 24px;
+            padding: 30px 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            opacity: 0;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
 
-        .therapy-btn { background: rgba(5, 5, 5, 0.7); border: 1px solid var(--glass-border); border-radius: 15px; padding: 30px 40px; display: flex; align-items: center; gap: 30px; cursor: pointer; backdrop-filter: blur(15px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: left; position: relative; overflow: hidden; color: var(--text-main); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .therapy-btn::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--cyan-neon); transform: scaleY(0); transition: transform 0.3s ease; }
-        .therapy-btn:hover { background: rgba(0, 243, 255, 0.08); border-color: var(--cyan-neon); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); transform: translateX(15px); }
-        .therapy-btn:hover::before { transform: scaleY(1); }
-        .therapy-btn h2 { font-size: 32px; margin-bottom: 8px; transition: color 0.3s; font-family: 'Space Grotesk', sans-serif;}
-        .therapy-btn p { font-size: 18px; color: var(--text-muted); line-height: 1.4; }
-        .therapy-icon-svg { width: 50px; height: 50px; flex-shrink: 0; filter: drop-shadow(0 0 10px currentColor); transition: all 0.3s ease; }
+        .tessuti-card { animation-delay: 0.2s; background: linear-gradient(90deg, rgba(11,19,30,0.85) 60%, rgba(0,243,255,0.06) 100%); }
+        .specchio-card { animation-delay: 0.3s; background: linear-gradient(90deg, rgba(11,19,30,0.85) 60%, rgba(57,255,20,0.06) 100%); }
+        .elettro-card { animation-delay: 0.4s; background: linear-gradient(90deg, rgba(11,19,30,0.85) 60%, rgba(255,170,0,0.06) 100%); }
+
+        .bento-interactive:hover { transform: translateX(15px); cursor: pointer; }
+        .tessuti-card:hover { border-color: var(--cyan-neon); box-shadow: 0 10px 30px rgba(0,243,255,0.15); }
+        .specchio-card:hover { border-color: var(--green-neon); box-shadow: 0 10px 30px rgba(57,255,20,0.15); }
+        .elettro-card:hover { border-color: var(--amber-neon); box-shadow: 0 10px 30px rgba(255,170,0,0.15); }
+
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TESTI SIDEBAR */
+        .column-step { font-family: 'VT323', monospace; font-size: 20px; color: var(--cyan-neon); letter-spacing: 3px; display: block; margin-bottom: 5px; }
+        .bento-sidebar h1 { font-size: 46px; color: var(--text-main); line-height: 1.1; letter-spacing: 1px; margin-bottom: 15px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;}
+        .bento-sidebar p { font-size: 18px; color: var(--text-muted); line-height: 1.5; font-family: 'Rajdhani', sans-serif;}
         
-        .btn-tessuti { color: var(--cyan-neon); } .btn-tessuti:hover h2, .btn-tessuti:hover .therapy-icon-svg { color: var(--cyan-neon); stroke: var(--cyan-neon); }
-        .btn-specchio { color: var(--green-neon); } .btn-specchio::before { background: var(--green-neon); } .btn-specchio:hover { border-color: var(--green-neon); box-shadow: 0 0 30px rgba(57, 255, 20, 0.2); } .btn-specchio:hover h2, .btn-specchio:hover .therapy-icon-svg { color: var(--green-neon); stroke: var(--green-neon); }
-        .btn-elettro { color: var(--warning-neon); } .btn-elettro::before { background: var(--warning-neon); } .btn-elettro:hover { border-color: var(--warning-neon); box-shadow: 0 0 30px rgba(255, 51, 102, 0.2); } .btn-elettro:hover h2, .btn-elettro:hover .therapy-icon-svg { color: var(--warning-neon); stroke: var(--warning-neon); }
+        /* ZONA MASCOTTE */
+        .mascot-zone { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 100%; position: relative; margin-top: 30px;}
+        .mascot-box { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: center; }
+        .mascot-box video { width: 100%; height: 100%; object-fit: contain; animation: hologramBoot 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
 
-        /* --- VISTA DETTAGLIO TERAPIA (LAYOUT ZERO-SCROLL) --- */
-        .therapy-display { display: flex; justify-content: space-between; align-items: stretch; height: 80vh; background: rgba(5, 5, 5, 0.7); border: 1px solid var(--glass-border); border-radius: 20px; backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden; }
+        @keyframes hologramBoot {
+            0% { opacity: 0; filter: hue-rotate(90deg) brightness(3) drop-shadow(0 0 40px var(--cyan-neon)); transform: scale(1.2) skewX(20deg); }
+            10% { opacity: 1; filter: hue-rotate(-45deg) brightness(1.5) drop-shadow(0 0 20px var(--cyan-neon)); transform: scale(0.9) skewX(-10deg); }
+            15% { opacity: 0.2; transform: skewX(5deg); }
+            20% { opacity: 1; transform: skewX(0); }
+            30% { filter: drop-shadow(0 0 30px var(--cyan-neon)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3)); transform: scale(1); }
+        }
+
+        /* --- VIGNETTA FUMETTO CENTRATA PERFETTAMENTE --- */
+        .robot-speech {
+            background: rgba(11, 19, 30, 0.95); 
+            border: 2px solid var(--cyan-neon); 
+            border-radius: 20px; 
+            padding: 15px 20px; 
+            width: 100%; 
+            min-height: 100px; 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 16px; 
+            line-height: 1.4;
+            color: var(--text-main); 
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15); 
+            margin-bottom: 25px; /* Spazio dal robot */
+            position: relative; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+            text-align: center; /* Testo centrato per estetica */
+        }
+        
+        /* Freccetta centrata (Bordo Interno Sfondo) */
+        .robot-speech::after { 
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 12px; border-style: solid; border-color: rgba(11, 19, 30, 0.95) transparent transparent transparent; z-index: 2;
+        }
+        /* Freccetta centrata (Bordo Esterno Neon) */
+        .robot-speech::before { 
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 15px; border-style: solid; border-color: var(--cyan-neon) transparent transparent transparent; z-index: 1;
+        }
+
+        .robot-speech.active { opacity: 1; }
+        .speech-hl { color: var(--cyan-neon); font-weight: bold; }
+        .blink-cursor { display: inline-block; width: 6px; height: 16px; background-color: var(--cyan-neon); vertical-align: middle; margin-left: 4px; animation: blink 1s infinite; }
+
+        /* CONTENUTI BOTTONI LISTA */
+        .module-icon { width: 60px; height: 60px; fill: none; stroke: var(--text-muted); stroke-width: 1.5; transition: all 0.3s ease; flex-shrink: 0;}
+        .tessuti-card:hover .module-icon, .tessuti-card:hover .btn-content h2 { stroke: var(--cyan-neon); color: var(--cyan-neon); filter: drop-shadow(0 0 10px var(--cyan-neon)); }
+        .specchio-card:hover .module-icon, .specchio-card:hover .btn-content h2 { stroke: var(--green-neon); color: var(--green-neon); filter: drop-shadow(0 0 10px var(--green-neon)); }
+        .elettro-card:hover .module-icon, .elettro-card:hover .btn-content h2 { stroke: var(--amber-neon); color: var(--amber-neon); filter: drop-shadow(0 0 10px var(--amber-neon)); }
+        
+        .btn-content h2 { font-size: 28px; color: var(--text-main); margin-bottom: 8px; transition: color 0.3s; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px;}
+        .btn-content p { font-size: 16px; color: var(--text-muted); line-height: 1.5;}
+        
+        .bento-interactive::after { content: '➔'; position: absolute; right: 40px; top: 50%; transform: translateY(-50%) translateX(-10px); font-size: 28px; opacity: 0; transition: all 0.3s ease; }
+        .tessuti-card::after { color: var(--cyan-neon); }
+        .specchio-card::after { color: var(--green-neon); }
+        .elettro-card::after { color: var(--amber-neon); }
+        .bento-interactive:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+        /* --- VISTA DETTAGLIO TERAPIA (RESTANO INVARIATE E CLINICHE) --- */
+        .therapy-display { display: flex; justify-content: space-between; align-items: stretch; height: 75vh; background: rgba(11, 19, 30, 0.85); border: 1px solid var(--glass-border); border-radius: 20px; backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden; }
 
         .video-side { flex: 0 0 45%; width: 45%; background: rgba(0,0,0,0.85); border-right: 2px solid var(--glass-border); position: relative; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 60px rgba(0, 243, 255, 0.05); }
         .video-placeholder-text { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--cyan-neon); font-family: 'VT323', monospace; font-size: 26px; text-align: center; letter-spacing: 3px; animation: pulseText 2s infinite; opacity: 0.6; z-index: 2; }
@@ -75,20 +169,17 @@ spline-viewer {
         .neon-title { font-size: 42px; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; gap: 15px; font-family: 'Space Grotesk', sans-serif;}
         .neon-title span { color: var(--cyan-neon); }
         
-        /* BARRA DI PROGRESSIONE */
         .progress-wrapper { background: rgba(0,0,0,0.4); padding: 15px 20px; border-radius: 10px; border: 1px solid var(--glass-border); margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; }
         .progress-info { display: flex; justify-content: space-between; font-family: 'VT323', monospace; font-size: 24px; color: var(--text-main); letter-spacing: 2px; }
         .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 0 10px currentColor; }
 
-        /* TASK CARDS */
         .task-list-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
         .task-card { background: rgba(5, 5, 5, 0.6); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px 25px; padding-left: 55px; cursor: pointer; transition: all 0.3s ease; position: relative; }
         .task-card::before { content: '>'; position: absolute; left: 20px; top: 22px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; font-weight: bold; font-size: 24px; transition: color 0.3s; }
         .task-card-title { font-size: 24px; color: var(--text-main); font-weight: 700; margin-bottom: 8px; transition: color 0.3s; font-family: 'Space Grotesk', sans-serif;}
         .task-card-desc { font-size: 17px; color: var(--text-muted); line-height: 1.4; transition: color 0.3s; }
         
-        /* Stato completato */
         .task-card.completed { opacity: 0.6; border-color: var(--glass-border) !important; background: transparent !important; transform: scale(0.98); box-shadow: none !important;}
         .task-card.completed .confirm-btn { color: currentColor; border-color: transparent; pointer-events: none; }
 
@@ -100,9 +191,9 @@ spline-viewer {
         .confirm-btn { margin-top: 15px; background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 8px 15px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; text-transform: uppercase; font-weight: bold; transition: all 0.3s; display: flex; align-items: center; gap: 8px; width: fit-content;}
         .btn-icon { width: 18px; height: 18px; }
 
-        /* Colori per Terapie */
+        /* Colori Tematici Terapie */
         .theme-cyan .neon-title span, .theme-cyan .progress-info span { color: var(--cyan-neon); }
-	.theme-cyan .progress-bar { background-color: var(--cyan-neon); }
+	    .theme-cyan .progress-bar { background-color: var(--cyan-neon); }
         .theme-cyan .task-card:not(.completed):hover .confirm-btn, .theme-cyan .task-card.active:not(.completed) .confirm-btn { color: var(--cyan-neon); border-color: var(--cyan-neon); }
         .theme-cyan .task-card.completed .confirm-btn { color: var(--cyan-neon); }
 
@@ -115,27 +206,33 @@ spline-viewer {
         .theme-green .task-card.completed .confirm-btn { color: var(--green-neon); }
         .theme-green .video-side { box-shadow: inset 0 0 60px rgba(57, 255, 20, 0.05); }
 
-        .theme-red .neon-title span, .theme-red .progress-info span { color: var(--warning-neon); }
-        .theme-red .progress-bar { background-color: var(--warning-neon); }
-        .theme-red .task-card:not(.completed):hover, .theme-red .task-card.active:not(.completed) { border-color: var(--warning-neon); }
-        .theme-red .task-card:not(.completed):hover::before, .theme-red .task-card.active:not(.completed)::before, .theme-red .task-card:not(.completed):hover .task-card-title, .theme-red .task-card.active:not(.completed) .task-card-title { color: var(--warning-neon); }
-        .theme-red .task-card.active:not(.completed) { background: rgba(255, 51, 102, 0.08); box-shadow: inset 0 0 20px rgba(255, 51, 102, 0.1); }
-        .theme-red .task-card:not(.completed):hover .confirm-btn, .theme-red .task-card.active:not(.completed) .confirm-btn { color: var(--warning-neon); border-color: var(--warning-neon); }
-        .theme-red .task-card.completed .confirm-btn { color: var(--warning-neon); }
-        .theme-red .video-side { box-shadow: inset 0 0 60px rgba(255, 51, 102, 0.05); }
+        .theme-red .neon-title span, .theme-red .progress-info span { color: var(--amber-neon); }
+        .theme-red .progress-bar { background-color: var(--amber-neon); }
+        .theme-red .task-card:not(.completed):hover, .theme-red .task-card.active:not(.completed) { border-color: var(--amber-neon); }
+        .theme-red .task-card:not(.completed):hover::before, .theme-red .task-card.active:not(.completed)::before, .theme-red .task-card:not(.completed):hover .task-card-title, .theme-red .task-card.active:not(.completed) .task-card-title { color: var(--amber-neon); }
+        .theme-red .task-card.active:not(.completed) { background: rgba(255, 170, 0, 0.08); box-shadow: inset 0 0 20px rgba(255, 170, 0, 0.1); }
+        .theme-red .task-card:not(.completed):hover .confirm-btn, .theme-red .task-card.active:not(.completed) .confirm-btn { color: var(--amber-neon); border-color: var(--amber-neon); }
+        .theme-red .task-card.completed .confirm-btn { color: var(--amber-neon); }
+        .theme-red .video-side { box-shadow: inset 0 0 60px rgba(255, 170, 0, 0.05); }
 
         /* SCHERMATA SUCCESSO */
         #success-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 10000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(10px); }
         #success-modal h1 { color: var(--green-neon); font-size: 60px; font-family: 'Space Grotesk'; margin-bottom: 20px; text-shadow: 0 0 40px rgba(57,255,20,0.6); }
         #success-modal p { color: var(--text-main); font-size: 24px; margin-bottom: 40px; font-family: 'Rajdhani'; }
-        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; }
+        .modal-btn { background: var(--green-neon); color: var(--bg-color); border: none; padding: 20px 40px; border-radius: 10px; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk'; text-transform: uppercase; box-shadow: 0 0 20px var(--green-neon); transition: 0.3s; cursor: pointer;}
         .modal-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--green-neon); }        
 
-	</style>
+        @media (max-width: 1024px) {
+            .bento-hub-layout { flex-direction: column; }
+            .bento-sidebar { flex: auto; }
+            .bento-row-card { flex-direction: column; text-align: center; padding: 25px; }
+            .bento-interactive::after { display: none; }
+        }
+    </style>
 </head>
 <body>
 
-    <svg class="defs">
+    <svg class="defs" style="display: none;">
         <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
         </symbol>
@@ -172,45 +269,60 @@ spline-viewer {
         <button class="modal-btn interactive-el" onclick="chiudiModalEShowHub()">Aggiorna Livello e Torna alla Libreria</button>
     </div>
 
-    <div class="content-container">
+    <div class="content-container" id="main-wrapper">
 
         <div id="view-menu" class="view-section">
-            <h1 class="hub-title">Protocolli di Ricalibrazione Neurale</h1>
-            <div class="hub-layout">
+            <div class="bento-hub-layout">
                 
-                <div class="mascot-container" id="terapie-3d-container"></div>
+                <div class="bento-sidebar">
+                    <div class="welcome-text-zone">
+                        <span class="column-step">LIBRERIA MEDICA //</span>
+                        <h1>Protocolli Terapeutici</h1>
+                        <p>Seleziona la terapia prescritta dall'elenco a destra. I moduli ti accompagneranno visivamente nell'esecuzione degli esercizi quotidiani.</p>
+                    </div>
+                    
+                    <div class="mascot-zone">
+                        <div class="robot-speech" id="robot-speech">
+                            <span id="robot-text"></span><span class="blink-cursor"></span>
+                        </div>
+                        <div class="mascot-box">
+                            <video src="Little power robot.webm" autoplay loop muted playsinline></video>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="options-container">
-                    <button class="therapy-btn btn-tessuti interactive-el" onclick="showTherapy('tessuti')">
-                        <svg class="therapy-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="bento-options">
+                    
+                    <div class="bento-row-card bento-interactive tessuti-card interactive-el" onclick="showTherapy('tessuti')" data-speech="Modulo <span style='color:var(--cyan-neon)'>Preparazione Tessuti</span>. Indispensabile per ridurre l'ipersensibilità del moncone prima di indossare l'invasatura.">
+                        <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/>
                         </svg>
-                        <div>
+                        <div class="btn-content">
                             <h2>1. Preparazione Tessuti</h2>
                             <p>Desensibilizzazione e massaggio cicatriziale pre-protesico.</p>
                         </div>
-                    </button>
+                    </div>
 
-                    <button class="therapy-btn btn-specchio interactive-el" onclick="showTherapy('specchio')">
-                        <svg class="therapy-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="bento-row-card bento-interactive specchio-card interactive-el" onclick="showTherapy('specchio')" data-speech="La <span style='color:var(--green-neon)'>Mirror Therapy</span> è essenziale. Sincronizziamo i due emisferi cerebrali per dominare il dolore fantasma.">
+                        <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2v20"/><path d="M5 6h5v12H5z"/><path d="M14 6h5v12h-5z" stroke-dasharray="4 4"/>
                         </svg>
-                        <div>
+                        <div class="btn-content">
                             <h2>2. Terapia a Specchio</h2>
                             <p>Ricalibrazione neurale per il controllo del dolore fantasma.</p>
                         </div>
-                    </button>
+                    </div>
 
-                    <button class="therapy-btn btn-elettro interactive-el" onclick="showTherapy('elettro')">
-                        <svg class="therapy-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="bento-row-card bento-interactive elettro-card interactive-el" onclick="showTherapy('elettro')" data-speech="L'<span style='color:var(--amber-neon)'>Elettrostimolazione</span> rinforza il segnale. Assicurati di aver posizionato correttamente gli elettrodi.">
+                        <svg class="module-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                         </svg>
-                        <div>
+                        <div class="btn-content">
                             <h2>3. Elettrostimolazione</h2>
                             <p>Stimolazione periferica dei segnali mioelettrici.</p>
-                            <p class="warning-text" style="color: var(--warning-neon); font-size: 14px; margin-top: 5px;">⚠️ Richiede dispositivo EMG-FES esterno.</p>
                         </div>
-                    </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -316,7 +428,7 @@ spline-viewer {
         <div id="view-elettro" class="view-section hidden theme-red">
             <div class="therapy-display">
                 <div class="video-side">
-                    <div class="video-placeholder-text" style="color: var(--warning-neon);">
+                    <div class="video-placeholder-text" style="color: var(--amber-neon);">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                         [ IN ATTESA DI<br>INPUT CLINICO ]
                     </div>
@@ -364,33 +476,96 @@ spline-viewer {
 
     </div>
 
+    <script src="baionicol-core.js"></script>
     <script>
         // ==========================================
-        // 1. MEMORIA PROFILO E TESTI CAMALEONTICI
+        // LA VOCE DEL ROBOT
+        // ==========================================
+        SoundEngine.robotVoice = function() {
+            if(!audioCtx || audioCtx.state === 'suspended') return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 600 + Math.random() * 400;
+                osc.type = 'sine'; 
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        let typingTimeout;
+        let isSpeaking = false;
+        const defaultText = "Benvenuto nei <span class='speech-hl'>Protocolli Terapeutici</span>. Seleziona una scheda per avviare la sessione interattiva.";
+
+        function robotSpeak(htmlText) {
+            clearTimeout(typingTimeout); 
+            isSpeaking = true;
+            
+            const bubble = document.getElementById('robot-speech');
+            const textContainer = document.getElementById('robot-text');
+            if(!bubble) return;
+            bubble.classList.add('active');
+            textContainer.innerHTML = '';
+            
+            let i = 0;
+            function type() {
+                if (i < htmlText.length) {
+                    if (htmlText.charAt(i) === '<') {
+                        let tag = '';
+                        while(htmlText.charAt(i) !== '>' && i < htmlText.length) { tag += htmlText.charAt(i); i++; }
+                        tag += '>'; textContainer.innerHTML += tag; i++;
+                        typingTimeout = setTimeout(type, 0); 
+                    } else {
+                        textContainer.innerHTML += htmlText.charAt(i);
+                        if(htmlText.charAt(i) !== ' ' && i % 4 === 0) {
+                            SoundEngine.robotVoice(); 
+                        }
+                        i++;
+                        typingTimeout = setTimeout(type, 12); 
+                    }
+                } else {
+                    isSpeaking = false;
+                }
+            }
+            type();
+        }
+
+        let hoverIntentTimer;
+        function initRobotInteractions() {
+            const cards = document.querySelectorAll('.bento-row-card[data-speech]');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    hoverIntentTimer = setTimeout(() => {
+                        const text = card.getAttribute('data-speech');
+                        robotSpeak(text);
+                    }, 200);
+                });
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer); 
+                });
+            });
+
+            const mainWrapper = document.getElementById('view-menu');
+            if(mainWrapper) {
+                mainWrapper.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverIntentTimer);
+                    robotSpeak(defaultText);
+                });
+            }
+        }
+
+        // ==========================================
+        // INIZIALIZZAZIONE PROFILO E TESTI
         // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // Legge la memoria Eco
             
             if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             badge.style.display = 'block';
-
-            // GESTIONE INTELLIGENTE DEL ROBOT 3D
-            const container3D = document.getElementById('terapie-3d-container');
-            if (isEco) {
-                // Se Eco Mode è ON: Distrugge fisicamente il contenitore. Zero layout rotto, zero cache!
-                if(container3D) container3D.remove();
-            } else if (window.innerWidth > 968) {
-                // Se Eco Mode è OFF e siamo su PC: Inietta il robot
-                if(container3D) {
-                    container3D.innerHTML = `
-                        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.60/build/spline-viewer.js"><\/script>
-                        <spline-viewer url="https://prod.spline.design/eto9tA806aaR8HFr/scene.splinecode"></spline-viewer>
-                    `;
-                }
-            }
 
             if(profile === 'superiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Superiore]";
@@ -433,6 +608,9 @@ spline-viewer {
                 document.body.classList.remove('zoom-out-start');
                 document.body.classList.add('zoom-normal');
             }
+
+            initRobotInteractions();
+            setTimeout(() => { robotSpeak(defaultText); }, 800);
         });
 
         function resetProfile() {
@@ -442,11 +620,12 @@ spline-viewer {
             }
         }
 
-        
         // ==========================================
-        // 3. GESTIONE VISTE E MENU
+        // GESTIONE VISTE E MENU
         // ==========================================
         function showTherapy(therapyId) {
+            clearTimeout(typingTimeout); 
+
             document.getElementById('view-menu').classList.add('hidden');
             document.getElementById('btn-back-paziente').classList.add('hidden');
             document.getElementById('profile-badge').classList.add('hidden');
@@ -467,10 +646,12 @@ spline-viewer {
             document.getElementById('btn-back-paziente').classList.remove('hidden');
             document.getElementById('profile-badge').classList.remove('hidden');
             document.getElementById('view-menu').classList.remove('hidden');
+
+            setTimeout(() => { robotSpeak("Ottimo lavoro Operatore! Sessione registrata. Qual è la prossima direttiva?"); }, 500);
         }
 
         // ==========================================
-        // 4. RIPRODUZIONE VIDEO E GAMIFICATION
+        // RIPRODUZIONE VIDEO E GAMIFICATION
         // ==========================================
         function playVideo(viewId, videoElementId, videoSrc, clickedCard) {
             SoundEngine.click();
@@ -528,7 +709,6 @@ spline-viewer {
         }
 
         function chiudiModalEShowHub() {
-            // Aggiunge +1 alla Sincronizzazione Neurale di paziente.html
             let currentSessions = parseInt(localStorage.getItem('baionicol_sessions')) || 0;
             localStorage.setItem('baionicol_sessions', currentSessions + 1);
             
@@ -555,12 +735,5 @@ spline-viewer {
             document.getElementById('prog-text-' + therapyId).innerText = '0%';
         }
     </script>
-<script src="baionicol-core.js"></script>
 </body>
-
 </html>
-
-
-
-
-
