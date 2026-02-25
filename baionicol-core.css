@@ -52,7 +52,7 @@ body.zoom-normal { transform: scale(1); opacity: 1; }
 h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; }
 
 /* --- HEADER GLOBALE --- */
-header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid rgba(0, 243, 255, 0.15); pointer-events: none; }
+header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(4px); z-index: 1000; border-bottom: 1px solid rgba(0, 243, 255, 0.15); pointer-events: none; }
 .hud-status { position: absolute; left: 50px; top: 50%; transform: translateY(-50%); font-family: 'VT323', monospace; color: var(--green-neon); font-size: 24px; letter-spacing: 2px; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 5px rgba(57, 255, 20, 0.5); pointer-events: auto; }
 .status-dot { width: 12px; height: 12px; background-color: var(--green-neon); border-radius: 50%; box-shadow: 0 0 10px var(--green-neon); animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
@@ -177,5 +177,6 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
         gap: 15px !important;
     }
 }
+
 
 
