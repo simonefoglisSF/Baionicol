@@ -199,9 +199,9 @@
             padding-top: 0 !important;
         }
 
-        /* 3. FIX DIALOGUE BOX (Centro assoluto, fluttuante) */
+       /* 3. FIX DIALOGUE BOX (Centro assoluto, fluttuante) */
         body.eco-active .hero-dialogue-box {
-            position: absolute !important; /* Si sgancia dal layout dei bottoni */
+            position: absolute !important; 
             left: 50% !important;
             top: 50% !important;
             transform: translate(-50%, -50%) !important;
@@ -209,10 +209,10 @@
             width: 80% !important;
             max-width: 700px !important;
             text-align: center;
-            display: inline-block !important;
             border-color: var(--cyan-neon);
             background: rgba(0, 243, 255, 0.05);
-            z-index: 50; /* Sta sopra ai bottoni mentre scrive */
+            z-index: 50; 
+            pointer-events: none !important; /* <--- IL FIX: I click passano attraverso! */
         }
         body.eco-active #mascot-text { display: inline; }
 
@@ -569,7 +569,7 @@
                 });
             }
 
-            // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
+          // --- B) GESTIONE BOOT E TASTO INIZIALIZZA ---
             const urlParams = new URLSearchParams(window.location.search);
             const standbyScreen = document.getElementById('standby-screen');
             const bootScreen = document.getElementById('boot-screen');
@@ -577,7 +577,12 @@
             const btnStartBoot = document.getElementById('btn-start-boot');
 
             if (urlParams.get('return') === 'true') {
-                standbyScreen.style.display = 'none'; bootScreen.style.display = 'none'; dialogueBox.style.display = 'none'; 
+                standbyScreen.style.display = 'none'; 
+                bootScreen.style.display = 'none'; 
+                dialogueBox.style.display = 'none'; 
+                dialogueBox.style.opacity = '0'; // Assicura trasparenza
+                dialogueBox.style.pointerEvents = 'none'; // Distrugge il "muro di vetro"
+                
                 document.body.classList.add('zoom-normal');
                 applyProfile(); 
                 document.querySelectorAll('.main-area-btn').forEach(area => {
@@ -616,6 +621,7 @@
     </script>
 </body>
 </html>
+
 
 
 
