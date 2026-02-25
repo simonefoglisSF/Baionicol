@@ -181,9 +181,8 @@
             </div>
         </div>
 
-        <div class="spline-section" id="3d-container">
+       <div class="spline-section" id="3d-container">
             <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
-            <spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>
         </div>
 
         <div class="right-column">
@@ -242,12 +241,15 @@
         // ==========================================
         // 0. MEMORIA PROFILO E ADATTAMENTO UI
         // ==========================================
+        // ==========================================
+        // 0. MEMORIA PROFILO E ADATTAMENTO UI
+        // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            if (!profile) { window.location.href = 'index.html'; return; }
+            if (!profile) { window.location.href = '1.html'; return; }
 
             const badge = document.getElementById('profile-badge');
-            const splineModel = document.getElementById('spline-model');
+            const container3D = document.getElementById('3d-container');
             const descAllenamento = document.getElementById('desc-allenamento');
             const descTerapie = document.getElementById('desc-terapie');
             const descInvasatura = document.getElementById('desc-invasatura');
@@ -260,8 +262,10 @@
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto superiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per avambraccio e compensazione volume.";
                 
-                // Imposta il braccio aggiornato
-                splineModel.setAttribute('url', 'https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode');
+                // Inietta il 3D solo su PC!
+                if(window.innerWidth > 968) {
+                    container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
+                }
             } 
             else if(profile === 'inferiore') {
                 badge.innerText = "[⚙️ Profilo: Arto Inferiore]";
@@ -269,8 +273,10 @@
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto inferiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per arto inferiore e gestione del volume sotto carico.";
                 
-                // Imposta il robottino per la gamba
-                splineModel.setAttribute('url', 'https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode');
+                // Inietta il 3D solo su PC!
+                if(window.innerWidth > 968) {
+                    container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
+                }
             }
 
             initSync(); 
@@ -456,4 +462,5 @@
 </body>
 
 </html>
+
 
