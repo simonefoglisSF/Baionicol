@@ -135,13 +135,24 @@ spline-viewer {
         body.eco-active .mascot-container { 
             display: none !important; 
         }
+        
+        /* Riallinea il layout verso l'alto e toglie il "vuoto" gigante */
         body.eco-active .hub-layout { 
             justify-content: center !important; 
+            align-items: flex-start !important; /* Spinge i bottoni in alto */
+            min-height: auto !important; /* Toglie il muro invisibile di 60vh */
+            margin-top: 40px !important; /* Distanza morbida dal titolo */
         }
+        
         body.eco-active .options-container { 
-            flex: 0 0 750px !important; /* Blocca la larghezza dei bottoni per non farli allungare troppo */
+            flex: 0 0 750px !important; 
             max-width: 100% !important; 
             margin: 0 auto !important; 
+        }
+        
+        /* Solleva leggermente anche il titolo per bilanciare la pagina */
+        body.eco-active .hub-title {
+            margin-top: 20px !important;
         }
 	</style>
 </head>
@@ -566,6 +577,7 @@ spline-viewer {
 </body>
 
 </html>
+
 
 
 
