@@ -334,7 +334,7 @@
     
     <script>
         // ==========================================
-        // 1. MOTORE AUDIO SICURO (Bypass Blocchi Browser)
+        // 1. MOTORE AUDIO SICURO E SUONI
         // ==========================================
         let audioCtx = null;
         const SoundEngine = {
@@ -343,7 +343,7 @@
                     try {
                         const AudioContext = window.AudioContext || window.webkitAudioContext;
                         if(AudioContext) audioCtx = new AudioContext();
-                    } catch(e) { console.warn("Audio Context bloccato"); }
+                    } catch(e) { console.warn("Audio bloccato"); }
                 }
                 if (audioCtx && audioCtx.state === 'suspended') {
                     audioCtx.resume();
@@ -352,8 +352,7 @@
             playTone: function(freq, type, dur, vol) {
                 if(!audioCtx || audioCtx.state === 'suspended') return;
                 try {
-                    const osc = audioCtx.createOscillator(); 
-                    const gain = audioCtx.createGain();
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
                     osc.type = type; osc.frequency.value = freq;
                     gain.gain.setValueAtTime(vol, audioCtx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
@@ -365,8 +364,72 @@
             bootSuccess: () => { SoundEngine.playTone(1000, 'sine', 0.2, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.4, 0.05), 150); },
             hover: () => SoundEngine.playTone(1500, 'sine', 0.05, 0.02),
             dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); },
-            click: () => SoundEngine.playTone(200, 'square', 0.1, 0.06) // <--- Suono di click aggiunto
+            click: () => SoundEngine.playTone(200, 'square', 0.1, 0.06),
+            
+            // IL NUOVO SUONO DELLA MACCHINA DA SCRIVERE (Breve, veloce e leggermente randomico per sembrare una tastiera)
+            typeTick: () => SoundEngine.playTone(1200 + Math.random() * 400, 'square', 0.015, 0.01) 
         };
+
+        // RISVEGLIO AGGRESSIVO AUDIO: Aggira il blocco del browser sbloccando l'audio appena "schiacci" un tasto del mouse o della tastiera
+        document.addEventListener('mousedown', () => { SoundEngine.init(); }, { once: true });
+        document.addEventListener('keydown', () => { SoundEngine.init(); }, { once: true });
+
+        // ==========================================
+        // 2. CURSORE E UI
+        // ==========================================
+        const cursorRing = document.getElementById('cursor-ring');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, ringX = mouseX, ringY = mouseY;
+        document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.2; ringY += (mouseY - ringY) * 0.2;
+            if(cursorRing) cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('.interactive-el').forEach(el => {
+            el.addEventListener('mouseenter', () => { 
+                SoundEngine.init(); // Tenta uno sblocco forzato anche sull'hover (per browser più permissivi)
+                if(cursorRing) cursorRing.classList.add('hovering'); 
+                SoundEngine.hover(); 
+            });
+            el.addEventListener('mouseleave', () => { if(cursorRing) cursorRing.classList.remove('hovering'); });
+        });
+
+        function updateClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('clock');
+            if(clockEl) clockEl.textContent = 'Time: ' + now.toLocaleTimeString('it-IT', { hour12: false });
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) return "Buongiorno";
+            if (hour >= 12 && hour < 18) return "Buon pomeriggio";
+            return "Buonasera";
+        }
+
+        function typeWriterEffect(text, elementId, speed, callback) {
+            let i = 0; const element = document.getElementById(elementId); element.innerHTML = ""; 
+            function type() {
+                if (i < text.length) {
+                    if(text.charAt(i) === '<') {
+                        let tag = "";
+                        while(text.charAt(i) !== '>' && i < text.length) { tag += text.charAt(i); i++; }
+                        tag += '>'; element.innerHTML += tag; i++; setTimeout(type, speed);
+                    } else {
+                        element.innerHTML += text.charAt(i); 
+                        
+                        // SUONA SOLO SE NON E' UNO SPAZIO VUOTO
+                        if (text.charAt(i) !== ' ') SoundEngine.typeTick(); 
+                        
+                        i++; setTimeout(type, speed);
+                    }
+                } else if (callback) { setTimeout(callback, 500); }
+            }
+            type();
+        }
 
         // SBLOCCO AUDIO UNIVERSALE: Risveglia l'audio al primo click in qualsiasi punto (Fissa il bug del ritorno)
         document.addEventListener('click', () => { SoundEngine.init(); }, { once: true });
@@ -632,6 +695,7 @@
     </script>
 </body>
 </html>
+
 
 
 
