@@ -364,8 +364,12 @@
             bootBeepDynamic: (step) => SoundEngine.playTone(300 + (step * 200), 'square', 0.1, 0.03),
             bootSuccess: () => { SoundEngine.playTone(1000, 'sine', 0.2, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.4, 0.05), 150); },
             hover: () => SoundEngine.playTone(1500, 'sine', 0.05, 0.02),
-            dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); }
+            dataSave: () => { SoundEngine.playTone(1000, 'sine', 0.1, 0.05); setTimeout(()=>SoundEngine.playTone(1500, 'sine', 0.3, 0.05), 100); },
+            click: () => SoundEngine.playTone(200, 'square', 0.1, 0.06) // <--- Suono di click aggiunto
         };
+
+        // SBLOCCO AUDIO UNIVERSALE: Risveglia l'audio al primo click in qualsiasi punto (Fissa il bug del ritorno)
+        document.addEventListener('click', () => { SoundEngine.init(); }, { once: true });
 
         // ==========================================
         // 2. CURSORE E UI
@@ -424,6 +428,13 @@
         }
 
         function animateAndNavigate(targetUrl) {
+            SoundEngine.init(); // Sicurezza extra
+            SoundEngine.click(); // Suono di pressione
+            
+            // ANTI-LAG: Nascondiamo il robot 3D esattamente 1 millisecondo prima dello zoom.
+            // Questo libera il 100% della scheda video, permettendo un'animazione fluidissima!
+            document.querySelectorAll('spline-viewer').forEach(el => el.style.display = 'none');
+            
             document.body.classList.add('zoom-in');
             setTimeout(() => { window.location.href = targetUrl; }, 550);
         }
@@ -621,6 +632,7 @@
     </script>
 </body>
 </html>
+
 
 
 
