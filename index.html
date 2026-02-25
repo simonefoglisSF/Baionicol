@@ -175,19 +175,74 @@
         .main-area-btn.show-area { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
         
         /* ========================================= */
-        /* MODALITÀ ECO (SCHERMATA INIZIALE)         */
-        /* ========================================= */
-        .eco-btn { background: rgba(255, 170, 0, 0.1); border: 1px solid var(--amber-neon); color: var(--amber-neon); padding: 8px 15px; border-radius: 5px; font-family: 'Space Grotesk'; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: 0.3s; position: relative; display: flex; align-items: center; gap: 8px; }
-        .eco-btn:hover { background: var(--amber-neon); color: #000; box-shadow: 0 0 15px var(--amber-neon); }
-        .eco-tooltip { position: absolute; top: 130%; left: 50%; transform: translateX(-50%); background: var(--amber-neon); color: #000; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: 'Space Grotesk'; font-weight: bold; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.4s ease; z-index: 1000; }
-        .eco-tooltip::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border-width: 6px; border-style: solid; border-color: transparent transparent var(--amber-neon) transparent; }
-        .show-tooltip .eco-tooltip { opacity: 1; animation: bounce 2s infinite; }
-        .eco-btn:hover .eco-tooltip { opacity: 1; animation: none; }
-        @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 5px); } }
-        
-        /* SPEGNE IL 3D E ABBASSA I RIFLESSI QUANDO ECO E' ATTIVO */
-        body.eco-active spline-viewer, body.eco-active .hero-mascot-placeholder { display: none !important; }
-        body.eco-active header, body.eco-active .hero-dialogue-box, body.eco-active .main-area-btn { backdrop-filter: blur(2px) !important; box-shadow: none !important; }
+/* MODALITÀ ECO (DESIGN OTTIMIZZATO)         */
+/* ========================================= */
+
+/* 1. Nasconde il 3D pesantissimo */
+body.eco-active spline-viewer, 
+body.eco-active .hero-mascot-placeholder { 
+    display: none !important; 
+}
+
+/* 2. Trasforma il layout in un cruscotto centrale */
+body.eco-active .hero {
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 30px !important;
+}
+
+/* 3. Centra e solleva il fumetto dell'assistente */
+body.eco-active .hero-dialogue-box {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin: 0 auto 20px auto !important;
+    max-width: 600px !important;
+    text-align: center;
+    border-color: var(--cyan-neon); /* Cambia colore per indicare ECO mode */
+    background: rgba(0, 243, 255, 0.02);
+}
+
+/* 4. Affianca i bottoni al centro dello schermo */
+body.eco-active .main-area-btn {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    display: inline-flex !important;
+    width: 400px !important;
+    margin: 0 15px !important;
+    opacity: 0;
+}
+
+/* Effetto comparsa dei bottoni centrati */
+body.eco-active .main-area-btn.show-area {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* 5. AGGIUNGE UN RADAR DI SFONDO (Leggerissimo CSS) */
+body.eco-active .hero::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    background: repeating-radial-gradient(circle, rgba(0, 243, 255, 0.05) 0%, transparent 10%, transparent 20%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: pulseRadar 8s linear infinite;
+}
+
+@keyframes pulseRadar {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.8); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.1); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) rotate(360deg) scale(0.8); opacity: 0.5; }
+}
     </style>
 </head>
 <body>
@@ -549,4 +604,5 @@
     </script>
 </body>
 </html>
+
 
