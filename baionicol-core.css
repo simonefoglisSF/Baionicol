@@ -143,5 +143,39 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
     .calib-box, .ticket-box, .emergency-fullscreen { width: 95% !important; padding: 25px 15px !important; }
     .calib-options { flex-direction: column !important; gap: 15px !important; }
     .calib-btn { width: 100% !important; font-size: 18px !important; padding: 15px !important; }
+   /* ========================================= */
+    /* FIX DEFINITIVO PAGINA TERAPIE SU MOBILE   */
+    /* ========================================= */
+    .split-view, .therapy-container, .terapie-layout { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        height: auto !important; 
+    }
+    
+    .video-col, .therapy-video-col, .left-col { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        min-height: 250px !important; 
+        height: 30vh !important; 
+        border-right: none !important; 
+        border-bottom: 2px solid var(--glass-border) !important; 
+    }
+    
+    .list-col, .therapy-list-col, .right-col { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        padding: 20px 15px !important; 
+        overflow-y: visible !important; 
+    }
+    
+    /* Sistema le singole voci della lista terapie per evitare scritte schiacciate */
+    .therapy-item, .list-item { 
+        flex-direction: column !important; 
+        align-items: flex-start !important; 
+        height: auto !important; 
+        padding: 20px 15px !important; 
+        gap: 15px !important;
+    }
 }
+
 
