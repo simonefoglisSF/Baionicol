@@ -241,12 +241,11 @@
         // ==========================================
         // 0. MEMORIA PROFILO E ADATTAMENTO UI
         // ==========================================
-        // ==========================================
-        // 0. MEMORIA PROFILO E ADATTAMENTO UI
-        // ==========================================
         window.addEventListener('load', () => {
             const profile = localStorage.getItem('baionicol_profile');
-            if (!profile) { window.location.href = '1.html'; return; }
+            const isEco = localStorage.getItem('baionicol_eco_mode') === 'true'; // <--- LEGGE LA MEMORIA ECO
+            
+            if (!profile) { window.location.href = 'index.html'; return; }
 
             const badge = document.getElementById('profile-badge');
             const container3D = document.getElementById('3d-container');
@@ -262,8 +261,8 @@
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto superiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per avambraccio e compensazione volume.";
                 
-                // Inietta il 3D solo su PC!
-                if(window.innerWidth > 968) {
+                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
+                if(window.innerWidth > 968 && !isEco) {
                     container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
                 }
             } 
@@ -273,21 +272,14 @@
                 descTerapie.innerText = "Gestione dolore fantasma, Mirror Therapy per arto inferiore e desensibilizzazione.";
                 descInvasatura.innerText = "Igiene della cute, liner in silicone per arto inferiore e gestione del volume sotto carico.";
                 
-                // Inietta il 3D solo su PC!
-                if(window.innerWidth > 968) {
+                // INIETTA IL 3D SOLO SE L'ECO MODE E' SPENTO!
+                if(window.innerWidth > 968 && !isEco) {
                     container3D.innerHTML += `<spline-viewer id="spline-model" url="https://prod.spline.design/br1Xg397DV0ivSH6/scene.splinecode"></spline-viewer>`;
                 }
             }
 
             initSync(); 
         });
-
-        function resetProfile() {
-            if(confirm("Vuoi ricalibrare l'architettura del sistema? Verrai reindirizzato al terminale principale.")) {
-                localStorage.removeItem('baionicol_profile');
-                window.location.href = 'index.html';
-            }
-        }
 
         
         // ==========================================
@@ -462,5 +454,6 @@
 </body>
 
 </html>
+
 
 
