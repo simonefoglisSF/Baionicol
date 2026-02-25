@@ -74,6 +74,86 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 
 .reticle-center { width: 15px; height: 10px; border: 2px solid var(--cyan-neon); border-top: none; }
 /* =========================================
+   MODALITÀ ECO (PERFORMANCE BOOSTER)
+   ========================================= */
+
+/* 1. Il Bottone */
+.eco-btn {
+    background: rgba(255, 170, 0, 0.1); 
+    border: 1px solid var(--amber-neon); 
+    color: var(--amber-neon);
+    padding: 8px 15px; 
+    border-radius: 5px; 
+    font-family: 'Space Grotesk'; 
+    font-size: 14px; 
+    letter-spacing: 1px;
+    cursor: pointer; 
+    transition: 0.3s; 
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.eco-btn:hover { background: var(--amber-neon); color: #000; box-shadow: 0 0 15px var(--amber-neon); }
+
+/* 2. La Vignetta "Se lagga" */
+.eco-tooltip {
+    position: absolute;
+    top: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--amber-neon);
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Space Grotesk';
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.4s ease;
+    box-shadow: 0 5px 15px rgba(255, 170, 0, 0.4);
+    z-index: 1000;
+}
+/* Freccina della vignetta */
+.eco-tooltip::before {
+    content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    border-width: 6px; border-style: solid; border-color: transparent transparent var(--amber-neon) transparent;
+}
+
+/* Animazione della vignetta all'avvio */
+.show-tooltip .eco-tooltip { opacity: 1; animation: bounce 2s infinite; }
+.eco-btn:hover .eco-tooltip { opacity: 1; animation: none; }
+@keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 5px); } }
+
+
+/* 3. COSA SUCCEDE QUANDO L'ECO MODE È ATTIVO */
+body.eco-active spline-viewer, 
+body.eco-active .spline-section, 
+body.eco-active #3d-container { 
+    display: none !important; 
+}
+
+/* Riduce drasticamente i calcoli della scheda video (Blur e Ombre) */
+body.eco-active .panel, 
+body.eco-active .dashboard-btn, 
+body.eco-active .super-card, 
+body.eco-active header, 
+body.eco-active .sync-panel, 
+body.eco-active .calibration-panel,
+body.eco-active .diag-panel,
+body.eco-active .hero-dialogue-box {
+    backdrop-filter: blur(2px) !important;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.8) !important;
+}
+
+/* Adatta i bottoni per mobile */
+@media (max-width: 768px) {
+    .eco-btn { font-size: 12px; padding: 8px 12px; margin: 0; }
+    .eco-tooltip { display: none; } /* Su mobile la vignetta dà fastidio, la nascondiamo */
+}
+/* =========================================
    MASTER RESPONSIVE PATCH (TUTTI I DISPOSITIVI)
    ========================================= */
 
@@ -173,6 +253,7 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
         gap: 15px !important;
     }
 }
+
 
 
 
