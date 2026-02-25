@@ -28,12 +28,14 @@
 .cursor-ring.hovering-danger { border-color: var(--danger-neon) !important; box-shadow: 0 0 15px rgba(255, 51, 51, 0.4) !important; }
 
 /* --- BASE BODY --- */
+/* --- BASE BODY --- */
 body {
     margin: 0; padding: 0;
     font-family: 'Rajdhani', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
-    overflow: hidden; 
+    overflow-x: hidden; 
+    overflow-y: auto; /* <--- IL FIX: Ora puoi scorrere in basso! */
     background-image: 
         linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
@@ -300,6 +302,76 @@ body.eco-active .therapy-btn {
         padding: 20px 15px !important; 
         gap: 15px !important;
     }
+    /* =========================================
+   IL ROBOTTINO E IL SISTEMA DI DIALOGOS
+   ========================================= */
+.mascot-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 10;
+}
+
+.mascot-video-container {
+    width: 380px; /* Dimensione del robottino */
+    height: 380px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.4)); /* Effetto ologramma */
+}
+
+.mascot-robot-vid {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Stile più professionale per il fumetto */
+.hero-dialogue-box {
+    background: rgba(11, 19, 30, 0.85); /* Blu notte clinico */
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-top: 3px solid var(--cyan-neon);
+    border-radius: 12px;
+    padding: 25px 35px;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    position: relative;
+    opacity: 0; 
+    display: none; 
+    transition: opacity 0.5s ease;
+}
+
+/* Freccetta del fumetto che punta al robot */
+.hero-dialogue-box::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 15px;
+    border-style: solid;
+    border-color: rgba(11, 19, 30, 0.85) transparent transparent transparent;
+}
+
+.hero-dialogue-box.show-dialogue { opacity: 1; display: block; }
+
+.hero-dialogue-box h1 {
+    font-family: 'Rajdhani', sans-serif; /* Font più leggibile */
+    font-size: 26px;
+    line-height: 1.4;
+    color: var(--text-main);
+    margin: 0;
+    text-transform: none; /* Togliamo il tutto maiuscolo per facilitare la lettura */
+    font-weight: 500;
+}
+
+.hero-dialogue-box .highlight-name { color: var(--cyan-neon); font-weight: 700; }
 }
 
 
