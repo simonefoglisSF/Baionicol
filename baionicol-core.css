@@ -128,17 +128,13 @@ header { position: fixed; top: 0; left: 0; width: 100%; height: 90px; background
 @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 5px); } }
 
 /* 3. COSA SUCCEDE QUANDO L'ECO MODE È ATTIVO */
+/* Uccide TUTTI i contenitori 3D fantasma in tutte le pagine */
 body.eco-active spline-viewer, 
 body.eco-active .spline-section, 
 body.eco-active #3d-container,
 body.eco-active .hero-mascot-placeholder,
 body.eco-active .mascot-container { 
     display: none !important; 
-}
-
-/* Centra perfettamente i layout quando il robot scompare */
-body.eco-active .hub-layout {
-    justify-content: center !important;
 }
 
 /* Riduce drasticamente i calcoli della scheda video (Blur e Ombre) */
@@ -149,42 +145,42 @@ body.eco-active header,
 body.eco-active .sync-panel, 
 body.eco-active .calibration-panel,
 body.eco-active .diag-panel,
+body.eco-active .therapy-btn,
 body.eco-active .hero-dialogue-box {
     backdrop-filter: blur(2px) !important;
     box-shadow: 0 5px 10px rgba(0,0,0,0.8) !important;
 }
+
 /* =========================================
    RIADATTAMENTO LAYOUT IN ECO MODE (Riempie i vuoti)
    ========================================= */
 
-/* Fix per PAZIENTE.HTML: Avvicina le due colonne al centro e le fa "respirare" */
+/* Fix per PAZIENTE.HTML: Avvicina le due colonne al centro */
 body.eco-active .dashboard-container {
     justify-content: center !important;
-    gap: 100px !important; /* Distanza elegante tra colonna destra e sinistra */
+    gap: 80px !important; 
 }
 body.eco-active .left-column, 
 body.eco-active .right-column {
     flex: 1 !important;
-    max-width: 650px !important; /* Permette ai pannelli di allargarsi di più */
-}
-body.eco-active .dashboard-btn {
-    padding: 30px 35px !important; /* Rende i bottoni di destra più maestosi */
+    max-width: 600px !important;
 }
 
-/* Fix per TERAPIE.HTML: Centra i bottoni e li rende più grandi */
+/* Fix per TERAPIE.HTML: Centra i bottoni, li alza e non li fa tagliare */
 body.eco-active .hub-layout {
     justify-content: center !important;
-    align-items: flex-start !important;
-    min-height: auto !important;
-    margin-top: 40px !important;
+    align-items: flex-start !important; /* Spinge verso l'alto */
+    min-height: auto !important; /* Toglie il blocco invisibile in altezza */
+    margin-top: 20px !important;
 }
 body.eco-active .options-container {
     flex: 1 !important;
-    max-width: 1000px !important; /* I bottoni si allargano per riempire lo schermo */
+    max-width: 900px !important; /* Allarga i bottoni in modo elegante */
     margin: 0 auto !important;
+    padding-bottom: 50px !important; /* Evita che l'ultimo bottone venga tagliato fuori */
 }
 body.eco-active .therapy-btn {
-    padding: 35px 50px !important; /* Aumenta il volume interno dei bottoni */
+    padding: 30px 40px !important;
 }
 /* Adatta i bottoni per mobile */
 @media (max-width: 768px) {
@@ -291,6 +287,7 @@ body.eco-active .therapy-btn {
         gap: 15px !important;
     }
 }
+
 
 
 
