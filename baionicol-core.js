@@ -156,4 +156,49 @@ document.addEventListener("DOMContentLoaded", () => {
     videos.forEach(video => {
         videoObserver.observe(video);
     });
+// ==========================================
+// 6. GESTIONE ECO MODE (Performance Saver)
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    const ecoBtn = document.getElementById('eco-toggle-btn');
+    if (!ecoBtn) return; // Se il bottone non c'è in questa pagina, si ferma
+
+    // 1. Controlla se l'utente aveva già attivato l'Eco Mode in precedenza
+    const isEcoActive = localStorage.getItem('baionicol_eco_mode') === 'true';
+
+    // 2. Applica lo stato iniziale
+    if (isEcoActive) {
+        document.body.classList.add('eco-active');
+        ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Prestazioni Ottimizzate</div>';
+        ecoBtn.style.color = 'var(--green-neon)';
+        ecoBtn.style.borderColor = 'var(--green-neon)';
+    } else {
+        // Se l'Eco Mode è spento, fa "rimbalzare" la vignetta per 5 secondi per farsi notare!
+        ecoBtn.classList.add('show-tooltip');
+        setTimeout(() => ecoBtn.classList.remove('show-tooltip'), 5000);
+    }
+
+    // 3. Cosa succede quando l'utente clicca il bottone
+    ecoBtn.addEventListener('click', () => {
+        const isCurrentlyEco = document.body.classList.contains('eco-active');
+        
+        if (isCurrentlyEco) {
+            // SPEGNE L'ECO MODE (Torna la grafica pesante)
+            document.body.classList.remove('eco-active');
+            localStorage.setItem('baionicol_eco_mode', 'false');
+            ecoBtn.innerHTML = '⚡ ECO: OFF <div class="eco-tooltip">Se il sito lagga, cliccami!</div>';
+            ecoBtn.style.color = 'var(--amber-neon)';
+            ecoBtn.style.borderColor = 'var(--amber-neon)';
+            SoundEngine.btnClick(); // Suono di click
+        } else {
+            // ACCENDE L'ECO MODE (Sito fulmineo)
+            document.body.classList.add('eco-active');
+            localStorage.setItem('baionicol_eco_mode', 'true');
+            ecoBtn.innerHTML = '⚡ ECO: ON <div class="eco-tooltip">Modalità Eco Attiva</div>';
+            ecoBtn.style.color = 'var(--green-neon)';
+            ecoBtn.style.borderColor = 'var(--green-neon)';
+            ecoBtn.classList.remove('show-tooltip');
+            SoundEngine.bootSuccess(); // Suono di conferma
+        }
+    });
 });
