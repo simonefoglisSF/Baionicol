@@ -19,10 +19,10 @@
         .defcon-mode .arc-right { border-left-color: var(--danger-neon); filter: drop-shadow(0 0 10px var(--danger-neon)); }
         .defcon-mode .content-container { background: radial-gradient(circle, rgba(255,51,51,0.05) 0%, transparent 70%); }
 
-        /* --- CONTENITORE PRINCIPALE (Aggiustato Padding) --- */
-        .content-container { padding: 100px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; min-height: 100vh;}
+       /* --- CONTENITORE PRINCIPALE (Centratura Perfetta) --- */
+        .content-container { padding: 90px 4vw 40px 4vw; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;}
         .view-section { transition: opacity 0.4s ease, transform 0.4s ease; display: none; opacity: 0; transform: scale(0.98); width: 100%; max-width: 1400px; }
-        .view-section.active { display: flex; opacity: 1; transform: scale(1); flex-direction: column; align-items: center; width: 100%;}
+        .view-section.active { display: flex; opacity: 1; transform: scale(1); flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1;}
 
         /* =========================================
            TOP HEADER E MASCOTTE (Limati gli spazi)
@@ -782,3 +782,4 @@
     </script>
 </body>
 </html>
+
