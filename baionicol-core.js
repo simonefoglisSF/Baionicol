@@ -122,8 +122,17 @@ function resetProfile() {
 function animateAndNavigate(targetUrl) {
     document.body.classList.add('zoom-in');
     setTimeout(() => { window.location.href = targetUrl; }, 550);
-
 }
+
+// FIX: RIPRISTINO VISUALE TASTO "INDIETRO" DEL BROWSER (BFCache)
+window.addEventListener('pageshow', function(event) {
+    // event.persisted è TRUE se la pagina è stata caricata dalla cache del tasto "Indietro"
+    if (event.persisted) {
+        // Rimuove l'invisibilità e ripristina la visuale normale
+        document.body.classList.remove('zoom-in', 'zoom-out-start');
+        document.body.classList.add('zoom-normal');
+    }
+});
 // ==========================================
 // 5. SMART VIDEO OBSERVER (Ottimizzazione CPU)
 // ==========================================
@@ -173,5 +182,6 @@ window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('spline-viewer').forEach(el => el.remove());
     }
 });
+
 
 
